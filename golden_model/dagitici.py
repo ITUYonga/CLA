@@ -1,7 +1,3 @@
-from .cla_state import ClaState
-from .cla_memory import ClaMemory
-from .decoder import DecodedInstruction, decode
-from .isa_table import load_table
 from .ops_float import UNCF
 from . import ops_convert as C
 from . import ops_float as F
@@ -9,21 +5,15 @@ from . import ops_int as I
 from . import ops_memory as M
 from . import ops_control as K
 from . import ops_parallel as PR
-
-# MSTOP'un kodlamasi: alan yok, 32 bitin tamami sabit (s.687).
-MSTOP_WORD = 0x7F800000
-
+from .decoder import DecodedInstruction
+from .isa_table import load_table
 
 class BaglanmamisKomutError(Exception):
     """Kodlama tabloda var ama dagit() icinde bir dali yok."""
 
 
-class ProgramBitmediError(Exception):
-    """run() adim sinirina carpti - MSTOP yok ya da sonsuz dongu."""
-
 
 _MAR_INDEKS = None
-
 
 def _mar_indeksi(entry):
     """MARx komutlarinda hedef MAR adlandirilmis bir alan DEGIL.
@@ -56,34 +46,8 @@ def _mar_indeksi(entry):
     return _MAR_INDEKS[entry["match"]]
 
 
-class ClaCore:
 
-    def __init__(self, state : ClaState, memory : ClaMemory, arbiter=None):
-        """arbiter ISTEGE BAGLI.
-
-        Tek gorevli kullanim (mevcut testlerin hepsi) hakem olmadan
-        calisir: MSTOP sadece durdurur. Hakem verilirse MSTOP ayrica
-        gorev_bitti()'yi cagirir - MIRUN temizlenir, PIE'ye bildirilir.
-        """
-        self.state = state
-        self.memory = memory
-        self.arbiter = arbiter
-        self.durdu = False
-
-    def getir(self) -> int:
-        """Komutu getirir ve MPC'yi ilerletir.
-
-        MPC ONCE ilerliyor: gercek islemcide PC getirme aninda artar ve
-        dallanma o artmis degerin uzerine yazar. MBCNDD'nin ofseti de
-        "komuttan sonraki konuma gore" tanimli (s.600), yani bu sira
-        dallanmalar geldiginde de dogru kalacak.
-        """
-        mpc = self.state.mpc
-        instruction = self.memory.fetch32(mpc)
-        self.state.advance_mpc(2)
-        return instruction
-
-    def dagit(self, decoded_instruction : DecodedInstruction):
+def dagit(decoded_instruction : DecodedInstruction , state = None , memory = None , cekirdek = None):
         """Cozulmus komudu ilgili ops_* fonksiyonuna baglar.
 
         TUZAK 1: #SHIFT alaninda kodlama 0 -> 1 bit kaydirma (Tablo 10-7),
@@ -91,8 +55,8 @@ class ClaCore:
         TUZAK 2: CNDF alani cozulmus komutta yoksa varsayilan UNCF
                  (s.598 dipnot 2) - NEQ degil.
         """
-        st = self.state
-        alan = decoded_instruction.fields
+        st, mem = state, memory
+        alan   = decoded_instruction.fields
         syntax = decoded_instruction.syntax
 
         if syntax == "MABSF32 MRa, MRb":
@@ -208,7 +172,7 @@ class ClaCore:
             M.mmovxi_ri(st, mra=alan['a'], lower_16=alan['I'])
 
         elif syntax == "MMOV32 MRa, mem32 {, CNDF}":
-            M.mmov32_yukle(st, self.memory,
+            M.mmov32_yukle(st, mem,
                 mra=alan['a'],
                 kip=alan['addr'],
                 m=alan['m'],
@@ -221,7 +185,7 @@ class ClaCore:
                 cndf=alan.get('cndf', UNCF))
 
         elif syntax == "MMOV32 mem32, MRa":
-            M.mmov32_sakla(st, self.memory,
+            M.mmov32_sakla(st, mem,
                 mra=alan['a'],
                 kip=alan['addr'],
                 m=alan['m'])
@@ -234,19 +198,19 @@ class ClaCore:
         # alan adres, dolayli kipte (0001/0010) MARx'e eklenecek offset.
         # Bu yuzden mem16/mem32 ve m parametrelerine ayni alan gidiyor.
         elif syntax == "MI16TOF32 MRa, mem16":
-            C.mi16tof32_ri(st, mra=alan['a'], memory=self.memory,
+            C.mi16tof32_ri(st, mra=alan['a'], memory=mem,
                 mem16=alan['m'], kip=alan['addr'], m=alan['m'])
 
         elif syntax == "MUI16TOF32 MRa, mem16":
-            C.mui16tof32_ri(st, mra=alan['a'], memory=self.memory,
+            C.mui16tof32_ri(st, mra=alan['a'], memory=mem,
                 mem16=alan['m'], kip=alan['addr'], m=alan['m'])
 
         elif syntax == "MI32TOF32 MRa, mem32":
-            C.mi32tof32_ri(st, mra=alan['a'], memory=self.memory,
+            C.mi32tof32_ri(st, mra=alan['a'], memory=mem,
                 mem32=alan['m'], kip=alan['addr'], m=alan['m'])
 
         elif syntax == "MUI32TOF32 MRa, mem32":
-            C.mui32tof32_ri(st, mra=alan['a'], memory=self.memory,
+            C.mui32tof32_ri(st, mra=alan['a'], memory=mem,
                 mem32=alan['m'], kip=alan['addr'], m=alan['m'])
 
         # --- paralel formlar ---
@@ -260,7 +224,7 @@ class ClaCore:
             PR.maddf32_rrr_mmov32_ri(st,
                 mrd=alan['d'], mre=alan['e'], mrf=alan['f'],
                 mra=alan['a'], mem32=alan['m'],
-                kip=alan['addr'], m=alan['m'], memory=self.memory)
+                kip=alan['addr'], m=alan['m'], memory=mem)
 
         # SAKLAMA varyantinda ZF/NF KURULMAZ ve MRd==MRa kisiti YOKTUR:
         # iki hedef farkli turde (yazmac / bellek), cakisma olamaz.
@@ -270,7 +234,7 @@ class ClaCore:
             PR.maddf32_rrr_mmov32_ir(st,
                 mrd=alan['d'], mre=alan['e'], mrf=alan['f'],
                 mra=alan['a'], mem32=alan['m'],
-                kip=alan['addr'], m=alan['m'], memory=self.memory)
+                kip=alan['addr'], m=alan['m'], memory=mem)
 
         # Iki aritmetikli formlar: ZF/NF'ye HIC dokunulmaz (bellekten
         # yukleme yok). LUF/LVF ikisinden de mandallanir.
@@ -291,32 +255,32 @@ class ClaCore:
         elif syntax == "MMACF32 MR3, MR2, MRd, MRe, MRf ||MMOV32 MRa, mem32":
             PR.mmacf32_rrrrr_mmov32_ri(st, mr3=3, mr2=2,
                 mrd=alan['d'], mre=alan['e'], mrf=alan['f'],
-                mra=alan['a'], mem32=alan['m'], memory=self.memory,
+                mra=alan['a'], mem32=alan['m'], memory=mem,
                 m=alan['m'], kip=alan['addr'])
 
         elif syntax == "MMPYF32 MRd, MRe, MRf ||MMOV32 MRa, mem32":
             PR.mmpyf_32_rrr_mmov32_ri(st,
                 mrd=alan['d'], mre=alan['e'], mrf=alan['f'],
                 mra=alan['a'], mem32=alan['m'],
-                kip=alan['addr'], m=alan['m'], memory=self.memory)
+                kip=alan['addr'], m=alan['m'], memory=mem)
 
         elif syntax == "MMPYF32 MRd, MRe, MRf ||MMOV32 mem32, MRa":
             PR.mmpyf32_rrr_mmov32_ir(st,
                 mrd=alan['d'], mre=alan['e'], mrf=alan['f'],
                 mra=alan['a'], mem32=alan['m'],
-                kip=alan['addr'], m=alan['m'], memory=self.memory)
+                kip=alan['addr'], m=alan['m'], memory=mem)
 
         elif syntax == "MSUBF32 MRd, MRe, MRf ||MMOV32 mem32, MRa":
             PR.msubf32_rrr_mmov32_ir(st,
                 mrd=alan['d'], mre=alan['e'], mrf=alan['f'],
                 mra=alan['a'], mem32=alan['m'],
-                kip=alan['addr'], m=alan['m'], memory=self.memory)
+                kip=alan['addr'], m=alan['m'], memory=mem)
 
         elif syntax == "MSUBF32 MRd, MRe, MRf ||MMOV32 MRa, mem32":
             PR.msubf32_rrr_mmov32_ri(st,
                 mrd=alan['d'], mre=alan['e'], mrf=alan['f'],
                 mra=alan['a'], mem32=alan['m'],
-                kip=alan['addr'], m=alan['m'], memory=self.memory)
+                kip=alan['addr'], m=alan['m'], memory=mem)
 
         elif syntax == "MMOVD32 MRa, mem32":
             # s.658: MRa = [mem32] VE [mem32+2] = [mem32].
@@ -324,18 +288,18 @@ class ClaCore:
             # adrese gore (son artirmadan onceki adres).
             # Bayraklar MMOV32 kuraliyla ama KOSULSUZ - CNDF alani yok.
             M.mmovd32(st, mra=alan['a'], mem32=alan['m'],
-                memory=self.memory, kip=alan['addr'], m=alan['m'])
+                memory=mem, kip=alan['addr'], m=alan['m'])
 
         elif syntax == "MMOV32 MSTF, mem32":
             # s.664: "Loading the status register will overwrite all flags
             # and the RPC field. The MEALLOW field is not affected."
             # Ayrilmis bitler (4,5,7,8,10,31-24) Tablo 10-33'e gore hep 0;
             # maske ops_memory'de tek yerde.
-            M.mmov32_mstf_mem(st, mem32=alan['m'], memory=self.memory,
+            M.mmov32_mstf_mem(st, mem32=alan['m'], memory=mem,
                 kip=alan['addr'], m=alan['m'])
 
         elif syntax == "MMOV32 mem32, MSTF":
-            M.mmov32_mem_mstf(st, mem32=alan['m'], memory=self.memory,
+            M.mmov32_mem_mstf(st, mem32=alan['m'], memory=mem,
                 kip=alan['addr'], m=alan['m'])
 
         # --- MAR ve 16-bit tasima (Grup 4) ---
@@ -358,22 +322,22 @@ class ClaCore:
         elif syntax == "MMOV16 MARx, mem16":
             x = _mar_indeksi(decoded_instruction.entry)
             (C.mmov16_mar_mem_0 if x == 0 else C.mmov16_mar_mem_1)(
-                st, mem16=alan['m'], memory=self.memory,
+                st, mem16=alan['m'], memory=mem,
                 kip=alan['addr'], m=alan['m'])
 
         elif syntax == "MMOV16 mem16, MARx":
             x = _mar_indeksi(decoded_instruction.entry)
             (C.mmov16_mem_mar_0 if x == 0 else C.mmov16_mem_mar_1)(
-                st, mem16=alan['m'], memory=self.memory,
+                st, mem16=alan['m'], memory=mem,
                 kip=alan['addr'], m=alan['m'])
 
         elif syntax == "MMOV16 mem16, MRa":
             C.mmov16_mem_mra(st, mem16=alan['m'], mra=alan['a'],
-                memory=self.memory, kip=alan['addr'], m=alan['m'])
+                memory=mem, kip=alan['addr'], m=alan['m'])
 
         elif syntax == "MMOVZ16 MRa, mem16":
             C.mmovz16(st, mem16=alan['m'], mra=alan['a'],
-                memory=self.memory, kip=alan['addr'], m=alan['m'])
+                memory=mem, kip=alan['addr'], m=alan['m'])
 
         # --- gorev sonu ---
         # MSTOP komut setinin parcasi; ayrica gorev hakemligini tetikler.
@@ -381,9 +345,10 @@ class ClaCore:
         # "gorev bitti" haberini alir. Ileride MDEBUGSTOP ve SOFTRESET de
         # ayni haberi verecek.
         elif syntax == "MSTOP":
-            self.durdu = True
-            if self.arbiter is not None:
-                self.arbiter.gorev_bitti()
+         if cekirdek is not None:                  # ardisik model
+            cekirdek.durdu = True
+            if cekirdek.arbiter is not None:
+                cekirdek.arbiter.gorev_bitti()
 
         # --- bayrak / koruma komutlari: yalniz MSTF'e dokunurlar ---
         elif syntax == "MEALLOW":
@@ -404,45 +369,3 @@ class ClaCore:
         else:
             raise BaglanmamisKomutError(
                 "%s bir ops_* fonksiyonuna baglanmamis" % syntax)
-
-    def step(self):
-        """Tek komut calistirir. MSTOP gorulurse False doner.
-
-        MSTOP artik dagit() icinde bir dal - ham kelime karsilastirmasi
-        yapip cozucuyu atlamiyoruz. Boylece hem ISA tablosundaki kodlama
-        bagli sayiliyor hem de hakem dogru yerden haber aliyor.
-        """
-        self.durdu = False
-        self.dagit(decode(self.getir()))
-        return not self.durdu
-
-    def run(self, max_step = 10000):
-        """MSTOP'a kadar calistirir, calisan komut sayisini doner.
-
-        Sinira carparsa SESSIZCE cikmaz - program bitmemis demektir.
-        """
-        step_cnt = 0
-        while step_cnt < max_step:
-            cnd = self.step()
-            step_cnt += 1
-            if not cnd:
-                return step_cnt
-        raise ProgramBitmediError(
-            "program %d adimda bitmedi (MSTOP yok ya da sonsuz dongu)" % max_step)
-
-    def run_tasks(self, max_step=10000, max_task=64):
-        """Bekleyen gorev kalmayana kadar sirayla calistirir.
-
-        Her turda hakem en yuksek oncelikli hazir gorevi secer, MPC'yi
-        MVECTx'ten yukler; gorev MSTOP'a kadar kosar; MSTOP hakeme haber
-        verir ve sira sonrakine gecer. Hakem yoksa anlamsiz.
-        """
-        if self.arbiter is None:
-            raise ValueError("run_tasks icin hakem gerekli")
-        kosan = []
-        while len(kosan) < max_task:
-            if not self.arbiter.gorev_basla(self.state):
-                return kosan
-            kosan.append((self.arbiter.regs.mirun, self.run(max_step)))
-        raise ProgramBitmediError(
-            "%d gorevden sonra hala bekleyen var" % max_task)
