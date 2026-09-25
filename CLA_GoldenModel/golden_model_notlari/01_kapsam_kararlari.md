@@ -2,7 +2,7 @@
 
 **KRİTİK** = RTL ile modelin bit/çevrim eşdeğerliğini ya da program
 sonuçlarını doğrudan etkiler; RTL tarafı aynısını uygulamak zorunda.
-§ numaraları `cla_project/docs/model_kararlari.md`'ye işaret eder.
+§ numaraları `docs/model_kararlari.md`'ye işaret eder.
 
 ## Modellenenler ve nasıl
 

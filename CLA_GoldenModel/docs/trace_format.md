@@ -223,9 +223,9 @@ RTL ile ilk karşılaştırmada **önce buralara bakılacak**:
    yeni görevin ilk komutu **n+3**'te F1'e girer — eski görevin son
    komutunun W'siyle aynı çevrim. **24.09 akşamı düzeltildi** (kullanıcı,
    model_kararlari §45): bekleyen görev varsa eski görev *n+2*'de biter,
-   yeni görev *n+3*'te başlar (önce *n+4*). Açık: yalnız MSTOP'tan oluşan
-   görevde yeni görev *n+1*'de başlıyor (2 erken; derleyici çıktısında
-   olmuyor) — `test_tablo_10_19_yalniz_MSTOP_olan_gorev` xfail.
+   yeni görev *n+3*'te başlar (önce *n+4*). Yalnız MSTOP'tan oluşan görev
+   de 25.09'dan beri *n+2*'de bitiyor (model_kararlari §46) —
+   `test_tablo_10_19_yalniz_MSTOP_olan_gorev`.
 6. **İlk görevde yalnız `MSTOP` içeren görev — çözüldü (24.09).** Boş
    kayıtların `gecerli`si `None`'dı, boşalma denetimi `== 0` arıyordu;
    aynı görev bir kez 5, bir kez 4 çevrim sürüyordu. `BoruKaydi.gecerli = 0`

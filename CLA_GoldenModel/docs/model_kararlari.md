@@ -1196,7 +1196,7 @@ bolumlerinde.
 | 10.6 | Tek komut icinde D2 once, E sonra | donanim |
 | 11.1 | Ayrilmis adresleme kipi + yanlis kosul | asagida |
 | ~~25.1~~ | ~~MCCNDD donus adresi (pc+8 karari)~~ | **KAPANDI** - s.606 + Tablo 10-13 dipnotu: I8 = pc+8 (§32.1) |
-| 26.5 | RPC EXE'de yazilip D2'de okunuyor - pay 1 cevrim | donanim/RTL |
+| ~~26.5~~ | ~~RPC EXE'de yazilip D2'de okunuyor~~ | **KAPANDI** - RPC D2'de yaziliyor (s.652 "the RPC is also updated in this phase") |
 | 27.1 | Yazma gorunurlugunde I3 (ayni cevrim) ve I4 - TRM susuyor | donanim |
 
 ### 11.1 BORC - ayrilmis adresleme kipi, kosul yanlisken sessiz geciyor
@@ -4288,5 +4288,48 @@ will convert ... into only MMOVIZ instruction"*. Assembler her zaman iki komut
 güncellendi. `lint.kaynak_haritasi` aynı sayımı kullanıyor.
 
 6 mutasyon (üç taban, işaretsiz kırpma, tek-komut açılımı) 6'sı da öldü.
+
+    1826 passed
+
+---
+
+## 48. TRM denetiminin kalan üç alanı (2026-09-25)
+
+**Hakem ve CLA yazmaçları (10.2.4, 10.7).** TRM'e uygun: öncelik (görev 1
+en yüksek, s.570), MIFR (çevresel tetik / MIFRC / IACK kurar, görev başında
+temizlenir, yazma yok sayılır), MIOVF (yalnız çevresel tetikte ve MIFR
+kuruluyken, s.710; MIFRC/IACK kurmaz), MICLR/MICLROVF (1 yazılan biti
+temizler, okuma 0), MIER (0 iken istek bekler; görev sırasında 0 yapmak
+görevi durdurmaz, s.715), MIRUN (tek bit, iç içe görev yok), IACK yalnız
+MCTL.IACKE = 1 iken (s.706), MCTL okumasında SOFT/HARDRESET 0, MVECT 12 bit
+ofset (s.705 örneği 0x9120 → 0x0120), PIE sırası, geçersiz opcode'da MIRUN
+set kalır ve sonraki görev başlamaz (s.576).
+- TRM çelişkisi: s.570 "MVECT contains the absolute 16-bit address", s.705
+  "Offset ... from the start of CLA program space" (12 bit, örnekli). Model
+  s.705'i uyguluyor.
+- Modellenmeyen (kapsam dışı, D2/D5): MMEMCFG (0x11) ve yürütme yazmaçlarının
+  CPU hata ayıklama okuması (0x28–0x3C) — `cpu_read` hata veriyor;
+  SOFTRESET/HARDRESET; MPISRCSEL1 yönlendirmesi; tetikten ilk getirmeye 4
+  çevrim (Tablo 10-3, s.581) — iz ilk F1'den başladığı için RTL
+  karşılaştırmasını etkilemez.
+
+**Boru hattının tablolar dışı kalanı.** Paralel komutlar tek çevrimde biter,
+hizalama şartı yok (s.582): sonraki komut iki sonucu da kullanabiliyor;
+Örnek 10-4'te MADDF32, MMPYF32'den ÖNCEKİ MR0'ı görüyor. R2'de okuma Tablo
+10-3 ile tutarlı ("N-2 instruction will arrive in the R2 phase just in time
+to read").
+
+**Araçlar, lint, iz.** 
+- Lint sınırları TRM'le birebir: MSTOP/MDEBUGSTOP/dal ile dal arasında 0–2
+  komut → bulgu, 3 → temiz (s.579, s.600, s.605, s.614, s.687); MAR
+  yükle-kullan I1–I3 bulgu, I4 temiz (s.580); aynı adrese yaz-oku araya 3
+  komut (Tablo 10-2).
+- **Eksik:** lint paralel komutların hedef kısıtlarını (s.596, s.633, s.673,
+  s.675, s.678, s.693: MRa ≠ MRd, MMACF32'de MRa ≠ MR3) denetlemiyor. Model
+  çalışma anında hata verdiği için sessiz değil; borç.
+- `compare_trace.py` çıkış kodları trace_format §3.2 ile aynı: aynı 0, değer
+  / X-Z / uzunluk farkı 1, okunamayan 2. `casm2hex` LSW'yi alt adrese
+  yazıyor.
+- Eskimiş belge satırları düzeltildi: trace_format §6.5, §11 satır 26.5.
 
     1826 passed

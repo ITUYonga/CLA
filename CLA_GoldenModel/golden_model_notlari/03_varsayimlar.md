@@ -71,4 +71,6 @@ seçtiği davranış. "(borç)" işaretliler donanımda doğrulanmalı (`02_borc
 - **Tek sayılı hedef ya da RPC** getirmeyi aşağı hizalar; ofset 4096 modülünde.
 - **R1/W durağı yok** (K7). **Görev sınırı** n+2 / n+3 (K6).
 - **Görev başlama gecikmesi** (tetikten ilk F1'e) modellenmez: görev `run_tasks` / `gorev_basla` ile başlar.
-- **Hakem önceliği**: en küçük numaralı hazır görev.
+- **Hakem önceliği**: en küçük numaralı hazır görev (s.570).
+- **MVECTx**: L3 başından 12-bit word ofseti (s.705). s.570'teki "mutlak 16-bit adres" ifadesiyle çelişiyor; örnekli olan s.705 esas.
+- **SOFTRESET / HARDRESET** ve **MPISRCSEL1** yönlendirmesi modellenmez; MMEMCFG ve yürütme yazmaçlarının CPU okuması yoktur.

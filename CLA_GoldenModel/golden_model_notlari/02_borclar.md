@@ -58,8 +58,12 @@ Numaralar `model_kararlari.md` §11 tablosundaki numaralar.
   Kod içindeki yorum ve docstring'lerde düzeltildi. Hata mesajı dizgilerindeki eski numaralar (ör. `ops_float`'taki "s.598", `lint`'teki "s.579 Ornek 10-2") kod sayıldığı için olduğu gibi bırakıldı.
   `model_kararlari.md` tarih sırasıyla tutulan bir kayıt olduğu için eski bölümleri de olduğu gibi duruyor.
 
-## D. Bu turda denetlenmeyen alanlar
+## D. Denetimin son üç alanında bulunanlar (25.09, model_kararlari §48)
 
-- Hakem ve CLA yazmaçları (TRM 10.7): MVECTx, MCTL, MIFR/MIOVF/MIER/MIRUN, öncelik. Mevcut testler: `test_task_arbiter`, `test_tasks`.
-- Araçlar, lint ve iz belgelerinin tutarlılığı. Mevcut testler: `test_araclar`, `test_lint`, `test_trace`.
-- Boru hattının tablolar dışındaki ayrıntıları (Tablo 10-1/10-2, MAR kuralları ve 10-10…10-19 denetlendi).
+Hakem/yazmaçlar, boru hattının tablolar dışı kalanı ve araçlar/lint/iz da
+denetlendi; TRM'e aykırı sonuç veren bir şey bulunmadı. Kalanlar:
+
+- **Lint**, paralel komutların hedef kısıtlarını (MRa ≠ MRd; MMACF32'de MRa ≠ MR3 — s.596, 633, 673, 675, 678, 693) denetlemiyor. Model çalışırken hata veriyor, sessiz değil.
+- **CPU okuması modellenmeyen yazmaçlar:** MMEMCFG (0x11) ve yürütme yazmaçları (MPC, MAR, MSTF, MR; 0x28–0x3C) — `cla_regs.cpu_read` hata veriyor.
+- **TRM çelişkisi:** s.570 MVECT'i "mutlak 16-bit adres", s.705 "program alanı başından 12-bit ofset" diyor. Model s.705'i (örnekli olanı) uyguluyor.
+- **Tetikten ilk getirmeye 4 çevrim** (Tablo 10-3, s.581) modellenmiyor; iz ilk F1'den başladığı için RTL karşılaştırmasını etkilemez.
