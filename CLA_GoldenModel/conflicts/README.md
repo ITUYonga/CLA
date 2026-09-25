@@ -33,5 +33,5 @@ Her satır: görüntü → TRM ne diyor → golden modelde / lint'te karşılı�
 |---|---|---|---|
 | 20 | s.717 | **MPC, D2'deki komutu gösterir**; görev başında MVECTx; MSTOP'tan sonra MSTOP'ta kalır; CPU yalnız okur | `state.mpc` D2'ye giren komutla yazılıyor (model_kararlari §41) |
 | 21 | s.577 | F1: *"program read address is placed on the CLA program address bus"* → getirme adresi MPC değil, ayrı iç sayaç | `Pipeline.getir_pc` |
-| 22 | s.600 | "MPC += 16BitDest", *0xFFFE dallanmanın kendisine döndürür* → hedef tabanı **dal adresi + 2** | `pc + 2 + dest` (TI assembler ile 80/80 doğrulandı) |
+| 22 | s.600 | "MPC += 16BitDest" ve MPC = D2'deki komut (s.717) → hedef tabanı **dalın kendi adresi**. Aynı sayfadaki "0xFFFE dallanmanın kendisine döndürür" cümlesi TRM hatası: TI cl2000 çıktısındaki 6/6 dallanma "hedef − dal adresi" kodlanmış (ör. 0x72 → 0x8A: 0x0018). | `pc + dest` (25.09'da düzeltildi, model_kararlari §47.1; eskiden `pc + 2 + dest` idi — 80/80 kontrolü etiketli dallanmaları kapsamıyordu) |
 | 23 | s.717 | MSTF: RPC bit 23:12, bayraklar | `RPC_SHIFT = 12` |
