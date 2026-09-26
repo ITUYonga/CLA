@@ -7,6 +7,7 @@ karşılaştırılabilir (`tools/compare_trace.py`).
 2. **Boru hattı**: 8 kademe F1 F2 D1 D2 R1 R2 E W (s.577).
    - D2'de adres üretimi, MAR post-increment ve dallanma kararı.
    - R1 adres, R2 okuma. E'de yazmaç sonuçları ve MAR yüklemesi. W'de bellek yazma.
+   - İstisna: FP aritmetiğinin sonucu ve LVF/LUF'u W'nin sonunda yazılır (FPU K1/K2, madde 14).
 3. **MPC** = D2'deki komutun adresi (s.717). Getirme adresi ayrı sayaçtır.
 4. **Dallanma**:
    - Hedef = dalın kendi adresi + işaretli ofset. Kendine dönen dal 0x0000'dır; TRM'deki 0xFFFE cümlesi yanlış.
@@ -14,11 +15,11 @@ karşılaştırılabilir (`tools/compare_trace.py`).
    - Her zaman 3 gecikme yuvası vardır.
    - MCCNDD, RPC = pc + 8'i D2'de yazar. MRCNDD'de MPC = RPC.
 5. **MAR**: yükleme E'de etkili olur. I3 aynı MAR'ı kullanırsa post-increment kazanır, yükleme düşer.
-6. **Bellek çakışması**:
-   - Durak yoktur.
-   - Aynı çevrimde aynı adrese W (komut n) ve R1 (komut n+3) gelirse okuma **yeni** değeri döndürmeli.
-   - FPGA blok RAM'de aynı kenarda aynı adrese yazma + okuma "çakışma"dır; yönlendirme (bypass) gerekir.
+6. **Bellek çakışması** (26.09, §49; TRM s.571–573, s.577):
+   - W'deki komut bir bloğa yazıyor ve R1'deki komut aynı bloktan okuyorsa R1 bir çevrim durur: F1…R1 bekler, R2'ye balon girer. Bloklar L1 (0x8800), L2 (0x8C00), CLA→CPU mesaj RAM'i (0x1480); adres değil blok karşılaştırılır. CPU→CLA mesaj RAM'ine CLA yazması yok sayıldığından orada durma yok.
+   - Bu durma yüzünden aynı çevrimde aynı bloğa yazma + okuma olmaz; RAM'de bypass gerekmez. Yazmadan sonraki 1. ve 2. komut eski değeri okur (Tablo 10-1); store→load iletme yolu eklenmez.
    - Test tezgâhı görev sırasında CLA belleğine CPU erişimi üretmemeli.
+   - Model henüz uygulamıyor (M4).
 7. **Görev sınırı** (Tablo 10-19):
    - MSTOP D2'de (n): MIRUN temizlenir, PIE kesmesi gider, arkasındaki 3 komut silinir.
    - n+1 ve n+2 hakem çevrimleridir. Bekleyen görevin ilk F1'i n+3'tedir; eski görevin son W'si de o çevrimdedir.
@@ -26,8 +27,9 @@ karşılaştırılabilir (`tools/compare_trace.py`).
 8. **Geçersiz opcode**: D2'de durur (kesme noktası gibi), PIE kesmesi gider, MIRUN set kalır. R1/R2/E'dekiler tamamlanmaz.
 9. **Kayan nokta**:
    - RND32: 0 = sıfıra kes (sıfırlama değeri), 1 = en yakın çift.
-   - Denormal sonuç → +0 ve LUF.
-   - Taşma: RND32=1'de ±∞ (LVF), RND32=0'da ±MAX (LVF).
+   - Girdideki denormal +0 sayılır (FTZ, 26.09; model M1 bekliyor).
+   - Alt taşma (kesin değer < 2^-126): LUF = 1. Sonuç denormale yuvarlanırsa +0; sıfıra yuvarlanırsa işaret korunur (±0); RN'de 2^-126'ya yuvarlanırsa ±MIN_NORMAL.
+   - Taşma: RND32=1'de ±∞ (LVF), RND32=0'da ±MAX (LVF). LVF eşiği iki kipte de RN'inki (|x| ≥ 2^128 − 2^103).
    - NaN sonucu **0x7FC00000**; ∞×0 ve ∞−∞ NaN verir.
    - Bayrak kuralları her komutun "Flags" tablosuna göredir: aritmetik yalnız LUF/LVF'yi değiştirir.
 10. **Kestirim**:
@@ -43,3 +45,9 @@ karşılaştırılabilir (`tools/compare_trace.py`).
     - Son görevin izi MSTOP D2 + 3'te biter; test tezgâhında bu, MIRUN temizlendikten sonra 3 çevrim demektir.
     - X/Z ayrışma sayılır.
 13. **MSTF bit düzeni**: LVF 0, LUF 1, NF 2, ZF 3, TF 6, RNDF32 9, MEALLOW 11, RPC 23:12 (s.718). MSETFLG'de FLAG bit 7 = RNDF32.
+14. **FPU K1/K2** (26.09, §49; model henüz uygulamıyor: M2, M3, M5):
+    - FP sonucu ve LVF/LUF'u W'nin sonunda yazılır.
+    - Bu sonucu okuyan komut EXE'deyse 1 çevrim durur (`dur_exe`: F1…EXE bekler, W'ye balon). Aynı MR'ye yalnız yazma durdurmaz: aynı kenarda EXE yazması kazanır.
+    - LVF/LUF okuyucuları (D2'de LV/LU dallar, EXE'de MTESTTF ve CNDF'li komutlar, `MMOV32 mem32, MSTF`) K2'deki bekleyen bayrakları da görür.
+    - D2 işi her komutta bir kez, `dur_exe = 0` olan ilk çevrimde; MPC her çevrim D2'deki komut.
+    - Arayüz ve tam liste: "CLA FPU Boru Hattı" sayfası.

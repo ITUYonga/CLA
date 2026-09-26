@@ -69,7 +69,7 @@ seçtiği davranış. "(borç)" işaretliler donanımda doğrulanmalı (`02_borc
 - **MSETFLG**: FLAG bit 7 → MSTF bit 9 (RNDF32) (s.686 örneği ve TI).
 - **Geçersiz opcode duruşunda** R1/R2'deki komutlar hiç çalışmaz, EXE'deki saklama belleğe inmez.
 - **Tek sayılı hedef ya da RPC** getirmeyi aşağı hizalar; ofset 4096 modülünde.
-- **R1/W durağı yok** (K7). **Görev sınırı** n+2 / n+3 (K6).
+- **R1/W durağı** TRM'deki gibi (K7, §49; kod bekliyor). **FPU K1/K2** zamanlaması K13 (§49; kod bekliyor). **Görev sınırı** n+2 / n+3 (K6).
 - **Görev başlama gecikmesi** (tetikten ilk F1'e) modellenmez: görev `run_tasks` / `gorev_basla` ile başlar.
 - **Hakem önceliği**: en küçük numaralı hazır görev (s.570).
 - **MVECTx**: L3 başından 12-bit word ofseti (s.705). s.570'teki "mutlak 16-bit adres" ifadesiyle çelişiyor; örnekli olan s.705 esas.

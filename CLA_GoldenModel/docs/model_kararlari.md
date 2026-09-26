@@ -4054,6 +4054,9 @@ senaryosunu da bağımsız testler yakalıyor.
 
 ## 43. R1/W çakışması — "olmuyor" varsayımı (kullanıcı kararı, 2026-09-24)
 
+> **26.09: bu karar §49 ile tersine döndü.** R1/W durağı TRM'deki gibi
+> modellenecek (M4); aşağıdaki "aynı adreste bypass" RTL şartı geçersiz.
+
 **Karar:** model R1/W bellek çakışması durağını üretmez.
 
 **§30.2/§32.2'ye düzeltme.** Orada "R1/W durağı yalnız CPU↔CLA hakemliği,
@@ -4333,3 +4336,58 @@ to read").
 - Eskimiş belge satırları düzeltildi: trace_format §6.5, §11 satır 26.5.
 
     1826 passed
+
+## 49. Hedef: RTL = model, model = TRM (K1/K2 hariç) — kullanıcı kararı (2026-09-26)
+
+**Karar.** RTL golden modelle bit ve çevrim düzeyinde aynı olacak; model
+TRM'e sadık kalacak. Tek istisna, ALU'daki kayan nokta biriminin iki
+kademeye bölünmesinin (K1 = EXE, K2 = W) zorunlu kıldığı değişiklikler.
+
+**Zorunlu sapmalar (K1/K2):**
+- FP sonucu (MADDF32, MSUBF32, MMPYF32, MMACF32, paralel formların FP
+  kısmı) EXE'nin değil W'nin sonunda yazılır.
+- Bu sonucu hemen okuyan komut 1 çevrim bekler (interlock, `dur_exe`).
+  Yalnız okuma durdurur. Aynı MR'ye art arda yazma durdurmaz: aynı kenarda
+  EXE'deki komutun yazması kazanır, son değer TRM'dekiyle aynı.
+
+**TRM'deki gibi kalanlar (model de RTL de uygular):**
+- LVF/LUF: okuyan her yer (D2'de LV/LU koşullu dallar; EXE'de MTESTTF,
+  CNDF'li komutlar, `MMOV32 mem32, MSTF`) K2'deki bekleyen bayrakları da
+  görür (OR). TRM s.579 dal kuralı durmadan korunur. Kenar 2'de EXE'deki
+  komut aynı bayrağı yazıyorsa (MMOV32 MSTF / MSETFLG) onunki kazanır.
+- **§43 / K7 tersine döndü:** R1/W bellek çakışması TRM'deki gibi R1'i bir
+  çevrim durdurur (`dur_r1`; s.571–573, s.577). Bloklar L1, L2 ve CLA→CPU
+  mesaj RAM'i; adres değil blok karşılaştırılır. CPU→CLA mesaj RAM'ine CLA
+  yazması yok sayıldığı için orada durma yok. §43'teki "aynı adreste
+  bypass" RTL şartı kalktı: durma yüzünden aynı çevrimde aynı bloğa yazma
+  ve okuma hiç olmaz.
+- D2 kuralı: D2 işi (adres üretimi, MAR artışı, dal/çağrı/dönüş kararı,
+  RPC, MSTOP algısı) her komutta bir kez, komut D2'deyken `dur_exe = 0`
+  olan ilk çevrimde yapılır; MPC her çevrim D2'deki komut. Bellek
+  durmasında s.579, EXE durmasında s.580 ilişkileri böyle korunur.
+- Değer kuralları aynen (`_sonuclandir`): alt taşmada sıfıra yuvarlanan
+  sonuç işaretini korur (±0), RN'de 2^-126'ya yuvarlanan ±MIN_NORMAL olur
+  (LUF yine 1); LVF iki kipte de RN'in eşiğiyle. B4/B5 önerileri geri
+  çekildi.
+
+**Kontrol — yazmaçlar EXE'de mi yazılıyor?** Evet: s.577 kademe tanımları
+(W yalnız bellek yolu; MAR yüklemesi EXE'de), s.579/s.601 (I1 dalın
+bayrağını etkiliyor, I2–I4 etkilemiyor: bayrak EXE sonunda yazılıyor),
+s.580/s.642 (MAR yüklemesi EXE'de), s.582 Örnek 10-3/10-4 (sonraki komut
+sonucu hemen kullanıyor). Modelin EXE'de yazması TRM ile aynı.
+
+**Modelde yapılacaklar (kullanıcı onayıyla; kod henüz değişmedi):**
+- M1 FTZ (değer): `ops_float._tam`, 0 < |x| < 2^-126 için 0 döndürür.
+  Bütün FP aritmetiği `_tam`'dan geçer. Etki: den × ∞ = NaN, den + den = +0
+  ve LUF kurulmaz.
+- M2 FP sonucu ve LVF/LUF W sonunda; aynı kenarda EXE yazması kazanır;
+  bayrak okuyanlar bekleyeni görür.
+- M3 interlock (`dur_exe`), M4 R1/W durması (`dur_r1`), M5 D2 kuralı
+  (`pipeline.py`).
+- M6 çevrim sayısı içeren testler güncellenir; iz formatı değişmez.
+
+K1/K2 bit düzeyi algoritması (`fp_son_adimlar` dahil) Python'da yazılıp
+FTZ'li modelle karşılaştırıldı: 1,2 milyon karşılaştırma, taşma, alt taşma,
+−0 ve MIN_NORMAL bölgeleri dahil, 0 fark. Ayrıntılı RTL spesifikasyonu ve
+top modül listesi: "CLA FPU Boru Hattı" sayfası; proje belgesi
+`claude/top_modul_fpu_arayuzu.md`.

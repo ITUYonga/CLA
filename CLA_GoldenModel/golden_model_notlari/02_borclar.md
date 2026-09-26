@@ -7,7 +7,7 @@ Numaralar `model_kararlari.md` §11 tablosundaki numaralar.
 
 | # | Konu | Modelin seçimi |
 |---|---|---|
-| 1.3.2 | Aritmetik girdilerde denormal | Yazmaçtan gelen denormal tam değerle, `#16FHi` sabitindeki denormal +0 olarak kullanılıyor — **iki yol tutarsız** (B2). |
+| 1.3.2 | Aritmetik girdilerde denormal | **Karar 26.09 (§49): FTZ**, iki yolda da +0 (kod bekliyor: M1). TI silikonunda doğrulanmadı. |
 | 3.12 | MNEGF32'de sinyalli NaN'ın işaret biti | Saf işaret biti işlemi. |
 | 3.19 | float→tamsayı **pozitif** taşma | Sonlu değerler sarılıyor, ±Inf doyuruluyor. Negatif→işaretsiz 0 (TRM örnekleri, §47.2). |
 | 3.20 | float→tamsayı NaN / ±Inf | NaN → 0; ±Inf → uç değerler. |
@@ -23,10 +23,10 @@ Numaralar `model_kararlari.md` §11 tablosundaki numaralar.
 | # | Bulgu | Not |
 |---|---|---|
 | B1 | Koşulu yanlış `MMOV32 MRa, *MARx[k]++, CNDF`: boru hattı MAR'ı artırıyor (adres D2'de üretiliyor, s.577), ardışık model artırmıyor. | Boru hattının davranışı TRM'e daha yakın. İz boru hattından geldiği için RTL karşılaştırmasını etkilemez; ardışık modelle karşılaştırmada ayrışır. |
-| B2 | Aynı denormal değer sabit (`#16FHi`) ve yazmaç olarak farklı sonuç veriyor (ör. MSUBF32: LUF 0 / 1). | Borç 1.3.2; tek kural seçilmeli. |
+| B2 | Aynı denormal değer sabit (`#16FHi`) ve yazmaç olarak farklı sonuç veriyor (ör. MSUBF32: LUF 0 / 1). | **Kapandı 26.09 (§49):** FTZ seçildi; M1 işlenince iki yol aynı. |
 | B3 | `MMOV16 *MARx[k]++, MARx` (aynı MAR hem adres hem veri): ardışık model artmış değeri, boru hattı eski değeri saklıyor. | TRM sessiz. |
-| B4 | RZ modunda LVF eşiği en-yakına-yuvarlamanın taşma noktası: ±MAX'a kesilen bazı sonuçlarda LVF=1, IEEE-RZ'de 0 olurdu. | §3.3/§3.5 "IEEE ile uyumlu" diyor — bu sınırda değil. |
-| B5 | Sıfır sonucun işareti: tam sıfır sonuçlar +0, alt taşmayla sıfıra yuvarlananlar −0 olabiliyor. | Bayraklar etkilenmiyor; bit düzeyinde tek kural gerekli. |
+| B4 | RZ modunda LVF eşiği en-yakına-yuvarlamanın taşma noktası: ±MAX'a kesilen bazı sonuçlarda LVF=1, IEEE-RZ'de 0 olurdu. | **Karar 26.09 (§49): model kuralı kalıyor**, RTL uyar. TI silikonunda doğrulanmadı. |
+| B5 | Sıfır sonucun işareti: tam sıfır sonuçlar +0, alt taşmayla sıfıra yuvarlananlar −0 olabiliyor. | **Karar 26.09 (§49): model kuralı kalıyor** (RN'deki ±MIN_NORMAL dahil), RTL uyar. |
 | B6 | MMAXF32/MMINF32 −0'ı +0 yazıyor (TRM'in çıktı listesinde −0 yok). | Donanım "üs 0 → +0" yapıyorsa model doğru. |
 | B7 | `MMOV32 MSTF, mem32` MCCNDD'den 1–2 komut önceyse boru hattında RPC'nin üstüne yazıyor; `MMOV32 mem32, MSTF` 1–3 komut önceyse yeni RPC'yi saklıyor. | TRM sessiz; RTL farklı sıralarsa ayrışır. RPC'yi dallanmadan en az 4 komut önce kaydedin/yükleyin. |
 | B8 | Kısıt ihlali (ör. paralel komutta MRa == MRd) hata fırlattıktan sonra iki modelin MAR durumu farklı. | Yalnız hata yolunda. |

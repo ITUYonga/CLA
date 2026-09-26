@@ -231,14 +231,16 @@ RTL ile ilk karşılaştırmada **önce buralara bakılacak**:
    aynı görev bir kez 5, bir kez 4 çevrim sürüyordu. `BoruKaydi.gecerli = 0`
    ile görev uzunluğu geçmişten bağımsız (k=0,1,2 komut → 4, 8, 9 çevrim;
    `test_bosalma_cevrim_sayisi_kesin_ve_gecmisten_bagimsiz`).
-7. **R1/W bellek çakışması — modellenmiyor (karar, 24.09).** Silikonda
-   komut *n*'nin W'si ile komut *n+3*'ün R1'i aynı bloğa aynı çevrimde
-   düşerse yazma öncelikli, R1 bir çevrim durur (s.571/573/577). Model
-   durmuyor ve veriyi R2'de (W'den bir çevrim sonra) okuduğu için YENİ
-   değeri alıyor (model_kararlari §43). RTL'in bellek hakemi bu durumda R1'i
-   durdurursa o satırdan sonraki her satır 1 kayar; aynı adreste eski
-   değeri okursa `mr` ayrışır. RTL == model için: durak yok, aynı adreste
-   yazılan değer okumaya yönlendirilir (bypass).
+7. **R1/W bellek çakışması — TRM'deki gibi durur (karar 26.09, §49;
+   24.09 kararı tersine döndü).** Komut *n*'nin W'si ile komut *n+3*'ün R1'i
+   aynı bloğa aynı çevrimde düşerse R1 bir çevrim durur (s.571/573/577);
+   o satırdan sonraki her satır 1 kayar ve RTL de aynı durmayı üretir.
+   Model henüz uygulamıyor (M4). Format aynı.
+8. **FPU K1/K2 (karar 26.09, §49).** FP aritmetiğinin MR sonucu ve
+   LVF/LUF'u W'nin sonunda yazılır: `mr*` ve `mstf` sütunlarında TRM'dekinden
+   bir çevrim geç görünür. Sonucu hemen okuyan komut 1 çevrim bekler
+   (`exe_pc` iki satır aynı kalır). Model henüz uygulamıyor (M2, M3). Format
+   aynı.
 
 ## 7. Örnek
 
@@ -278,6 +280,7 @@ Okuma notları:
 | sürüm | tarih | değişiklik |
 |---|---|---|
 | 1 | — | ilk sabitleme — çevrim başına satır, tek yazma alanı |
+| 1 | 26.09 | §6.7 tersine döndü (R1/W durağı TRM'deki gibi), §6.8 eklendi (FPU K1/K2). Format aynı. |
 | 1 | 24.09 (4) | §4 iz sonu: son görev her zaman *n+3* (MSTOP'tan önce komut yoksa da); görev sınırı Tablo 10-19'a çekildi (§6.5). Format aynı. |
 | 1 | 24.09 (3) | §6.7 eklendi: R1/W çakışması modellenmiyor (model_kararlari §43). Format aynı. |
 | 1 | 24.09 (2) | **`mpc` sütununun anlamı TRM'e çekildi** (D2'deki komut, s.717); sütunlar ve genişlikler aynı. RTL henüz yok, eski iz saklanmıyor → sürüm artırılmadı. |
