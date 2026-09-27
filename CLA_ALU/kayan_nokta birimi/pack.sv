@@ -1,11 +1,6 @@
 `timescale 1ns / 1ps
 
-typedef enum logic [1:0] {
-    NORMAL  = 2'b00,
-    SONSUZ  = 2'b01,
-    SIFIR   = 2'b10,
-    NAN     = 2'b11
-} durumlar;
+import kod_sinifi::*;
 
 module pack (
     input  logic [1:0]  kod,         // 00 -> NORMAL, 01 -> SONSUZ, 10 -> SIFIR, 11 -> NAN
@@ -56,7 +51,7 @@ module pack (
                 luf          = 1'b0;
             end
             
-            SONSUZ: begin
+            INF: begin
                 out_sign     = sign;
                 out_exp      = 8'hFF;
                 out_mantissa = 24'h0;
@@ -64,7 +59,7 @@ module pack (
                 luf          = 1'b0;
             end
             
-            SIFIR: begin
+            ZERO: begin
                 out_sign     = 1'b0; // Görsel: SIFIR -> 32'h0 (+0)
                 out_exp      = 8'h00;
                 out_mantissa = 24'h0;
