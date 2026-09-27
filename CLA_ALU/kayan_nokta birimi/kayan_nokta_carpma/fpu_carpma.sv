@@ -43,7 +43,7 @@ module fpu_carpma(
 
     );
 
-logic[66:0] k_yazmaci ; 
+logic[64:0] k_yazmaci ; 
 
 
 
@@ -68,6 +68,8 @@ logic [23:0]mantissa_b_out;
   logic [26:0] out_n_mantissa;   
   logic [9:0]exp_out;   
  
+  logic lvf_out;
+  logic luf_out;
  
 clasify C_a(.fp(fp_a) , .sign(sign_a_out) , .exp(exp_a_out) , .mantissa(mantissa_a_out), .ozel_durumlar(ozel_durumlar_a));
 clasify C_b(.fp(fp_b) , .sign(sign_b_out) , .exp(exp_b_out) , .mantissa(mantissa_b_out), .ozel_durumlar(ozel_durumlar_b));
@@ -75,7 +77,7 @@ clasify C_b(.fp(fp_b) , .sign(sign_b_out) , .exp(exp_b_out) , .mantissa(mantissa
 
 
 
-carp_k1(.kod_a(ozel_durumlar_a) , .kod_b(ozel_durumlar_b) , .sign_a(sign_a_out) , 
+carp_k1 M1(.kod_a(ozel_durumlar_a) , .kod_b(ozel_durumlar_b) , .sign_a(sign_a_out) , 
         .sign_b(sign_b_out ), .exp_a(exp_a_out) , .exp_b(exp_b_out) ,
         .mantissa_a(mantissa_a_out), .mantissa_b(mantissa_b_out) , .out_kod(out_kod),
         .out_sign(out_sign) , .out_exp(out_exp) ,.out_mantissa(out_mantissa)); 
@@ -99,7 +101,7 @@ end
 
 
 
-carp_k2(.exp(k_yazmaci[14:5]) , .mantissa(k_yazmaci[62:15]) , .out_n_mantissa(out_n_mantissa) , .exp_out(exp_out));
+carp_k2 M2(.exp(k_yazmaci[59:50]) , .mantissa(k_yazmaci[49:2]) , .out_n_mantissa(out_n_mantissa) , .exp_out(exp_out));
 
 
 
@@ -109,14 +111,14 @@ carp_k2(.exp(k_yazmaci[14:5]) , .mantissa(k_yazmaci[62:15]) , .out_n_mantissa(ou
 
 
 
-pack P(.kod(k_yazmaci[65:64]) , .rnd(k_yazmaci[3]) , .sign(k_yazmaci[4]) , .exp_on(exp_out),
-        .n_mantissa(out_n_mantissa) , .lvf(lvf) , .luf(luf) , .result(result));
+pack P(.kod(k_yazmaci[1:0]) , .rnd(k_yazmaci[61]) , .sign(k_yazmaci[60]) , .exp_on(exp_out),
+        .n_mantissa(out_n_mantissa) , .lvf(lvf_out) , .luf(luf_out) , .result(result));
 
 
 assign valid_out = k_yazmaci[64] ; 
 assign hedef_mr_out = k_yazmaci[63:62] ; 
-assign lvf = lvf & valid_out;
-assign luf = luf & valid_out;
+assign lvf = lvf_out & valid_out;
+assign luf = luf_out & valid_out;
 
 
 

@@ -45,7 +45,7 @@ module fpu_toplama(
 
     );
 
-logic[66:0] k_yazmaci ; 
+logic[69:0] k_yazmaci ; 
 
 
 //Clasify ciktilari
@@ -75,7 +75,8 @@ logic [23:0]mantissa_b_out;
  logic [26:0]mantissa_out;
  
  
-
+logic lvf_out;
+logic luf_out;
 
 
 
@@ -93,7 +94,7 @@ topla_k1 T1(.cikarma(cikarma) , .sign_a(sign_a_out) ,
      
 always_ff@(posedge clk or negedge rst)begin
     if(!rst)
-        k_yazmaci <= 67'b0 ; 
+        k_yazmaci <= 70'b0 ; 
 
      else begin
         k_yazmaci <= {valid , hedef_mr , rnd , out_sign , out_exp , out_mantissa_a,
@@ -105,24 +106,24 @@ end
 
 
 
-topla_k2 T2(.cik(k_yazmaci[64]) , .kod(k_yazmaci[66:65]) , .exp_a(k_yazmaci[12:5]) , 
-            .mantissa_a(k_yazmaci[36:13]), .mantissa_b(k_yazmaci[63:37]),
+topla_k2 T2(.cik(k_yazmaci[2]) , .kod(k_yazmaci[1:0]) , .exp_a(k_yazmaci[64:57]) , 
+            .mantissa_a(k_yazmaci[56:30]), .mantissa_b(k_yazmaci[29:3]),
             .kod_out(kod_out) , .exp_out(exp_out) , .mantissa_out(mantissa_out));
             
 
 
 
 
-pack P(.kod(kod_out) , .rnd(k_yazmaci[3]) , .sign(k_yazmaci[4]) , .exp_on(exp_out),
-        .n_mantissa(mantissa_out) , .lvf(lvf) , .luf(luf) , .result(result));
+pack P(.kod(kod_out) , .rnd(k_yazmaci[66]) , .sign(k_yazmaci[65]) , .exp_on(exp_out),
+        .n_mantissa(mantissa_out) , .lvf(lvf_out) , .luf(luf_out) , .result(result));
 
 
 
 
-assign valid_out = k_yazmaci[66] ; 
-assign hedef_mr_out = k_yazmaci[65:64] ; 
-assign lvf = lvf & valid_out;
-assign luf = luf & valid_out;
+assign valid_out = k_yazmaci[69] ; 
+assign hedef_mr_out = k_yazmaci[68:67] ; 
+assign lvf = lvf_out & valid_out;
+assign luf = luf_out & valid_out;
 
 
 endmodule

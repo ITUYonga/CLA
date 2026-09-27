@@ -41,12 +41,18 @@ input logic [1:0]mux_5,
 input logic [1:0]mux_6,
 
 
-output logic lvf,
-output logic luf,
+output logic lvf_topla,
+output logic luf_topla,
+output logic lvf_carp,
+output logic luf_carp,
 output logic [31:0] result_topla, // KAYAN NOKTA
 output logic [31:0] result_carp, // KAYAN NOKTA
 output logic [31:0] result_tamsayi,
-output logic [4:0]mstf_out //  4: TF 3: ZF 2:NF 1: LUF 0:LVF
+output logic [4:0]mstf_out, //  4: TF 3: ZF 2:NF 1: LUF 0:LVF
+    output logic valid_carp,
+    output logic [1:0]hedef_mr_out_carp, 
+    output logic valid_topla,
+    output logic [1:0]hedef_mr_out_topla
 
     );
     
@@ -123,8 +129,9 @@ end
 
 
 fpu_toplama T(.clk(clk) , .rst(rst) , .fp_a(topla_in_1) , .fp_b(topla_in_2),
-                .lvf(lvf) , .luf(luf) , .result(result_topla), .hedef_mr(topla_cntrl[4:3]),
-                .rnd(topla_cntrl[2]) , .valid(topla_cntrl[1]) ,.cikarma(topla_cntrl[0]));
+                .lvf(lvf_topla) , .luf(luf_topla) , .result(result_topla), .hedef_mr(topla_cntrl[4:3]),
+                .rnd(topla_cntrl[2]) , .valid(topla_cntrl[1]) ,.cikarma(topla_cntrl[0]),
+                .valid_out(valid_topla) , .hedef_mr_out(hedef_mr_out_topla));
 
 
 
@@ -133,12 +140,14 @@ fpu_toplama T(.clk(clk) , .rst(rst) , .fp_a(topla_in_1) , .fp_b(topla_in_2),
 
 fpu_carpma C(.clk(clk) , .rst(rst) ,  .fp_a(carpma_in_1) , .fp_b(carpma_in_2),
                 .valid(carpma_cntrl[1]) , .rnd(carpma_cntrl[2]) , .hedef_mr(carpma_cntrl[4:3]),
-                .lvf(lvf) , .luf(luf) , .result(result_carp));
+                .lvf(lvf_carp) , .luf(luf_carp) , .result(result_carp),
+                .valid_out(valid_carp) , .hedef_mr_out(hedef_mr_out_carp));
                 
 
 
 tamsayi_islem I(.in_1(tamsayi_in_1) , .in_2(tamsayi_in_2) , .alu_cntrl_1(tamsayi_cntrl),
-                .mr_out3(result_tamsayi) , .mstf_out3(mstf_out));
+                .mr_out3(result_tamsayi) , .mstf_out3(mstf_out)
+                 );
         
     
 endmodule

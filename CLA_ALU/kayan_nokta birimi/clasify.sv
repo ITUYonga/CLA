@@ -24,7 +24,7 @@ module clasify(
 
     input logic [31:0]fp,
     
-    output logic [3:0]ozel_durumlar,
+    output logic [1:0]ozel_durumlar,
     output logic sign,
     output logic [7:0]exp,
     output logic [23:0]mantissa
@@ -73,7 +73,7 @@ module clasify(
             ozel_durumlar = 2'b01 ; 
             
         
-        else
+        if(NORMAL)
             ozel_durumlar = 2'b00 ; 
             
       
