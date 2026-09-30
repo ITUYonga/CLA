@@ -53,6 +53,8 @@ def _tam(deger):
     """
     if deger != deger or abs(deger) == float("inf"):
         return deger
+    if deger != 0 and abs(deger) < 2.0 ** -126:     # M1 (FTZ, K12): denormal girdi +0 sayilir
+        return Fraction(0)
     return Fraction(deger)
 
 

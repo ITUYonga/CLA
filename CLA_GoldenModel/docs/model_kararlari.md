@@ -4391,3 +4391,24 @@ FTZ'li modelle karşılaştırıldı: 1,2 milyon karşılaştırma, taşma, alt 
 −0 ve MIN_NORMAL bölgeleri dahil, 0 fark. Ayrıntılı RTL spesifikasyonu ve
 top modül listesi: "CLA FPU Boru Hattı" sayfası; proje belgesi
 `claude/top_modul_fpu_arayuzu.md`.
+
+---
+
+## 50. M1 uygulandı: denormal FP girdisi +0 (kullanıcı onayı, 2026-09-29)
+
+§49'daki M1: `ops_float._tam`, 0 < |x| < 2^-126 için `Fraction(0)` döndürür
+(2 satır). `_tam`'ı yalnız FP aritmetiği kullanıyor (`ops_float`,
+`ops_parallel`: MADDF32, MSUBF32, MMPYF32, anlık biçimler, MMACF32, paralel
+biçimler); diğer birimler etkilenmiyor. Karar K12, RTL'deki FTZ ile aynı.
+
+Doğrulama (ALU RTL'i ile, Verilator):
+- FPU: 733.870 işlem (TRM örneklerinden ve test takımından yakalananlar dahil)
+  + yeni rastgele 251.587 işlem (19.484'ü denormal girdili): 0 fark.
+- TRM örnek programları (2.632 kontrol): 0 hata.
+
+Beklentisi değişen 3 test (denormal girdiyi IEEE gibi işliyorlardı):
+`test_yonlu_yuvarlama_bagimsiz_referansa_uyuyor`,
+`test_dort_aritmetik_bagimsiz_referansa_uyuyor` (bağımsız referans girdideki
+denormal'i +0 saymalı), `test_luf_lvf_aritmetikten[8388608-8388607-0-1]`
+(0x00800000 − 0x007FFFFF: M1'le sonuç MIN_NORMAL, LUF = 0).
+Ayrıntı: proje belgesi `claude/dogrulama_raporu.md`.
