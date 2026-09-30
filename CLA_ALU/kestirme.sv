@@ -38,12 +38,12 @@ module kestirme #(
     output logic luf 
 );
 
-    // Bellek dizisi tanýmý
+    // Bellek dizisi tanï¿½mï¿½
     
     logic [DATA_WIDTH-1:0] mem [0:DEPTH-1];
     logic [7:0]estimate ;
     logic [9:0] address;
-    // Simülasyon ve sentez baþlangýcýnda hex dosyasýný yükler
+    // Simï¿½lasyon ve sentez baï¿½langï¿½cï¿½nda hex dosyasï¿½nï¿½ yï¿½kler
     initial begin
         $readmemh(HEX_FILE, mem);
     end
@@ -60,7 +60,7 @@ module kestirme #(
             estimate = mem[address];
             result = {sign , 8'(253-exp) , estimate, 15'b0};
        if(exp == 8'b0)begin
-               // En temiz ve risksiz yazým:
+               // En temiz ve risksiz yazï¿½m:
                 result = {sign, 8'hFF, 23'd0}; // 1 + 8 + 23 = 32 bit (+/- Sonsuz);
                 lvf = 1 ; 
                 end
@@ -80,11 +80,11 @@ module kestirme #(
         
             address = {1'b0 , exp[0] , mantissa[22:15]} ;
             estimate = mem[address];
-            result = {sign , 8'((380-exp) >> 1), estimate , 15'b0};
+            result = {1'b0 , 8'((380-exp) >> 1), estimate , 15'b0};
         
              if(exp == 8'b0)begin
-               // En temiz ve risksiz yazým:
-                result = {sign, 8'hFF, 23'd0}; // 1 + 8 + 23 = 32 bit (+/- Sonsuz) 
+               // En temiz ve risksiz yazï¿½m:
+                result = {1'b0, 8'hFF, 23'd0}; // 1 + 8 + 23 = 32 bit (+/- Sonsuz) 
                 lvf = 1 ; 
                 end
                 

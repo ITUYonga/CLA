@@ -27,7 +27,7 @@ typedef enum logic [3:0] {
 
 module karsilastirma(
     input  logic [7:0]  exp_1,
-    input  logic [22:0] mantissa_1, // 23-bit standart IEEE 754 mantis alaný
+    input  logic [22:0] mantissa_1, // 23-bit standart IEEE 754 mantis alanï¿½
     input  logic        sign_1,
     
     input  logic [3:0]  CNDF,       // cmp_e
@@ -36,7 +36,7 @@ module karsilastirma(
     input  logic [7:0]  exp_2,
     input  logic [22:0] mantissa_2,
     input  logic        sign_2,
-    input  logic [4:0]  mstf,       // [4]->Z, [3]->N, [2]->TF, [1]->LUF, [0]->LVF
+    input  logic [4:0]  mstf,       // [4]->TF, [3]->ZF, [2]->NF, [1]->LUF, [0]->LVF (ALU.sv / tamsayi_islem ile ayni)
     
     input  logic [1:0]  kod_1,
     input  logic [1:0]  kod_2,
@@ -51,29 +51,29 @@ module karsilastirma(
     logic [1:0]  zf_nf;
     logic        is_cndf;
 
-    // 1. Giriþ Sayýlarýný Normalize Etme / IEEE Standartlaþtýrma
+    // 1. Giriï¿½ Sayï¿½larï¿½nï¿½ Normalize Etme / IEEE Standartlaï¿½tï¿½rma
     always_comb begin
-        // Ham 32-bit float oluþturma
+        // Ham 32-bit float oluï¿½turma
         fp_1 = {sign_1, exp_1, mantissa_1};
         fp_2 = {sign_2, exp_2, mantissa_2};
 
-        // Sýfýr ve Denormal yakalama (+0.0 veya -0.0)
+        // Sï¿½fï¿½r ve Denormal yakalama (+0.0 veya -0.0)
         if (exp_1 == 8'd0 || fp_1 == 32'h8000_0000) fp_1 = 32'h0000_0000;
         if (exp_2 == 8'd0 || fp_2 == 32'h8000_0000) fp_2 = 32'h0000_0000;
 
-        // NaN dönüþümleri (Kanonik qNaN)
-        if (kod_1 == NAN) fp_1 = 32'h7FC0_0000;
-        if (kod_2 == NAN) fp_2 = 32'h7FC0_0000;
+        // NaN dï¿½nï¿½ï¿½ï¿½mleri (Kanonik qNaN)
+        if (kod_1 == NAN) fp_1 = {sign_1, 8'hFF, 23'd0};
+        if (kod_2 == NAN) fp_2 = {sign_2, 8'hFF, 23'd0};
     end
 
-    // 2. Karþýlaþtýrma Mantýðý
+    // 2. Karï¿½ï¿½laï¿½tï¿½rma Mantï¿½ï¿½ï¿½
     always_comb begin
-        // a > b kontrolü
+        // a > b kontrolï¿½
         a_gt_b = (fp_1[31] != fp_2[31]) ? !fp_1[31] : 
                  (!fp_1[31])            ? (fp_1[30:0] > fp_2[30:0]) : 
                                           (fp_1[30:0] < fp_2[30:0]);
 
-        // b > a kontrolü
+        // b > a kontrolï¿½
         b_gt_a = (fp_2[31] != fp_1[31]) ? !fp_2[31] : 
                  (!fp_2[31])            ? (fp_2[30:0] > fp_1[30:0]) : 
                                           (fp_2[30:0] < fp_1[30:0]);
@@ -81,17 +81,17 @@ module karsilastirma(
         a_eq_b = (fp_1 == fp_2);
     end
 
-    // 3. Koþul Kontrolü (CNDF Deðerlendirmesi)[cite: 1]
+    // 3. Koï¿½ul Kontrolï¿½ (CNDF Deï¿½erlendirmesi)[cite: 1]
     always_comb begin
         case (CNDF)
-            CMP_NEQ  : is_cndf = (mstf[4] == 1'b0);
-            CMP_EQ   : is_cndf = (mstf[4] == 1'b1);
-            CMP_GT   : is_cndf = (mstf[4] == 1'b0) && (mstf[3] == 1'b0);
-            CMP_GEQ  : is_cndf = (mstf[3] == 1'b0);
-            CMP_LT   : is_cndf = (mstf[3] == 1'b1);
-            CMP_LEQ  : is_cndf = (mstf[4] == 1'b1) || (mstf[3] == 1'b1);
-            CMP_TF   : is_cndf = (mstf[2] == 1'b1);
-            CMP_NTF  : is_cndf = (mstf[2] == 1'b0);
+            CMP_NEQ  : is_cndf = (mstf[3] == 1'b0);
+            CMP_EQ   : is_cndf = (mstf[3] == 1'b1);
+            CMP_GT   : is_cndf = (mstf[3] == 1'b0) && (mstf[2] == 1'b0);
+            CMP_GEQ  : is_cndf = (mstf[2] == 1'b0);
+            CMP_LT   : is_cndf = (mstf[2] == 1'b1);
+            CMP_LEQ  : is_cndf = (mstf[3] == 1'b1) || (mstf[2] == 1'b1);
+            CMP_TF   : is_cndf = (mstf[4] == 1'b1);
+            CMP_NTF  : is_cndf = (mstf[4] == 1'b0);
             CMP_LU   : is_cndf = (mstf[1] == 1'b1);
             CMP_LV   : is_cndf = (mstf[0] == 1'b1);
             CMP_UNC  : is_cndf = 1'b1;
@@ -100,9 +100,9 @@ module karsilastirma(
         endcase
     end
 
-    // 4. Ana Ýþlem Yürütme (ALU Mantýðý)
+    // 4. Ana ï¿½ï¿½lem Yï¿½rï¿½tme (ALU Mantï¿½ï¿½ï¿½)
     always_comb begin
-        // Varsayýlan atamalar (Latch oluþmasýný engeller)
+        // Varsayï¿½lan atamalar (Latch oluï¿½masï¿½nï¿½ engeller)
         result = fp_1;
         zf_nf  = 2'b00;
 
@@ -141,20 +141,22 @@ module karsilastirma(
             end
 
             MABSF32: begin
-                result   = {1'b0, fp_2[30:0]}; // Mutlak deðer: Ýþareti zorla 0 yap
+                result   = {1'b0, exp_2 , mantissa_2 }; // Mutlak deï¿½er: ï¿½ï¿½areti zorla 0 yap
                 zf_nf[0] = 1'b0;
-                zf_nf[1] = (fp_2[30:0] == 31'd0); // Sýfýrsa ZF = 1
+                zf_nf[1] = (exp_2  == 31'd0); // Sï¿½fï¿½rsa ZF = 1
             end
 
             MNEGF32: begin
                 if (is_cndf) begin
-                    result = {~fp_2[31], fp_2[30:0]}; // Koþul saðlandýysa iþareti tersle
+                    result = {~sign_2, exp_2 , mantissa_2 }; // Koï¿½ul saï¿½landï¿½ysa iï¿½areti tersle
                 end else begin
-                    result = fp_2;
+                    result = {sign_2, exp_2 , mantissa_2 };
                 end
 
-                if (CNDF == CMP_UNCF)
-                    zf_nf = 2'b11;
+                if (CNDF == CMP_UNCF)begin
+                    zf_nf[1] = exp_2 == 0; 
+                    zf_nf[0] = (result[31] == 1)& ~zf_nf[1] ;
+                end
 
             end
 
@@ -164,7 +166,7 @@ module karsilastirma(
             end
         endcase
 
-        // Bayrak çýkýþlarýna atama
+        // Bayrak ï¿½ï¿½kï¿½ï¿½larï¿½na atama
         {zf, nf} = zf_nf;
     end
 

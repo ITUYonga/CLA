@@ -31,7 +31,7 @@ typedef enum logic[2:0]{
     LSHIFT_R = 3'b110,
     ASHIFT_R = 3'b111
     
-}op_type;
+}tamsayi_op_e;   // eski adi op_type: kestirme/karsilastirma port adiyla cakisiyordu
 
 
 
