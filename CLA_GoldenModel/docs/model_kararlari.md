@@ -4339,6 +4339,9 @@ to read").
 
 ## 49. Hedef: RTL = model, model = TRM (K1/K2 hariç) — kullanıcı kararı (2026-09-26)
 
+> **05.10: M2–M5 uygulandı, §51.** Bu bölümdeki D2 kuralı R1/W durması için
+> değişti: D2 işi komut D2'den **ilerlediği** çevrimde yapılır (§51.4).
+
 **Karar.** RTL golden modelle bit ve çevrim düzeyinde aynı olacak; model
 TRM'e sadık kalacak. Tek istisna, ALU'daki kayan nokta biriminin iki
 kademeye bölünmesinin (K1 = EXE, K2 = W) zorunlu kıldığı değişiklikler.
@@ -4412,3 +4415,99 @@ Beklentisi değişen 3 test (denormal girdiyi IEEE gibi işliyorlardı):
 denormal'i +0 saymalı), `test_luf_lvf_aritmetikten[8388608-8388607-0-1]`
 (0x00800000 − 0x007FFFFF: M1'le sonuç MIN_NORMAL, LUF = 0).
 Ayrıntı: proje belgesi `claude/dogrulama_raporu.md`.
+
+---
+
+## 51. M2–M5 uygulandı: FPU K1/K2, interlock, R1/W durması, D2 kuralı (2026-10-05)
+
+§49'daki M2–M5 `pipeline.py`'de; yardımcı tablolar `erisim.py`'de. Model artık
+RTL'in (ALU K1/K2 + top modül) çevrim çevrim referansı.
+
+### 51.1 M2 — FP sonucu W'nin sonunda
+
+- FP buyruklarının (15 biçim, `erisim.K2_YAZAR`) MR sonucu ve LVF/LUF'u EXE'de
+  state'e yazılmaz, kayda ertelenir (`BoruKaydi.k2_hedef_mr`, `latch_overflow`,
+  `latch_underflow`). Erteleme `BoruState.set_mr / latch_*` içinde, yalnız
+  K2 buyruklarında.
+- Ertelenen MR'ler buyruğun **alanlarından** belirlenir (`erisim.k2_hedefler`):
+  tekli `{MRa}`, FP ‖ MMOV32 `{MRd}`, MMPYF32 ‖ MADDF32/MSUBF32 `{MRa, MRd}`,
+  MMACF32 `{3, MRd}`. Paralel yüklemenin MRa'sı ve ZF/NF'si EXE'de kalır.
+- `k2_uygula()` W'deki kaydı **çevrimin başında** işler (`f1()`'den önce).
+  Bunun üç sonucu var, üçü de istenen davranış:
+  1. Aynı çevrimde EXE'deki buyruk aynı MR'ye ya da LVF/LUF'a yazarsa sonra
+     yazdığı için kazanır (öncelik EXE > K2).
+  2. D2'deki LV/LU dalları ve EXE'deki bayrak okuyucular bekleyen LVF/LUF'u
+     görür (TRM'deki zamanlama korunur).
+  3. İz satırı çevrim sonunu gösterdiği için FP sonucu W satırında görünür.
+- MMACF32'de MRd = MR3 ise iki K2 yazması MR3'e düşer; sözlükte sonra yazılan
+  toplama kalır → **toplayıcı > çarpıcı** (ALU tarafındaki öncelik de bu).
+  TRM yalnız MRa ≠ MR3 ve MRa ≠ MRd ister (§13.6).
+
+### 51.2 M3 — interlock (`dur_exe`)
+
+- `erisim.okunan_mr(cozum)`: buyruğun EXE'de okuduğu MR'ler (51 biçim,
+  `OKUNAN_MR_ALANLARI`; MMACF32'de sabit 3 ve 2). Koşullu MMOV32 MRa,MRb ve
+  MSWAPF koşuldan bağımsız okur sayılır.
+- Karar çevrimin sonunda, sıradaki çevrim için: `okunan_mr([5]) ∩
+  k2_hedefler([6]) ≠ ∅` → `self.dur_exe`.
+- Durma çevrimi: `k2_uygula()` ve `write()` çalışır; F1…EXE çağrılmaz,
+  `[0..5]` yerinde, `[6]` balon.
+- Yalnız okuma durdurur; yalnız yazan buyruk (ör. `MMOV32 MR0, @x`) durmaz.
+
+### 51.3 M4 — R1/W bellek durması (`dur_r1`)
+
+- `erisim.blok / ayni_blok`: L1 (0x8800–0x8BFF), L2 (0x8C00–0x8FFF), CLA→CPU
+  mesaj RAM'i (0x1480–0x14FF). CPU→CLA mesaj RAM'i (0x1500–0x157F) için durma
+  yok (CLA yazması yok sayılır). Adres değil blok karşılaştırılır.
+- Karar: W'ye geçen `[6]` belleğe yazıyor (`yazar16/32`), R1'deki
+  `pipeline_kaydi[3]` okuyor (`okur16/32`) ve `ayni_blok(yaz_ea, ea)`.
+  R1 kaydı olarak kalıcı `[3]` kullanılır: durma çevriminde R1'de bekleyen
+  buyruk orada durduğu için **zincirleme** durma yakalanır.
+- Durma çevrimi: F1…R1 çağrılmaz, `[0..3]` yerinde, `[4]` balon; R2, EXE, W
+  ilerler. `dur_exe` ile aynı çevrime düşerse `dur_exe` baskın (`elif`).
+
+### 51.4 M5 — D2 kuralı (karar: "ilerlediği çevrim")
+
+D2 işi (adres, MAR artışı, dal kararı, RPC, MSTOP algısı) her buyrukta bir kez,
+buyruk D2'den **ilerlediği** çevrimde yapılır: durma çevriminde `d2()`
+çağrılmaz.
+
+- `dur_exe` için §49'daki "dur_exe = 0 olan ilk çevrim" ile aynı şey.
+- `dur_r1` için §49 "ilk çevrim" diyordu; **değiştirildi.** Gerekçe: "ilk
+  çevrim" yalnız durma anında D2'de oturan buyruğu korur, D1/F2/F1'dekiler
+  balondan sonra D2'ye gelir ve öndekilere bir kademe uzak kalır; yani
+  program davranışının bellek durmasına bağlı olması (TI silikonunda da var)
+  ortadan kalkmaz. Buna karşılık "ilk çevrim" golden'da ve RTL'de ek mantık
+  ister (D2 işini bastırma, dal hedefini F1 bir kez ilerleyene kadar bekletme;
+  yoksa gecikme yuvası 3'ten 2'ye iner). TRM bu ayrıntıyı yazmıyor; önemli
+  olan golden ile RTL'in aynı kuralı uygulaması. RTL'de: D2'nin yan etkili
+  işleri "D2 kademesi ilerliyor" sinyaliyle yapılır.
+- Durma çevriminde MPC, D2'de bekleyen buyruğu gösterir (`state.mpc =
+  pipeline_kaydi[2].pc`; s.717).
+- Lint'ten temiz programlarda iki kuralın değerleri aynı; fark yalnız
+  `S5.2-bayrak` (daldan önceki 3 buyrukta bayrak) ve `S5.3-mar` kalıplarında
+  ve izin MAR sütununun zamanlamasında görülür.
+
+### 51.5 İz (trace_format v1, format aynı)
+
+- `dur_exe` çevrimi: EXE'de bekleyen buyruk o satırda da basılır, yani
+  `exe_pc` iki satır aynı (trace_format §6.8). `Pipeline.exe_bekledi` ile.
+- `dur_r1`: balon iki çevrim sonra EXE'ye ulaşır, o satırda `exe_pc` boş.
+- Durma satırlarında `mpc` = D2'de bekleyen buyruk.
+
+### 51.6 Doğrulama (M6)
+
+`tests/test_boru_hatti.py` (pytest'li ya da `python3 tests/test_boru_hatti.py`, 21 test):
+her kural için küçük program; çevrim sayısı, durma satırları, son yazmaç ve
+bellek değerleri sabitlendi. Ek olarak 23 programlık takımda M2'siz/M3'süz/
+M4'süz sürümlerle karşılaştırma: son durumlar hep aynı, iz yalnız beklenen
+yerde (FP sonucu W satırı, durma satırları) değişiyor. `alu_kabul_1`: 109 →
+122 çevrim (13 `dur_exe`, 0 `dur_r1`).
+
+### 51.7 Koşullu yüklemede MAR artışı
+
+Boru hattı modelinde (referans) MAR post-increment D2'de, adres üretimiyle
+birlikte yapılır; koşul E'de değerlendirilir. Bu yüzden `MMOV32 MRa,
+*MARx[n]++, CNDF`'de koşul tutmasa da MAR artar (test
+`test_kosullu_yuklemede_MAR_artisi_kosulsuz`). Ardışık model artırmıyor
+(borç 3b.4); ardışık model referans değil. RTL boru hattı modelini izler.

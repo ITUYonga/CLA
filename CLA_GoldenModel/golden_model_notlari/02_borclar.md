@@ -7,11 +7,11 @@ Numaralar `model_kararlari.md` §11 tablosundaki numaralar.
 
 | # | Konu | Modelin seçimi |
 |---|---|---|
-| 1.3.2 | Aritmetik girdilerde denormal | **Karar 26.09 (§49): FTZ**, iki yolda da +0 (kod bekliyor: M1). TI silikonunda doğrulanmadı. |
+| 1.3.2 | Aritmetik girdilerde denormal | **Karar 26.09 (§49): FTZ**, iki yolda da +0 (uygulandı 29.09, §50). TI silikonunda doğrulanmadı. |
 | 3.12 | MNEGF32'de sinyalli NaN'ın işaret biti | Saf işaret biti işlemi. |
 | 3.19 | float→tamsayı **pozitif** taşma | Sonlu değerler sarılıyor, ±Inf doyuruluyor. Negatif→işaretsiz 0 (TRM örnekleri, §47.2). |
 | 3.20 | float→tamsayı NaN / ±Inf | NaN → 0; ±Inf → uç değerler. |
-| 3b.4 | Koşul yanlışken post-increment | **İki model ayrışıyor** (B1). |
+| 3b.4 | Koşul yanlışken post-increment | **İki model ayrışıyor** (B1). Referans boru hattı modeli koşulsuz artırır (D2'de, §51.7); RTL de böyle. |
 | 6.1 | Kestirim tablosunun TI ile eşitliği | Proje tablosu (§42). |
 | 10.6 | Tek komut içinde D2 önce, E sonra | Model sırası: D2 E'den önce. |
 | 11.1 | Ayrılmış adresleme kipi + yanlış koşul | Ardışık modelde sessiz geçiyor, koşul doğruysa hata. |

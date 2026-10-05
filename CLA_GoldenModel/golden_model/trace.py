@@ -126,7 +126,13 @@ class Izci:
     def satir(self):
         """Az once kosan cevrimin satirini basar."""
         self.cevrim += 1
-        kayit = self.cekirdek.pipeline.pipeline_kaydi[6]
+        boru = self.cekirdek.pipeline
+        # exe_* = o cevrim EXE kademesindeki komut (S2). Normal cevrimde EXE'den
+        # gecen komut W'ye ([6]) kaydi; dur_exe cevriminde EXE'deki komut
+        # calismadan bekledi ve [5]'te duruyor, W'ye balon girdi (S6.8:
+        # exe_pc iki satir ayni kalir).
+        kayit = boru.pipeline_kaydi[5] if getattr(boru, "exe_bekledi", False) \
+            else boru.pipeline_kaydi[6]
         gecerli = (kayit.gecerli == 1 and kayit.pc is not None)
         wr_addr, wr_data, wr_w = self._bu_cevrimdeki_yazma()
         satir_yaz(self.akis, {

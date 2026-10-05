@@ -235,12 +235,15 @@ RTL ile ilk karşılaştırmada **önce buralara bakılacak**:
    24.09 kararı tersine döndü).** Komut *n*'nin W'si ile komut *n+3*'ün R1'i
    aynı bloğa aynı çevrimde düşerse R1 bir çevrim durur (s.571/573/577);
    o satırdan sonraki her satır 1 kayar ve RTL de aynı durmayı üretir.
-   Model henüz uygulamıyor (M4). Format aynı.
+   Balon iki çevrim sonra EXE'ye ulaşır; o satırda `exe_pc` boş. Bloklar
+   L1, L2, CLA→CPU mesaj RAM'i; adres değil blok karşılaştırılır.
+   Model uyguluyor (M4, 05.10, model_kararlari §51.3). Format aynı.
 8. **FPU K1/K2 (karar 26.09, §49).** FP aritmetiğinin MR sonucu ve
    LVF/LUF'u W'nin sonunda yazılır: `mr*` ve `mstf` sütunlarında TRM'dekinden
    bir çevrim geç görünür. Sonucu hemen okuyan komut 1 çevrim bekler
-   (`exe_pc` iki satır aynı kalır). Model henüz uygulamıyor (M2, M3). Format
-   aynı.
+   (`exe_pc` iki satır aynı kalır: bekleyen komut EXE'de durur, W'ye balon
+   girer). Durma satırlarında `mpc` D2'de bekleyen komuttur. Model
+   uyguluyor (M2, M3, M5; 05.10, model_kararlari §51). Format aynı.
 
 ## 7. Örnek
 
@@ -280,6 +283,7 @@ Okuma notları:
 | sürüm | tarih | değişiklik |
 |---|---|---|
 | 1 | — | ilk sabitleme — çevrim başına satır, tek yazma alanı |
+| 1 | 05.10 | §6.7/§6.8: model M2–M5'i uyguluyor; durma satırlarında `exe_pc` ve `mpc` kuralları yazıldı. Format aynı. |
 | 1 | 26.09 | §6.7 tersine döndü (R1/W durağı TRM'deki gibi), §6.8 eklendi (FPU K1/K2). Format aynı. |
 | 1 | 24.09 (4) | §4 iz sonu: son görev her zaman *n+3* (MSTOP'tan önce komut yoksa da); görev sınırı Tablo 10-19'a çekildi (§6.5). Format aynı. |
 | 1 | 24.09 (3) | §6.7 eklendi: R1/W çakışması modellenmiyor (model_kararlari §43). Format aynı. |

@@ -14,8 +14,14 @@ Kod: `golden_model/` (bu reponun kökünde).
 | `04_rtl_sartlari.md` | Verilog RTL'in modelle eşdeğer olması için uyması gerekenler. |
 
 Kararların gerekçeli, tarihli kaydı: `docs/model_kararlari.md`
-(§1–§48). İz biçimi sözleşmesi: `docs/trace_format.md`.
+(§1–§51). İz biçimi sözleşmesi: `docs/trace_format.md`.
 TRM ekran görüntüleri (çakışma durumları, MPC): `conflicts/`.
+
+## Durum (2026-10-05)
+
+- **FPU K1/K2, interlock, R1/W durması ve D2 kuralı uygulandı** (M1–M5, §50–§51).
+  Model ALU RTL'i ve top modül için çevrim çevrim referans. Boru hattı
+  regresyon testi: `tests/test_boru_hatti.py`.
 
 ## Durum (2026-09-25)
 

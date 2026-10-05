@@ -18,7 +18,24 @@
 #  update_pipeline() = bir saat cevrimi. Gorev sonu (Tablo 10-19): MSTOP
 #  D2'de (n); bekleyen gorev varsa MSTOP'un balonu R2'deyken (n+2) biter,
 #  yeni gorev n+3'te baslar; yoksa R1/R2/E bosalinca (son W'den sonra).
-#  Varsayimlar: R1/W bellek duragi yok (model_kararlari §43).
+#
+#  FPU K1/K2 ve durmalar (model_kararlari §49, §51; uygulandi 05.10.2026):
+#  M2  FP sonucu (MR) ve LVF/LUF'u W'nin SONUNDA yazilir: EXE'de kayda
+#      ertelenir (k2_hedef_mr, latch_*), cevrimin BASINDA k2_uygula() ile
+#      islenir. Boylece ayni cevrimde EXE'nin yazmasi kazanir (MR ve bayrak)
+#      ve D2/EXE bekleyen LVF/LUF'u gorur.
+#  M3  dur_exe: EXE'deki komut, W'deki FP komutunun K2'de yazacagi bir MR'yi
+#      okuyorsa 1 cevrim bekler (erisim.okunan_mr & erisim.k2_hedefler).
+#      F1..EXE yerinde kalir, W'ye balon girer.
+#  M4  dur_r1: W'deki komut bir bloga yaziyor, R1'deki komut ayni bloktan
+#      okuyorsa (erisim.ayni_blok; L1, L2, CLA->CPU mesaj RAM'i) R1 1 cevrim
+#      bekler: F1..R1 yerinde kalir, R2'ye balon girer, R2/EXE/W ilerler.
+#      Zincirlenir. dur_exe ile ayni cevrime duserse dur_exe baskin.
+#  M5  D2 isi (adres, MAR artisi, dal karari, RPC, MSTOP) her komutta bir kez,
+#      komut D2'den ILERLEDIGI cevrimde yapilir: durma cevriminde d2()
+#      cagrilmaz. Durmada MPC = D2'de bekleyen komut.
+#  Kararlar cevrimin sonunda, siradaki cevrim icin verilir (self.dur_exe,
+#  self.dur_r1); durma cevrimi bayragi kullanip sifirlar.
 # =====================================================================
 
 
@@ -70,6 +87,37 @@ class BoruState:
     def __setattr__(self, ad, v):
         setattr(self._gercek, ad, v)
 
+    def set_mr(self , i , v):
+         if(i in E.k2_hedefler(self._kayit.cozum)):      # FP yarisi: W sonunda (K2)
+              self._kayit.k2_hedef_mr[i] =v
+         
+         else:                                           # paralel yuklemenin MRa'si: EXE
+              self._gercek.set_mr(i , v)
+
+    
+    
+    
+
+    def latch_underflow(self):
+          if(E.k2_yazar(self._kayit.cozum)):              # FP: W sonunda (K2)
+              self._kayit.latch_underflow = True
+
+          else:
+               self._gercek.latch_underflow()             # kestirim vb.: EXE
+
+
+    def latch_overflow(self):
+          if(E.k2_yazar(self._kayit.cozum)):              # FP: W sonunda (K2)
+              self._kayit.latch_overflow = True
+
+          else:
+               self._gercek.latch_overflow()              # kestirim vb.: EXE
+            
+         
+         
+              
+              
+
 
 class BoruKaydi:
 
@@ -89,7 +137,10 @@ class BoruKaydi:
             self.mar_before = [None , None]
             self.d2_mar = None
             self.mstop = False        # MSTOP'un balonu: gorev sinirini sayar (Tablo 10-19)
-
+            self.k2_hedef_mr = {}     # M2: W sonunda yazilacak FP sonuclari {MR: deger}
+            self.latch_overflow = None    # M2: W sonunda kurulacak LVF
+            self.latch_underflow = None   # M2: W sonunda kurulacak LUF
+           
 
 
 class Pipeline:
@@ -101,8 +152,9 @@ class Pipeline:
         self.durdu = False
         self.donduruldu = False
         self.getir_pc = None      # getirme sayaci (TRM s.577 F1). MPC ayri: D2'deki komut (s.717)
-
-
+        self.dur_exe = False      # M3: siradaki cevrim EXE durmasi
+        self.dur_r1 = False       # M4: siradaki cevrim R1/W durmasi
+        self.exe_bekledi = False  # bu cevrim dur_exe idi (iz: EXE'de bekleyen komut basilir)
 
     def f1(self ) ->BoruKaydi:
 
@@ -310,6 +362,9 @@ class Pipeline:
             sahte_state = BoruState(self.state , kopya_kayit)
             sahte_bellek = BoruBellek(kopya_kayit)
             
+           
+     
+
             if(kopya_kayit.gecerli == 1 ):
 
                             if (E.mar_yukler(kopya_kayit.cozum) and self.d2_mar is not None  and D._mar_indeksi(kopya_kayit.cozum.entry) == self.d2_mar):
@@ -317,16 +372,32 @@ class Pipeline:
                                 return kopya_kayit  
 
 
-                            D.dagit(kopya_kayit.cozum, sahte_state, sahte_bellek , cekirdek )
+                            D.dagit(kopya_kayit.cozum, sahte_state, sahte_bellek , cekirdek ) 
+            
+            
 
-                  
-
-
-
-
+   
             return  kopya_kayit
 
-    def write(self):
+    def k2_uygula(self):
+        """W'deki FP buyrugunun K2 yazmasi (M2). Cevrimin EN BASINDA cagrilir:
+        ayni cevrimde EXE'deki buyruk sonra yazdigi icin MR'de ve bayrakta kazanir;
+        D2 ve EXE bekleyen LVF/LUF'u gorur. Bellek yazmasi write()'ta, sonda kalir."""
+
+        kayit = self.pipeline_kaydi[6]
+
+        if(kayit.gecerli == 1):
+
+            for i,v in kayit.k2_hedef_mr.items():
+                 self.state.set_mr(i , v)
+
+            if(kayit.latch_overflow):
+                self.state.latch_overflow()
+
+            if(kayit.latch_underflow):
+                 self.state.latch_underflow()
+
+    def write(self , cekirdek = None):
 
         kayit = self.pipeline_kaydi[6]
         
@@ -348,7 +419,17 @@ class Pipeline:
      
 
 
-    def update_pipeline(self , cekirdek = None):
+    def update_pipeline(self , cekirdek = None ):
+            
+            kayit_0 = BoruKaydi()
+            kayit_1 = BoruKaydi()
+            kayit_2 = BoruKaydi()
+            kayit_3 = BoruKaydi()
+            kayit_4 = BoruKaydi()
+            kayit_5 = BoruKaydi()
+            kayit_6 = BoruKaydi()
+
+
 
             if self.donduruldu:
 
@@ -357,20 +438,35 @@ class Pipeline:
                     cekirdek.durdu = True
 
                 return
-                
-            kayit_0 = self.f1()
-            kayit_1 = self.f2()
-            kayit_2 = self.d1()
-            kayit_3 = self.d2(cekirdek)
+            
+     
+            self.exe_bekledi = self.dur_exe # iz: dur_exe cevriminde EXE'de bekleyen komut basilir
+            self.k2_uygula()                # M2: K2 yazmasi cevrimin basinda; dur_exe cevriminde de
+                                            # (W'deki FP buyrugu durmadan bagimsiz biter)
+            if(self.dur_exe or self.dur_r1):       # durmada D2 calismaz; MPC = D2'de bekleyen buyruk (s.717)
+                if(self.pipeline_kaydi[2].gecerli == 1):
+                    self.state.mpc = self.pipeline_kaydi[2].pc
+
+            if(not self.dur_exe and not self.dur_r1) :
+
+                kayit_0 = self.f1()
+                kayit_1 = self.f2()
+                kayit_2 = self.d1()
+                kayit_3 = self.d2(cekirdek)
+                kayit_4 = self.r1()
+
+            if(not self.dur_exe):
+
+                kayit_5 = self.r2()
+                kayit_6 = self.exe(cekirdek) 
+
+           
         
+            self.write(cekirdek)
+         
 
 
-            kayit_4 = self.r1()
-            kayit_5 = self.r2()
-            kayit_6 = self.exe(cekirdek)
-            self.write()
-
-            if self.durdu == 1 :
+            if self.durdu == 1 and not self.dur_exe and not self.dur_r1:      # dur_exe cevriminde boru hatti bos degil
                     
                 kayit_3.gecerli = 0
                 kayit_2.gecerli = 0
@@ -385,14 +481,46 @@ class Pipeline:
                 elif(cekirdek is not None and kayit_4.gecerli == 0 and kayit_5.gecerli == 0 and kayit_6.gecerli == 0 and (cekirdek.arbiter is None or cekirdek.arbiter.sonraki_gorev() == None)):
                         cekirdek.durdu = True
 
+            if(not self.dur_exe and not self.dur_r1):
 
-            self.pipeline_kaydi[0] = kayit_0
-            self.pipeline_kaydi[1] = kayit_1
-            self.pipeline_kaydi[2] = kayit_2
-            self.pipeline_kaydi[3] = kayit_3
-            self.pipeline_kaydi[4] = kayit_4
-            self.pipeline_kaydi[5] = kayit_5
-            self.pipeline_kaydi[6] = kayit_6
+                self.pipeline_kaydi[0] = kayit_0
+                self.pipeline_kaydi[1] = kayit_1
+                self.pipeline_kaydi[2] = kayit_2
+                self.pipeline_kaydi[3] = kayit_3
+                self.pipeline_kaydi[4] = kayit_4
+
+            if(not self.dur_exe):
+                self.pipeline_kaydi[5] = kayit_5
+                self.pipeline_kaydi[6] = kayit_6
+
+                # M3: siradaki cevrimin dur_exe karari. kayit_5 simdi EXE'ye, kayit_6 W'ye
+                # (K2) gecti: EXE'deki buyruk K2'nin yazacagi bir MR'yi okuyorsa 1 cevrim bekler.
+
+            
+            if(self.dur_exe):
+                # dur_exe cevrimi: F1..EXE yerinde kaldi; W'deki buyruk bitti -> W'ye balon
+                self.pipeline_kaydi[6] = BoruKaydi()
+                self.dur_exe = False
+
+            if(self.dur_r1):
+                self.pipeline_kaydi[4]= BoruKaydi()
+                self.dur_r1 = False
+                 
+                
+
+
+            if(kayit_5.gecerli == 1 and kayit_6.gecerli == 1 and
+                   (E.okunan_mr(kayit_5.cozum) & E.k2_hedefler(kayit_6.cozum))):
+                    self.dur_exe = True
+
+
+            elif((self.pipeline_kaydi[3].gecerli == 1 and  kayit_6.gecerli == 1 )and
+                   ((E.yazar16(kayit_6.cozum.syntax) or E.yazar32(kayit_6.cozum.syntax)) and (E.okur16(self.pipeline_kaydi[3].cozum.syntax) or E.okur32(self.pipeline_kaydi[3].cozum.syntax) ))
+                   and E.ayni_blok(kayit_6.yaz_ea, self.pipeline_kaydi[3].ea)):     # M4: adres degil blok
+                    self.dur_r1 = True
+                
+
+
             
 
             
