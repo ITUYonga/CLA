@@ -1,3 +1,0 @@
-  lint: HATA        S5.4-yaz-oku komut 6    (pc 0x00c)  0x8800 komut 4'de yazildi, 2 komut sonra okunuyor; araya en az 3 komut girmeli - donanimda koruma YOK, BAYAT deger okunur (s.578)
-                                          | MMOV32 MR1, @0x8800
-19_yaz_oku_eski_deger: 14 komut, 1 gorev kostu (MIRUN, cevrim): [(1, 17)] -> /Users/oguzhand/Desktop/CLA_ALL/ALU_teslim/golden_paket/boru_hatti_testleri/beklenen

@@ -1,4 +1,0 @@
-  lint: UYARI       S5.2-bayrak komut 7    (pc 0x00e)  MMOV32 bayrak degistiriyor ama komut 8'deki dallanmaya YETISMEZ (karar D2'de)
-                                          | MMOV32 MR1, @0x8820
-16_d2_dal_bir_kez: 17 komut, 1 gorev kostu (MIRUN, cevrim): [(1, 20)] -> /Users/oguzhand/Desktop/CLA_ALL/ALU_teslim/golden_paket/boru_hatti_testleri/beklenen
-UYARI: 1 durmaya duyarli kalip (S5.2-bayrak / S5.3-mar). Golden ve RTL ayni sonucu verir, ama sonuc bellek durmasina bagli; kabul programinda kacinin.
