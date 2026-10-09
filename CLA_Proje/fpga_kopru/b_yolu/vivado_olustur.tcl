@@ -1,21 +1,26 @@
 # =====================================================================
 #  vivado_olustur.tcl - B yolu: proje + blok tasarim + bitstream, ARAYUZSUZ
 # ---------------------------------------------------------------------
-#  Calistirma (sanal makinede ya da x86 bir PC'de, uart_kopru klasorunun icinden):
+#  Calistirma (sanal makinede ya da x86 bir PC'de, fpga_kopru klasorunun icinden):
 #      vivado -mode batch -source b_yolu/vivado_olustur.tcl
 #      vivado -mode batch -source b_yolu/vivado_olustur.tcl -tclargs 8     ;# 8 is parcacigi
+#      vivado -mode batch -source b_yolu/vivado_olustur.tcl -tclargs 4 ../uygulama/drone_sim/kontrolcu_l3.hex
+#  CLA programi bitstream'e gomulur (L3 baslangic degeri). Varsayilan: uygulama/drone_sim/ic_kestirim_l3.hex
+#  (l3_uret.py ciktisi, 16 bit/satir). Program degisince bitstream yeniden uretilir.
 #  Cikti (b_yolu/cikti/):
 #      kv260_b.bit     PL tasarimi
 #      psu_init.tcl    PS'i (saatler, MIO, UART, PL saati/reseti) kuran betik
 #      kv260_b.xsa     donanim platformu (bitstream dahil; Vitis isterse)
 #      rapor.txt       kaynak kullanimi + zamanlama ozeti
 #  Tasarim: Zynq MPSoC (KV260 on ayari) --M_AXI_HPM0_LPD--> SmartConnect --> kopru
-#           (kv260_b_sarmal: cla_axi_kopru + cla_ctrl_regs + taklit cekirdek)
+#           (kv260_b_sarmal: cla_axi_kopru + CLA_Top)
 #           kopru adresi 0x8000_0000 (aktarici.elf bunu bekler), pl_clk0 100 MHz,
 #           PS UART referans saati 100 MHz (aktarici.elf bunu bekler).
 # =====================================================================
 set BURASI [file dirname [file normalize [info script]]]
 set RTL    [file normalize [file join $BURASI .. rtl]]
+set CLA    [file normalize [file join $BURASI .. .. rtl]]
+set L3     [file normalize [expr {[llength $argv] > 1 ? [lindex $argv 1] : [file join $BURASI .. .. uygulama drone_sim ic_kestirim_l3.hex]}]]
 set PROJE  [file join $BURASI proje]
 set CIKTI  [file join $BURASI cikti]
 set IS     [expr {[llength $argv] > 0 ? [lindex $argv 0] : 4}]
@@ -41,11 +46,17 @@ puts "kart: $bp"
 adim "proje"
 create_project kv260_b $PROJE -part xck26-sfvc784-2LV-c -force
 set_property board_part $bp [current_project]
-set kaynak [list \
-    $RTL/cla_kopru_cekirdek.sv $RTL/cla_axi_kopru.sv $RTL/cla_cekirdek_taklidi.sv \
-    $RTL/cla_ctrl_regs_yamali.sv $RTL/kv260_b_top.sv $RTL/kv260_b_sarmal.v]
+set kaynak [concat [list \
+    $RTL/cla_kopru_cekirdek.sv $RTL/cla_axi_kopru.sv $RTL/kv260_b_top.sv $RTL/kv260_b_sarmal.v \
+    $CLA/yazmac_bellek/cla_data_ram.sv $CLA/yazmac_bellek/cla_mvect_regs.sv] \
+    [glob $CLA/kontrol/*.sv $CLA/top/*.sv $CLA/alu/*.sv "$CLA/alu/kayan_nokta birimi/*.sv" "$CLA/alu/kayan_nokta birimi/*/*.sv"]]
 foreach f $kaynak { if {![file exists $f]} { dur "kaynak yok: $f" } }
 add_files -norecurse $kaynak
+# $readmemh dosyalari adlariyla okunur: kestirme.sv -> estimate_lut.hex, kv260_b_sarmal -> cla_program.hex
+if {![file exists $L3]} { dur "CLA programi yok: $L3 (uygulama/drone_sim/l3_uret.py ile uretin)" }
+file copy -force $L3 [file join $CIKTI cla_program.hex]
+add_files -norecurse [list $CLA/alu/estimate_lut.hex [file join $CIKTI cla_program.hex]]
+puts "CLA programi: $L3
 set_property file_type SystemVerilog [get_files *.sv]
 update_compile_order -fileset sources_1
 

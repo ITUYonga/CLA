@@ -1,19 +1,19 @@
 `timescale 1ns / 1ps
 // =====================================================================
-//  kv260_b_top - B yolu ust modulu (CLA'siz ilk deneme)
+//  kv260_b_top - B yolu ust modulu: kopru + CLA
 // ---------------------------------------------------------------------
 //      PC --micro-USB--> PS UART --> ARM (aktarici.elf) --AXI4-Lite--+
 //                                                                    |
-//      cla_axi_kopru (mesaj RAM'leri) --+--> cla_ctrl_regs (Arda)    |
-//                                       +--> cla_cekirdek_taklidi    |
+//      cla_axi_kopru (mesaj RAM'leri, CPU yerine gecer) <---> CLA_Top
+//  CLA_Top gorev yazmaclarini (MIFR, MIER, MIRUN ...) kendi icinde tutar.
+//  Program L3'e bitstream'le gelir: PROGRAM_HEX (16 bit/satir, l3_uret.py ciktisi).
 //  Blok tasarima kv260_b_sarmal.v ile (Verilog sarmal) eklenir:
 //  clk = pl_clk0 (100 MHz), rst_n = pl_resetn0, s_axi = M_AXI_HPM0_LPD.
-//  Gercek CLA hazir olunca cla_cekirdek_taklidi yerine o baglanir.
 // =====================================================================
 module kv260_b_top #(
     parameter int ZAMAN_ASIMI = 1_000_000,   // 10 ms @100 MHz
     parameter int BAYT_ASIMI  = 1_000_000,
-    parameter int GECIKME     = 200          // taklit gorevin suresi
+    parameter string PROGRAM_HEX = ""        // L3 baslangic goruntusu
 )(
     input  logic        clk,
     input  logic        rst_n,
@@ -53,15 +53,13 @@ module kv260_b_top #(
 
     logic        cpu_wr_en;
     logic [2:0]  cpu_reg_addr;
-    logic [15:0] cpu_wr_data, cpu_rd_data;
-    logic [15:0] mifr, miovf, mier, mirun;
-    logic        task_start_req, task_done;
-    logic [2:0]  selected_task;
-    logic        hw_trig [7:0];
-    always_comb for (int t = 0; t < 8; t++) hw_trig[t] = 1'b0;
+    logic [15:0] cpu_wr_data, cpu_rd_data, mvect_oku;
+    logic [15:0] mirun;
+    logic [7:0]  pie_kesme;
+    logic        cla_bosta;
 
     logic [6:0]  m2c_addr, c2m_addr;
-    logic [1:0]  m2c_rd_en, c2m_wr_en;
+    logic [1:0]  m2c_rd_en, c2m_wr_en, c2m_rd_en;
     logic [31:0] m2c_dout, c2m_din, c2m_dout;
 
     cla_axi_kopru #(.ZAMAN_ASIMI(ZAMAN_ASIMI), .BAYT_ASIMI(BAYT_ASIMI)) u_kopru (
@@ -70,19 +68,16 @@ module kv260_b_top #(
         .s_axi_wready, .s_axi_bresp, .s_axi_bvalid, .s_axi_bready, .s_axi_araddr, .s_axi_arvalid,
         .s_axi_arready, .s_axi_rdata, .s_axi_rresp, .s_axi_rvalid, .s_axi_rready,
         .m2c_addr, .m2c_rd_en, .m2c_dout,
-        .c2m_addr, .c2m_wr_en, .c2m_rd_en(2'b00), .c2m_din, .c2m_dout,
-        .cpu_wr_en, .cpu_reg_addr, .cpu_wr_data, .mirun, .cla_rst_n,
+        .c2m_addr, .c2m_wr_en, .c2m_rd_en, .c2m_din, .c2m_dout,
+        .cpu_wr_en, .cpu_reg_addr, .cpu_wr_data, .mirun, .cla_bosta, .cla_rst_n,
         .durum(izle));
 
-    cla_ctrl_regs u_ctrl (
+    // MVECT1 = 0 (reset degeri): gorev 1 programin basindan baslar
+    CLA_Top #(.PROGRAM_HEX(PROGRAM_HEX)) u_cla (
         .clk, .rst_n(cla_rstn),
         .cpu_wr_en, .cpu_reg_addr, .cpu_wr_data, .cpu_rd_data,
-        .hw_task_trig(hw_trig),
-        .task_done, .task_start_req, .selected_task,
-        .mifr_out(mifr), .miovf_out(miovf), .mier_out(mier), .mirun_out(mirun));
-
-    cla_cekirdek_taklidi #(.GECIKME(GECIKME)) u_cekirdek (
-        .clk, .rst_n(cla_rstn), .task_start_req, .task_done,
+        .mvect_wr_en(1'b0), .mvect_gorev(3'd0), .mvect_veri(16'h0000), .mvect_oku,
+        .hw_task_trig(8'h00), .pie_kesme, .mirun, .bosta(cla_bosta),
         .m2c_addr, .m2c_rd_en, .m2c_dout,
-        .c2m_addr, .c2m_wr_en, .c2m_din);
+        .c2m_addr, .c2m_wr_en, .c2m_rd_en, .c2m_din, .c2m_dout);
 endmodule

@@ -53,6 +53,7 @@ module cla_axi_kopru #(
     output logic [2:0]  cpu_reg_addr,
     output logic [15:0] cpu_wr_data,
     input  logic [15:0] mirun,
+    input  logic        cla_bosta,
     output logic        cla_rst_n,
     output logic [3:0]  durum
 );
@@ -70,7 +71,7 @@ module cla_axi_kopru #(
         .cikis_gonder, .cikis_veri, .cikis_mesgul(dolu),
         .m2c_addr, .m2c_rd_en, .m2c_dout,
         .c2m_addr, .c2m_wr_en, .c2m_rd_en, .c2m_din, .c2m_dout,
-        .cpu_wr_en, .cpu_reg_addr, .cpu_wr_data, .mirun, .cla_rst_n, .durum);
+        .cpu_wr_en, .cpu_reg_addr, .cpu_wr_data, .mirun, .cla_bosta, .cla_rst_n, .durum);
 
     // ------------------------------------------------------------ cevap FIFO'su
     logic [7:0]         fifo [0:N-1];

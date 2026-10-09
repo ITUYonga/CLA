@@ -7,7 +7,9 @@
 //  ozellikler sayesinde Vivado AXI4-Lite arayuzunu, saati ve reseti
 //  kendisi tanir (Connection Automation dogrudan baglar).
 // =====================================================================
-module kv260_b_sarmal (
+module kv260_b_sarmal #(
+    parameter PROGRAM_HEX = "cla_program.hex"   // L3 baslangic goruntusu (vivado_olustur.tcl projeye ekler)
+) (
     (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 clk CLK" *)
     (* X_INTERFACE_PARAMETER = "ASSOCIATED_BUSIF s_axi, ASSOCIATED_RESET rst_n, FREQ_HZ 100000000" *)
     input  wire        clk,
@@ -33,7 +35,7 @@ module kv260_b_sarmal (
     input  wire        s_axi_rready,
     output wire [3:0]  izle
 );
-    kv260_b_top u_top (
+    kv260_b_top #(.PROGRAM_HEX(PROGRAM_HEX)) u_top (
         .clk(clk), .rst_n(rst_n),
         .s_axi_awaddr(s_axi_awaddr), .s_axi_awvalid(s_axi_awvalid), .s_axi_awready(s_axi_awready),
         .s_axi_wdata(s_axi_wdata), .s_axi_wstrb(s_axi_wstrb), .s_axi_wvalid(s_axi_wvalid),

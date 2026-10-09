@@ -29,6 +29,7 @@ module CLA_Top
                 //////////////CPU'ya
                 output logic [7:0]pie_kesme ,
                 output logic [15:0]mirun ,
+                output logic bosta ,                     // gorev yok ve boru hatti bosaldi (golden gorev sonu)
 
                 //////////////mesaj RAM'leri
                 output logic [6:0]m2c_addr ,
@@ -432,6 +433,15 @@ always_ff@(posedge clk or negedge rst_n) begin
     end
 
 end
+
+
+
+/////////////////////////BOSTA
+
+// golden'in gorev sonu kosulu : calisan ve bekleyen gorev yok , R1 R2 E bos , durma yok.
+// MIRUN MSTOP D2'deyken duser ; son buyruklar bundan sonra W'ye kadar akar.
+
+assign bosta = ~calisiyor & (bekleyen == 8'h00) & ~d2r1_gecerli & ~r1r2_gecerli & ~r2e_gecerli & ~dur_exe & ~dur_r1;
 
 
 

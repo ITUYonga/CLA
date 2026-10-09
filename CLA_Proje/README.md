@@ -18,7 +18,7 @@ CLA_Proje/
 │   ├── test_karsilastirici.py  RTL test kaydını golden'la çevrim çevrim karşılaştırır; CASM'den tezgâh girişi üretir
 │   └── tb_cla_kayit.sv         RTL tezgâhı: test kaydını (.hex) üretir
 ├── dogrulama/cla_top/rastgele_top.py   Rastgele program üretip yukarıdaki akışla karşılaştırır
-├── fpga_kopru/         KV260 AXI/UART köprüsü (rtl/) ve Vivado blok tasarım betikleri (b_yolu/)
+├── fpga_kopru/         KV260 köprüsü + CLA_Top (rtl/), Vivado betikleri (b_yolu/), köprü tezgâhı (tb/)
 ├── uygulama/drone_sim/ CLA üzerinde koşan drone kontrolcüsü ve sanal FPGA simülasyonu
 ├── belgeler/           Tasarım belgeleri (.docx), rehber sayfaları (.html), golden_model_notlari/ (model kararları)
 └── semalar/            draw.io şemaları ve PNG/PDF çıktıları (üst modül FF'leri, E/W, aşama aşama)
@@ -36,7 +36,7 @@ CLA_Proje/
 ## Üst modül
 
 `rtl/top/CLA_Top.sv`, 8 aşamalı boru hattını (F1 F2 D1 D2 R1 R2 E W), görev denetimini, MAR/MPC'yi ve L1/L2 veri RAM'lerini birleştirir.
-Mesaj RAM'leri (M2C, C2M) dışarıda durur; portları `fpga_kopru/rtl/cla_kopru_cekirdek.sv` ile uyumludur.
+Mesaj RAM'leri (M2C, C2M) dışarıda durur; kartta `fpga_kopru/rtl/kv260_b_top.sv` CLA_Top'u köprüye bağlar.
 
 Vivado projesine eklenecekler:
 - `rtl/kontrol/cla_pkg.sv` (önce), `rtl/kontrol/*.sv`
@@ -78,4 +78,4 @@ Rastgele test: `dogrulama/cla_top/rastgele_top.py` (kullanım dosyanın başınd
 
 - **Golden:** dur_r1 çevriminde `Pipeline.d2_mar` önceki çevrimden kalıyor ve E'deki MAR yüklemesi atlanıyor (RTL TI'a uygun davranıyor). Öneri: `update_pipeline` içinde D2 çağrısından önce `self.d2_mar = None`.
 - **ALU:** `clasify.sv` ve `topla_k2.sv` latch uyarıları.
-- **FPGA:** `fpga_kopru/rtl/kv260_b_top.sv` içinde `cla_cekirdek_taklidi` ve `cla_ctrl_regs_yamali` yerine `CLA_Top` bağlanacak.
+- **FPGA:** bitstream kartta denenmedi (Vivado betiği, zamanlama). Köprü + CLA_Top simülasyonda golden'la aynı: `fpga_kopru/tb/kopru_testi.py`.

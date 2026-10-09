@@ -5,7 +5,8 @@
 //  Gercek sistemde C28x CPU'nun yaptigi isi yapar:
 //    * CPU->CLA mesaj RAM'ine (0x1500-0x157F) yazar,
 //    * cla_ctrl_regs'in CPU portundan MIER ve MIFRC yazip gorev 1'i tetikler,
-//    * MIRUN'un inmesini bekler (zaman asimi var),
+//    * MIRUN'un inmesini (MSTOP D2'de), sonra boru hattinin bosalmasini bekler
+//      (CLA_Top.bosta; MSTOP'tan onceki son yazmalar W'ye kadar akar), zaman asimi var,
 //    * CLA->CPU mesaj RAM'inden (0x1480-0x14FF) sonucu okuyup geri yollar.
 //  Bayt akisi disaridan gelir/gider: UART (cla_uart_kopru, A yolu) ya da
 //  ARM'in AXI-Lite kapisi (cla_axi_kopru, B yolu). Paket kurallari ayni.
@@ -20,7 +21,8 @@
 //  tip 00 YANKI : veri aynen geri doner (baglanti testi)
 //      01 YAZ   : veri = ofs, k kelime -> M2C[ofs..]; cevap bos
 //      02 ADIM  : veri = ofs, n, k kelime -> M2C'ye yaz, gorev 1'i kostur,
-//                 cevap = C2M[0..n-1] + gorevin cevrim sayisi (32 bit)
+//                 cevap = C2M[0..n-1] + gorevin cevrim sayisi (32 bit): ilk getirmeden
+//                 boru hatti bosalana kadar (golden'in gorev suresiyle ayni: core.ClaCore.run)
 //      03 OKU   : veri = ofs, n -> cevap = C2M[ofs..ofs+n-1]
 //      04 SIFIRLA: veri bos -> cla_rst_n 16 cevrim 0 (takilan gorevi kurtarir); cevap bos
 //      7F HATA  : (cevap) veri = kod: 1 saglama, 2 tip, 3 zaman asimi, 4 uzunluk
@@ -52,7 +54,8 @@ module cla_kopru_cekirdek #(
     output logic [2:0]  cpu_reg_addr,     // 4: MIFRC, 5: MIER
     output logic [15:0] cpu_wr_data,
     input  logic [15:0] mirun,
-    output logic        cla_rst_n,        // cla_ctrl_regs ve cekirdegin resetine AND'lenir
+    input  logic        cla_bosta,        // CLA_Top.bosta: gorev yok, boru hatti bos
+    output logic        cla_rst_n,        // CLA'nin resetine AND'lenir
     // izleme (LED)
     output logic [3:0]  durum             // {cla mesgul, hata, tx, rx}
 );
@@ -75,7 +78,7 @@ module cla_kopru_cekirdek #(
     // ------------------------------------------------------------ durum makinesi
     typedef enum logic [3:0] {
         S_BASLIK, S_TIP, S_UZUN, S_VERI, S_SAGLAMA, S_KOMUT,
-        S_YAZ, S_MIER, S_MIFRC, S_BEKLE_BASLA, S_BEKLE_BIT, S_CEVAP, S_SIFIR
+        S_YAZ, S_MIER, S_MIFRC, S_BEKLE_BASLA, S_BEKLE_BIT, S_BOSALT, S_CEVAP, S_SIFIR
     } durum_t;
     durum_t d;
 
@@ -190,9 +193,14 @@ module cla_kopru_cekirdek #(
                     else if (zaman == 32'(ZAMAN_ASIMI)) `HATA_VER(8'd3)
                     else zaman <= zaman + 1;
                 end
-                S_BEKLE_BIT: begin
-                    if (!mirun[0]) begin
-                        c_ofs <= '0; c_n <= n;
+                S_BEKLE_BIT: begin                                  // MIRUN MSTOP D2'deyken duser
+                    if (!mirun[0]) begin cevrim <= cevrim + 1; d <= S_BOSALT; end
+                    else if (zaman == 32'(ZAMAN_ASIMI)) `HATA_VER(8'd3)
+                    else begin zaman <= zaman + 1; cevrim <= cevrim + 1; end
+                end
+                S_BOSALT: begin                                     // son buyruklar W'ye kadar akar
+                    if (cla_bosta) begin
+                        cevrim <= cevrim + 1; c_ofs <= '0; c_n <= n;
                         `CEVAP_BASLAT(T_ADIM, {n[6:0], 1'b0} + 8'd4, 2'd1)
                     end else if (zaman == 32'(ZAMAN_ASIMI)) `HATA_VER(8'd3)
                     else begin zaman <= zaman + 1; cevrim <= cevrim + 1; end
