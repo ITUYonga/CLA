@@ -160,8 +160,9 @@ def _sure(us):
 
 
 # =================================================================== CLA sayfasi
-# projede olculmus sonuclar (bkz. dogrulama/, test_kontrolcu.py)
-DOGRULAMA = ["ALU RTL ↔ golden: 289 648 vektör, 0 hata",
+# projede olculmus sonuclar (golden_model/test_karsilastirici.py, fpga_kopru/tb/kopru_testi.py, test_kontrolcu.py)
+DOGRULAMA = ["RTL ↔ golden: 10 000 program, 0 fark",
+             "köprü+CLA ↔ golden: 900 adım, 0 fark",
              "CLA programı ↔ Python ref.: 2000 adım, ≤1,5e-6"]
 YAZI = (226, 233, 240)
 SOLUK = (140, 156, 172)
@@ -302,7 +303,7 @@ def cla_sayfasi(e, x, y, w, f, iz, olcum, oynat_cevrim):
     _kart(e, (x, y, w, h), "DOĞRULAMA  ·  golden model referans", f["kucuk"])
     if olcum.get("fark") is not None:
         renk = YESIL if olcum["fark"] == 0 and not olcum.get("cevrim_farki") else KIRMIZI
-        metin = "canlı: golden ↔ FPGA %d adım, %d fark" % (olcum["adim"], olcum["fark"])
+        metin = "canlı: golden ↔ %s %d adım, %d fark" % (olcum.get("karsi_taraf", "FPGA"), olcum["adim"], olcum["fark"])
         if olcum.get("cevrim_farki"):
             metin += ", %d çevrim farkı" % olcum["cevrim_farki"]
     else:

@@ -8,6 +8,8 @@
 //    +CEVAP=<dosya>   her istegin cevabi ayni bicimde
 //    PROG parametresi: L3 programi (kv260_b_top PROGRAM_HEX), Verilator: -GPROG='"yol"'
 //  kopru_testi.py bu tezgahi derler, isteklerini uretir ve cevaplari golden'la karsilastirir.
+//  ISTEK ve CEVAP adlandirilmis boru (FIFO) da olabilir: her cevap hemen yazilir (fflush);
+//  drone simulasyonu boylece RTL'le canli calisir (uygulama/drone_sim/sanal_fpga.py RtlFpga).
 // =====================================================================
 module tb_kopru_cla #(parameter string PROG = "");
 
@@ -90,6 +92,7 @@ module tb_kopru_cla #(parameter string PROG = "");
             $fwrite(fo, "%0d", alinan);
             for (i = 0; i < alinan; i++) $fwrite(fo, " %h", gelen[i]);
             $fwrite(fo, "\n");
+            $fflush(fo);
         end
         $fclose(fi);
         $fclose(fo);

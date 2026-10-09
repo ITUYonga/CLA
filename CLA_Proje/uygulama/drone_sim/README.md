@@ -12,7 +12,7 @@
 CLA görevi 120 buyruk, **her adımda 160 çevrim** (100 MHz'de 1,6 µs). Her iç adımda 8 değer
 gider (jiroskop, ivmeölçer x/z, θ_d, T_v, ölçülen ivme x/y, KORU), 4 değer döner (F_L, F_R, T,
 kestirilen θ). `--sensor ideal` ile açıyı doğrudan ölçen eski iç döngü (`ic_dongu.casm`, 45 buyruk,
-59 çevrim) kullanılır. FPGA tarafı: `../uart_kopru/README.md`.
+59 çevrim) kullanılır. FPGA tarafı: `../../fpga_kopru/b_yolu/README.md`.
 
 ## Çalıştırma
 
@@ -20,8 +20,9 @@ macOS'ta `sim.command`'a çift tıklayın, ya da:
 
 ```
 .venv/bin/python sim.py                     # golden, 8 kademeli boru hattı (çevrim doğru)
-.venv/bin/python sim.py --kontrolcu fpga  --port /dev/tty.usbserial-XXXX   # iç döngü KV260'taki CLA'da
-.venv/bin/python sim.py --kontrolcu ikisi --port /dev/tty.usbserial-XXXX   # FPGA sürer, golden bit bit karşılaştırır
+.venv/bin/python sim.py --kontrolcu fpga  --port auto   # iç döngü KV260'taki CLA'da
+.venv/bin/python sim.py --kontrolcu ikisi --port auto   # FPGA sürer, golden çıktıyı ve çevrimi bit bit karşılaştırır
+.venv/bin/python sim.py --kontrolcu rtl     # kart yok: karttaki RTL'in Verilator simülasyonu sürer, golden karşılaştırır
 .venv/bin/python sim.py --kontrolcu sanal   # kart yok: sanal KV260 (pty) + golden
 .venv/bin/python sim.py --ic-hz 100         # iç döngü 100 Hz (kazançlar o hıza göre)
 .venv/bin/python sim.py --govde eski        # ilk sürümdeki 1 kg, motoru 35 ms'lik gövde
@@ -30,12 +31,13 @@ macOS'ta `sim.command`'a çift tıklayın, ya da:
 
 **Ağır çekim:** simülasyon zamanı duvar saatinden bağımsız; her iç adım fiziği tam 2 ms
 ilerletir. CLA'ya giden yol (USB) adıma yetişemezse simülasyon yavaşlar, sonuç değişmez;
-ekranda "AĞIR ÇEKİM ×…" yazar. Sanal KV260'ta gidiş-dönüş ~1,6 ms (500 Hz'e yetişiyor);
-gerçek USB-TTL'de dönüştürücüye bağlı (`../uart_kopru/kart_testi.py` ölçer). Üst üste 3
-UART hatasında simülasyon duraklar.
+ekranda "AĞIR ÇEKİM ×…" yazar. Sanal KV260'ta ve `rtl` kipinde adım ~1,6 ms (500 Hz'e
+yetişiyor); kartta KV260'ın micro-USB'sine (FTDI) ve işletim sisteminin sürücüsüne bağlı, panelde
+"UART gidiş-dönüş" olarak görünür. Üst üste 3 UART hatasında simülasyon duraklar.
 
-`ikisi` modunda panelde **golden≠FPGA** sayacı (yeşil 0 = RTL golden'la bit bit aynı) ve
-çevrim farkı görünür.
+`ikisi` ve `rtl` kiplerinde panelde **golden≠FPGA** sayacı (yeşil 0 = RTL golden'la bit bit aynı)
+ve çevrim farkı görünür. Çevrim, kartta köprünün sayacından gelir: ilk getirmeden boru hattı
+boşalana kadar, golden'la aynı tanım.
 
 İlk kurulum (yalnız bir kez):
 
@@ -44,7 +46,26 @@ python3.11 -m venv --system-site-packages .venv
 .venv/bin/pip install pygame-ce pyserial
 ```
 
-Golden model `../../golden_model`'den okunur; başka yerdeyse `CLA_GOLDEN=/yol` verin.
+Golden model `../../golden_model/core.py`'den okunur; başka yerdeyse `CLA_GOLDEN=/yol` verin.
+`--kontrolcu rtl` için Verilator 5 gerekir (RTL açılışta birkaç saniyede derlenir).
+
+## KV260 ile (CLA FPGA'da)
+
+CLA programı bitstream'e gömülür; simülasyonun seçtiği programla aynı olmalı:
+
+| Simülasyon | CLA programı | Bitstream (`fpga_kopru` klasöründen) |
+|---|---|---|
+| `sim.py` (varsayılan, `--sensor gercek`) | `ic_kestirim.casm`, 160 çevrim | `vivado -mode batch -source b_yolu/vivado_olustur.tcl -tclargs 4` |
+| `sim.py --sensor ideal` | `ic_dongu.casm`, 59 çevrim | `... -tclargs 4 ../uygulama/drone_sim/ic_dongu_l3.hex` |
+
+1. Program değiştiyse L3 dosyasını yeniden üretin: `.venv/bin/python l3_uret.py` (`--mimari ic` ideal sensör için).
+2. Bitstream'i üretip karta yükleyin: `../../fpga_kopru/b_yolu/README.md` adım 1–4.
+3. Kartı golden'la birlikte sürün: `.venv/bin/python sim.py --kontrolcu ikisi --port auto`.
+4. Panelde golden≠FPGA ve çevrim farkı 0 kalıyorsa yalnız kartla uçun: `--kontrolcu fpga --port auto`.
+
+Açılışta `FpgaKontrolcu` karttaki programı denetler (bir ADIM, çevrim sayısı programı belirler).
+Yanlış bitstream sessizce yanlış kuvvet üretmez; simülasyon açılmadan hangi programın yüklü olduğunu
+ve hangi komutun gerektiğini yazar.
 
 ## Kontroller
 
@@ -137,9 +158,9 @@ Sınırlar: tek eksen (yunuslama), PD iç döngü, bozucu ve gürültü modeller
 | `ic_dongu.casm` | İdeal sensörlü iç döngü (45 buyruk, 59 çevrim); `--sensor ideal` |
 | `cpu_dongu.py` | Simülasyonun CPU'su: dış döngü (konum PID), iki hızlı zamanlayıcı `Zincir`, iç döngünün float64 aynası |
 | `paket.py` | Mesaj RAM sözleşmesi; `ICK` (varsayılan), `IC` (ideal sensör), `TEK` (ilk sürüm) düzenleri, kazanç tablosu |
-| `kontrolcu.py` | CLA arka uçları: `GoldenKontrolcu`, `FpgaKontrolcu` (UART), `IkiliKontrolcu` (karşılaştırma) |
-| `uart_protokol.py` | PC ↔ KV260 paket biçimi (`../uart_kopru/rtl/cla_uart_kopru.sv` ile aynı) |
-| `sanal_fpga.py` | Kart yokken: pty üzerinde köprüyü taklit eden sanal KV260 |
+| `kontrolcu.py` | CLA arka uçları: `GoldenKontrolcu`, `FpgaKontrolcu` (UART; açılışta karttaki programı denetler), `IkiliKontrolcu` (çıktı + çevrim karşılaştırması) |
+| `uart_protokol.py` | PC ↔ KV260 paket biçimi (`../../fpga_kopru/rtl/cla_kopru_cekirdek.sv` ile aynı) |
+| `sanal_fpga.py` | Kart yokken: pty üzerinde sanal KV260; içinde golden (`sanal`) ya da karttaki RTL'in Verilator simülasyonu (`rtl`) |
 | `cla_vitrin.py` | CLA paneli ve "CLA nedir?" ekranı (boru hattı izi golden'dan, ölçüm grafiği json'dan) |
 | `dongu_hizi.py` | İç döngü hızı deneyi (bant genişliği, rüzgâr, darbe; iki gövde) |
 | `l3_uret.py` | CLA programı → `ic_kestirim_l3.hex` (`--mimari ic` / `tek`: diğerleri), `$readmemh`, lint'ten geçerse |
@@ -157,7 +178,7 @@ Sayılar ölçümden gelir, elle yazılmaz:
 - **Determinizm:** her adımın CLA çevrim histogramı (hep 160, sapma 0) ile PC/UART süresi (değişken).
 - **Paralellik:** golden boru hattından çıkarılan iz; 8 kademede hangi buyruğun olduğu canlı
   oynar, durmalar kırmızı (35 FPU, 2 bellek). Ortalama 7,4 buyruk aynı anda; boru hattısız 960 çevrim olurdu.
-- **Doğrulama:** `ikisi` modunda canlı golden ↔ FPGA farkı, ALU ve program doğrulama sonuçları.
+- **Doğrulama:** `ikisi` / `rtl` kipinde canlı golden ↔ FPGA (RTL) farkı; RTL, köprü ve program doğrulama sonuçları.
 - **"CLA nedir?":** CPU (dış döngü) / CLA (iç döngü) iş bölümü; bir dış döngü periyodunda
   CLA'sız (iç döngü 10 kez CPU'yu keser) ve CLA'lı zaman çizelgesi; "neden 500 Hz" ölçümü;
   bu demoda kimin ne yaptığı; dört ana sayı.

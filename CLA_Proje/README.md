@@ -57,7 +57,7 @@ python3 golden_model/test_karsilastirici.py prog_kayit.hex          # golden ile
 - **Kayıt (`prog_kayit.hex`) içeriği:** girişin kendisi, her saat çevrimi için bir satır ve görev sonu bellek/yazmaçlar.
   - Satır alanları: E'deki buyruk, MPC, MR0–3, MAR0–1, MSTF, bellek yazması ve 8 kontrol sinyali (E geçerli, dur_exe, dur_r1, dal alındı, K2 yazması, MSTOP, görev başlıyor, donma).
 - **Karşılaştırıcı:** Yalnız bu dosyayı alır, aynı girişle golden'ı koşturur, aynı biçimde `prog_kayit_golden.hex` yazar ve satır satır karşılaştırır. İki dosya eşleşirse `diff` ile de aynıdır.
-- **Tezgâhı derlemek:** `golden_model/tb_cla_kayit.sv` başındaki komut. Çalışma klasörüne `rtl/alu/estimate_lut.hex` kopyalanır.
+- **Tezgâhı derlemek:** `golden_model/tb_cla_kayit.sv` başındaki komut. Yeniden derlemeden önce `obj_kayit` silinir (ALU klasör adındaki boşluk eski bağımlılık dosyasında `make`'i bozar). Çalışma klasörüne `rtl/alu/estimate_lut.hex` kopyalanır.
 
 ## Doğrulama durumu
 

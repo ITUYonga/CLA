@@ -5,10 +5,12 @@ Simulasyon yalniz `Kontrolcu.adim(girdiler) -> ciktilar` arayuzunu bilir.
 Girdi ve cikti float32 BITLERIDIR (int); boylece golden ile FPGA'nin
 cevaplari bit bit karsilastirilabilir.
 
-    GoldenKontrolcu : kontrolcu.casm, CLA'nin golden modelinde kosar.
-    FpgaKontrolcu   : ayni degerler UART ile KV260'a gider (uart_protokol.py);
-                      kart yokken sanal_fpga.SanalFpga'ya da baglanabilir.
-    IkiliKontrolcu  : ikisini birden kosturur, ciktilari bit bit karsilastirir.
+    GoldenKontrolcu : duzenin CLA programi (varsayilan ic_kestirim.casm) golden modelde
+                      (../../golden_model/core.py) kosar.
+    FpgaKontrolcu   : ayni degerler UART ile KV260'a gider (uart_protokol.py); kartta
+                      fpga_kopru (kopru + CLA_Top), program bitstream'e gomulu. Kart
+                      yokken sanal_fpga.SanalFpga'ya da baglanabilir.
+    IkiliKontrolcu  : ikisini birden kosturur; ciktilari ve cevrim sayisini bit bit karsilastirir.
 """
 import os
 import sys
@@ -102,6 +104,23 @@ class GoldenKontrolcu(Kontrolcu):
         return [self.mem.read32(adr) for _, adr, _ in self.duzen.ciktilar]
 
 
+class ProgramUyusmazligi(U.ProtokolHatasi):
+    """Karttaki CLA programi secilen duzenle ayni degil (yanlis bitstream)."""
+
+
+_beklenen = {}
+
+
+def beklenen_cevrim(duzen):
+    """Duzenin CLA gorevinin cevrim sayisi (golden boru hatti). Programlar dalsiz: her adimda ayni,
+    ve kart (fpga_kopru) ayni tanimla sayar: ilk getirmeden boru hatti bosalana kadar."""
+    if duzen.ad not in _beklenen:
+        g = GoldenKontrolcu(duzen=duzen, model="boru")
+        g.adim([paket.f2b(v) for v in duzen.ornek])
+        _beklenen[duzen.ad] = g.cevrim
+    return _beklenen[duzen.ad]
+
+
 def _bitisik(liste, taban):
     """Sembol listesi ardisik 32 bitlik adreslerde mi? -> ilk ofset."""
     adr = [x[1] for x in liste]
@@ -136,13 +155,14 @@ def kv260_bul(baud=921600, sure=0.4):
 
 
 class FpgaKontrolcu(Kontrolcu):
-    """KV260'taki CLA, UART koprusu uzerinden (uart_kopru/rtl/cla_uart_kopru.sv).
+    """KV260'taki CLA: micro-USB -> ARM aktarici -> fpga_kopru (cla_kopru_cekirdek + CLA_Top).
 
-    port: '/dev/tty.usbserial-XXXX' (macOS), 'COM5' (Windows) ya da
-    sanal_fpga'nin pty yolu. Her adim tek ADIM paketi: girdiler M2C'ye,
-    gorev 1 kosar, ciktilar ve gorevin cevrim sayisi doner."""
+    port: 'auto' (KV260'i kendisi bulur), '/dev/cu.usbserial-XXXX' (macOS), 'COM5' (Windows)
+    ya da sanal_fpga'nin pty yolu. Her adim tek ADIM paketi: girdiler M2C'ye, gorev 1 kosar,
+    ciktilar ve gorevin cevrim sayisi doner. CLA programi bitstream'e gomulu oldugu icin
+    acilista denetlenir (program_denetle): yanlis bitstream anlasilir bir hatayla durur."""
 
-    def __init__(self, port, baud=921600, duzen=None, degisen=None, zaman_asimi=0.25, pty=False):
+    def __init__(self, port, baud=921600, duzen=None, degisen=None, zaman_asimi=0.25, pty=False, denetle=True):
         import serial
         if port == "auto":
             port = kv260_bul(baud)
@@ -162,6 +182,36 @@ class FpgaKontrolcu(Kontrolcu):
         if self.istek(U.yanki_istegi(b"CLA"), U.YANKI) != b"CLA":
             raise U.ProtokolHatasi("yanki yanlis dondu")
         self.parametreleri_yukle(degisen)
+        self.denetim_girdisi = None
+        if denetle:
+            self.program_denetle()
+
+    def program_denetle(self):
+        """Karttaki program secilen duzenin programi mi? Ornek girdiyle bir ADIM: cevrim sayisi
+        programi belirler (ick 160, ic 59, tek 207). Sonraki ilk adimda KORU = 0 kestirimi sifirlar;
+        IkiliKontrolcu ayni adimi golden'a da kosturur (denetim_girdisi)."""
+        beklenen = beklenen_cevrim(self.duzen)
+        self.denetim_girdisi = [paket.f2b(v) for v in self.duzen.ornek]
+        self.adim(self.denetim_girdisi)
+        if self.cevrim == beklenen:
+            return
+        hex_adi = lambda d: os.path.splitext(os.path.basename(d.casm))[0] + "_l3.hex"      # noqa: E731
+        secim = {"ick": "sim.py --sensor gercek (varsayilan)", "ic": "sim.py --sensor ideal"}
+        aday = [d for d in paket.DUZENLER.values() if d is not self.duzen and beklenen_cevrim(d) == self.cevrim]
+        ipucu, uret = "", "Bitstream'i"
+        if aday:
+            ipucu = "\n  Karttaki program buyuk olasilikla '%s' (%s)" % (aday[0].ad, hex_adi(aday[0]))
+            if aday[0].ad in secim:
+                ipucu += "; simulasyonda onu secin: %s" % secim[aday[0].ad]
+                uret = "Ya da bitstream'i"
+            else:
+                ipucu += "; sim.py bu programi kullanmaz"
+        raise ProgramUyusmazligi(
+            "Karttaki CLA programi '%s' (%s) degil: kart %d cevrim, beklenen %d.%s\n"
+            "  %s bu programla uretin (fpga_kopru klasorunden):\n"
+            "    vivado -mode batch -source b_yolu/vivado_olustur.tcl -tclargs 4 ../uygulama/drone_sim/%s"
+            % (self.duzen.ad, os.path.basename(self.duzen.casm), self.cevrim, beklenen, ipucu, uret,
+               hex_adi(self.duzen)))
 
     def istek(self, bayt, tip):
         self.ser.reset_input_buffer()       # gec gelmis eski cevap yenisiyle karismasin
@@ -199,6 +249,8 @@ class IkiliKontrolcu(Kontrolcu):
     def __init__(self, fpga, golden):
         self.fpga, self.golden = fpga, golden
         self.duzen = golden.duzen
+        if getattr(fpga, "denetim_girdisi", None):         # acilis denetim adimi: golden da ayni adimi kossun
+            golden.adim(fpga.denetim_girdisi)
         self.ad = "%s + golden" % fpga.ad
         self.fark_sayisi, self.son_fark = 0, None
         self.cevrim_farki = 0 if golden.model in ("boru", "hizli") else None

@@ -8,6 +8,7 @@ golden'la (core.py, boru hatti modeli) bit bit karsilastirilir.
 """
 import os
 import random
+import shutil
 import subprocess
 import sys
 
@@ -33,6 +34,7 @@ KAYNAK = ([os.path.join(RTL, "kontrol", f) for f in ("cla_pkg.sv", "cla_decoder.
 
 def derle(l3_hex, ad):
     obj = os.path.join(BURASI, "obj_" + ad)
+    shutil.rmtree(obj, ignore_errors=True)  # yeniden derleme: eski bagimlilik dosyasi "kayan_nokta birimi"deki boslukta make'i bozuyor
     komut = ["verilator", "--binary", "--timing", "-Wno-fatal", "-Wno-lint", "-Wno-style", "--top-module", "tb_kopru_cla",
              "-GPROG=\"%s\"" % l3_hex, "-Mdir", obj] + KAYNAK
     r = subprocess.run(komut, capture_output=True, text=True)
@@ -42,13 +44,18 @@ def derle(l3_hex, ad):
     return os.path.join(obj, "Vtb_kopru_cla")
 
 
+def l3_hazirla(duzen):
+    """Duzenin programi -> tam L3 goruntusu (4096 x 16 bit), bu klasorde <ad>_l3_tam.hex."""
+    metin = open(duzen.casm, encoding="utf-8").read()
+    satirlar, _ = core.cevir(metin, 16, 4096, semboller=duzen.semboller())
+    l3 = os.path.join(BURASI, duzen.ad + "_l3_tam.hex")
+    open(l3, "w").write("\n".join(satirlar) + "\n")
+    return l3
+
+
 def test(mimari, adim, tohum=1):
     duzen = paket.DUZENLER[mimari]
-    metin = open(duzen.casm, encoding="utf-8").read()
-    satirlar, _ = core.cevir(metin, 16, 4096, semboller=duzen.semboller())   # tam L3 (4096 x 16 bit)
-    l3 = os.path.join(BURASI, mimari + "_l3_tam.hex")
-    open(l3, "w").write("\n".join(satirlar) + "\n")
-    tb = derle(l3, mimari)
+    tb = derle(l3_hazirla(duzen), mimari)
 
     golden = GoldenKontrolcu(duzen=duzen, model="boru")
     girdi_ofs = _bitisik(duzen.girdiler, U.M2C_TABAN)

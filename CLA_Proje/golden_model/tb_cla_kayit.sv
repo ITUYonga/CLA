@@ -11,6 +11,8 @@
 //    python3 test_karsilastirici.py prog_kayit.hex            -> golden ile cevrim cevrim karsilastirma
 //
 //  Derleme (Verilator 5, CLA_Proje klasorunden):
+//    (yeniden derlemeden once obj_kayit silinir: ALU klasor adindaki bosluk eski bagimlilik dosyasinda make'i bozar)
+//    $ rm -rf obj_kayit
 //    $ verilator --binary --timing -Wno-fatal -Wno-lint -Wno-style --top-module tb_cla_kayit -Mdir obj_kayit \
 //      rtl/kontrol/cla_pkg.sv rtl/kontrol/cla_decoder.sv rtl/kontrol/cla_ctrl_gen.sv rtl/kontrol/cla_gorev_denetci.sv \
 //      rtl/yazmac_bellek/cla_data_ram.sv rtl/yazmac_bellek/cla_mvect_regs.sv \

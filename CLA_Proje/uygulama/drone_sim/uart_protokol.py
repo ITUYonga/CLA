@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""PC <-> KV260 UART paket bicimi (uart_kopru/rtl/cla_uart_kopru.sv ile ayni).
+"""PC <-> KV260 paket bicimi (fpga_kopru/rtl/cla_kopru_cekirdek.sv ile ayni; kartta micro-USB ->
+ARM aktarici -> AXI4-Lite -> kopru -> CLA_Top).
 
     istek : A5 | tip | uzunluk | veri[uzunluk] | saglama
     cevap : 5A | tip | uzunluk | veri[uzunluk] | saglama
@@ -12,6 +13,7 @@ kelime cinsinden: M2C 0x1500 + ofs, C2M 0x1480 + ofs.
     YANKI 00  veri aynen doner
     YAZ   01  ofs, k kelime          -> M2C[ofs..]           cevap bos
     ADIM  02  ofs, n, k kelime       -> M2C'ye yaz, gorev 1  cevap C2M[0..n-1] + cevrim(32)
+                                        cevrim: ilk getirmeden boru hatti bosalana kadar (golden'la ayni)
     OKU   03  ofs, n                 ->                      cevap C2M[ofs..ofs+n-1]
     SIFIRLA 04 (bos)                 -> CLA tarafi 16 cevrim reset            cevap bos
     HATA  7F  (yalniz cevap) kod: 1 saglama, 2 bilinmeyen tip, 3 zaman asimi, 4 uzunluk

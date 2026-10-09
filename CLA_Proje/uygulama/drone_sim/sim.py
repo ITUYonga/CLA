@@ -9,12 +9,14 @@ Govde: ~450 g yaris sinifi (fizik.py).
 
     .venv/bin/python sim.py                 # golden (boru hatti) kontrolcu
     .venv/bin/python sim.py --model ardisik # golden, ardisik model (daha hizli)
-    .venv/bin/python sim.py --kontrolcu fpga --port /dev/tty.usbserial-XXXX
-                                            # KV260'taki CLA, UART uzerinden
-    .venv/bin/python sim.py --kontrolcu ikisi --port ...
-                                            # drone'u FPGA surer, golden ile bit bit karsilastir
+    .venv/bin/python sim.py --kontrolcu fpga --port auto
+                                            # KV260'taki CLA (micro-USB, fpga_kopru); program bitstream'de
+    .venv/bin/python sim.py --kontrolcu ikisi --port auto
+                                            # drone'u FPGA surer, golden ile bit bit + cevrim karsilastirir
     .venv/bin/python sim.py --kontrolcu sanal
                                             # kart yok: sanal KV260 (pty) + golden
+    .venv/bin/python sim.py --kontrolcu rtl # kart yok: karttaki RTL'in Verilator simulasyonu
+                                            # (kopru + CLA_Top), golden ile bit bit + cevrim karsilastirir
 
 Fare (sol tus basili): hedef | sag tus: burada asili kal
 Sol/Sag ok: ortalama ruzgar | T: turbulans | G: ani esinti | Y: yuk (+0.15 kg)
@@ -31,6 +33,7 @@ import time
 import pygame
 
 import paket
+import uart_protokol as U
 from fizik import Drone, DroneParam, Ruzgar, G
 from kontrolcu import GoldenKontrolcu, FpgaKontrolcu, IkiliKontrolcu
 from cpu_dongu import Zincir
@@ -351,13 +354,19 @@ def kontrolcu_kur(tur, model, port=None, baud=921600, degisen=None, D=None):
     if tur == "golden":
         return GoldenKontrolcu(duzen=D, model=model, degisen=degisen), None
     sanal = None
+    if tur == "rtl":                        # kart yerine RTL simulasyonu, golden canli karsilastirir
+        from sanal_fpga import RtlFpga
+        sanal = RtlFpga(baud=baud, duzen=D)
+        fpga = FpgaKontrolcu(sanal.yol, baud, duzen=D, degisen=degisen, pty=True)
+        fpga.ad = "RTL simülasyonu (Verilator)"
+        return IkiliKontrolcu(fpga, GoldenKontrolcu(duzen=D, model="hizli", degisen=degisen)), sanal
     if tur == "sanal" or (tur == "ikisi" and not port):
         from sanal_fpga import SanalFpga
-        sanal = SanalFpga(cekirdek="golden", model="hizli", baud=baud, duzen=D)
+        sanal = SanalFpga(model="hizli", baud=baud, duzen=D)
         fpga = FpgaKontrolcu(sanal.yol, baud, duzen=D, degisen=degisen, pty=True)
         fpga.ad = "sanal KV260 (pty)"
     elif not port:
-        raise SystemExit("--kontrolcu fpga icin --port gerekli (or. /dev/tty.usbserial-XXXX)")
+        raise SystemExit("--kontrolcu fpga icin --port gerekli: auto ya da /dev/cu.usbserial-XXXX")
     else:
         fpga = FpgaKontrolcu(port, baud, duzen=D, degisen=degisen)
     if tur == "ikisi":
@@ -607,11 +616,16 @@ class Uygulama(object):
             cla_vitrin.cla_nedir(e, VIEW_W, H, f, self.boru_izi, self.olcum())
         self.panel()
 
+    def cevrim_kaynagi(self):
+        if self.sanal is None:
+            return "FPGA donanım sayacı"
+        return "RTL köprü sayacı" if type(self.sanal).__name__ == "RtlFpga" else "sanal KV260, golden"
+
     def olcum(self):
         k = self.kontrolcu
         uart = k.tur_ms is not None
         o = {"cevrimler": list(self.olc_cevrim), "pc_ms": list(self.olc_pc_ms), "adim": self.adim_sayisi,
-             "kaynak": ("sanal KV260, golden" if self.sanal else "FPGA donanım sayacı") if uart else "golden model",
+             "kaynak": self.cevrim_kaynagi() if uart else "golden model",
              "pc_ad": "UART gidiş-dönüş" if uart else "PC'de golden taklidi",
              "pc_kisa": "USB/UART: değişken" if uart else "Python: değişken",
              "fark": None, "cevrim_farki": None,
@@ -619,6 +633,7 @@ class Uygulama(object):
              "kestirimli": self.zincir.kestirimli}
         if isinstance(k, IkiliKontrolcu):
             o["fark"], o["cevrim_farki"] = k.fark_sayisi, k.cevrim_farki
+            o["karsi_taraf"] = "RTL" if type(self.sanal).__name__ == "RtlFpga" else "FPGA"
         return o
 
     def ruzgar_gostergesi(self):
@@ -809,9 +824,10 @@ class Uygulama(object):
 
 def main():
     ap = argparse.ArgumentParser(description="CLA drone simülasyonu")
-    ap.add_argument("--kontrolcu", choices=("golden", "fpga", "ikisi", "sanal"), default="golden",
-                    help="golden: Python modeli | fpga: KV260 (UART) | ikisi: FPGA sürer, golden "
-                         "karşılaştırır | sanal: kart yok, pty üzerinde sanal KV260")
+    ap.add_argument("--kontrolcu", choices=("golden", "fpga", "ikisi", "sanal", "rtl"), default="golden",
+                    help="golden: Python modeli | fpga: KV260 | ikisi: FPGA sürer, golden karşılaştırır | "
+                         "sanal: kart yok, pty üzerinde sanal KV260 | rtl: kart yok, karttaki RTL'in "
+                         "Verilator simülasyonu, golden karşılaştırır")
     ap.add_argument("--port", help="seri port (/dev/cu.usbserial-..., COM5) ya da 'auto': KV260'ı kendisi bulur")
     ap.add_argument("--baud", type=int, default=921600)
     ap.add_argument("--model", choices=("boru", "hizli", "ardisik"), default="boru",
@@ -827,7 +843,10 @@ def main():
     a = ap.parse_args()
     govde = DroneParam() if a.govde == "yaris" else DroneParam.eski_1kg()
     D = paket.ICK if a.sensor == "gercek" else paket.IC
-    kontrolcu, sanal = kontrolcu_kur(a.kontrolcu, a.model, a.port, a.baud, ic_parametreler(govde, a.ic_hz), D)
+    try:
+        kontrolcu, sanal = kontrolcu_kur(a.kontrolcu, a.model, a.port, a.baud, ic_parametreler(govde, a.ic_hz), D)
+    except (U.ProtokolHatasi, OSError) as e:  # kart/port yok, cevap yok, karttaki program farkli
+        raise SystemExit("KV260: %s" % e)
     Uygulama(kontrolcu, sanal, a.ic_hz, a.dis_hz, govde).calistir()
 
 
