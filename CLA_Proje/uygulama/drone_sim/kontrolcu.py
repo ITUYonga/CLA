@@ -50,14 +50,7 @@ class GoldenKontrolcu(Kontrolcu):
         kok = os.path.abspath(golden_kok)
         if kok not in sys.path:
             sys.path.insert(0, kok)
-        from golden_model.assembler import assemble
-        from golden_model.cla_state import ClaState
-        from golden_model.cla_memory import ClaMemory
-        from golden_model.cla_core import ClaCore
-        from golden_model.pipeline import Pipeline
-        from golden_model.cla_regs import ClaRegs
-        from golden_model.task_arbiter import TaskArbiter
-        from golden_model.lint import denetle, HATA
+        from core import assemble, ClaState, ClaMemory, ClaCore, Pipeline, ClaRegs, TaskArbiter, denetle, HATA
 
         self.duzen = duzen = duzen or paket.IC
         metin = open(duzen.casm, encoding="utf-8").read()

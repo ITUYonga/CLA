@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """CLA programi -> program RAM'i (L3) icin $readmemh dosyasi.
 
-Golden'in tools/casm2hex.py'si ile ayni yerlesim (16 bit/satir, LSW once);
+Golden'in (core.py) casm2hex bolumu ile ayni yerlesim (16 bit/satir, LSW once);
 paket.py sembolleri verilir ve once boru hatti lint'i kosar.
 
     .venv/bin/python -B l3_uret.py                       # ic_kestirim_l3.hex (16 bit, sensorlu)
@@ -28,9 +28,7 @@ def main():
     a = ap.parse_args()
 
     sys.path.insert(0, os.path.abspath(VARSAYILAN_GOLDEN))
-    sys.path.insert(0, os.path.join(os.path.abspath(VARSAYILAN_GOLDEN), "tools"))
-    from casm2hex import cevir
-    from golden_model.lint import denetle, HATA
+    from core import cevir, denetle, HATA
 
     D = paket.DUZENLER[a.mimari]
     a.cikti = a.cikti or os.path.splitext(D.casm)[0] + "_l3.hex"

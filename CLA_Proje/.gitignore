@@ -13,4 +13,6 @@ dogrulama/cla_top/vektorler.txt
 dogrulama/cla_top/programlar.txt
 dogrulama/cla_top/rtl_*.txt
 dogrulama/cla_top/*.trace
+obj_kayit/
+*_kayit_golden.hex
 dogrulama/alu_vivado/alu_sentez/
