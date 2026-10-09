@@ -1,0 +1,16 @@
+.DS_Store
+__pycache__/
+*.pyc
+.venv/
+# dogrulama ciktilari
+dogrulama/cla_top/obj_*/
+dogrulama/cla_top/rtl_cikti/
+dogrulama/cla_top/rastgele/
+dogrulama/cla_top/yonlu/
+dogrulama/cla_top/estimate_lut.hex
+dogrulama/cla_top/*.pkl
+dogrulama/cla_top/vektorler.txt
+dogrulama/cla_top/programlar.txt
+dogrulama/cla_top/rtl_*.txt
+dogrulama/cla_top/*.trace
+dogrulama/alu_vivado/alu_sentez/

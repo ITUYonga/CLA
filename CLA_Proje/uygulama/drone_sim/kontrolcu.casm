@@ -1,0 +1,213 @@
+; =====================================================================
+;  kontrolcu.casm - 2B drone ucus denetleyicisi (CLA gorev 1)
+; ---------------------------------------------------------------------
+;  Her kontrol adiminda bir kez kosar. Girdiler CPU->CLA mesaj RAM'inde,
+;  ciktilar CLA->CPU mesaj RAM'inde; adresler paket.py'de.
+;
+;  0) KORU      : ix, iy *= KORU (1.0 koru, 0.0 sifirla). L1 FPGA'da
+;                 acilista belirsiz olabilir; ilk adim hep KORU = 0.
+;  1) konum PID : a_x = Kpx*ex - Kdx*vx + Kix*ix, sinirli
+;                 a_y = Kpy*ey - Kdy*vy + Kiy*iy, sinirli
+;                 integrator yalniz ivme sinira dayanmadiysa guncellenir,
+;                 ve drone neredeyse dururken (|v| < VZONE); girdisi +-EIMAX
+;                 (MCMPF32 + kosullu MMOV32: dalsiz anti-windup)
+;  2) egim      : th_d = -atan(a_x / (g + a_y))       (MEINVF32 + 2 Newton)
+;  3) itki      : T = m (g + a_y) / cos(th)           (MEINVF32 + 2 Newton)
+;  4) aci PD    : dF = KTAU * (Kpt*(th_d - th) - Kdt*w)
+;  5) motorlar  : F_R = T/2 + dF, F_L = T/2 - dF, [0, FMAX]
+;
+;  Kullanilan ALU birimleri: toplama/cikarma (K1/K2), carpma (K1/K2),
+;  kestirim (MEINVF32), karsilastirma (MMINF32/MMAXF32/MNEGF32/MCMPF32).
+;  Dal yok: butun sinirlar MMINF32/MMAXF32 ile.
+; =====================================================================
+
+; ---------------- 0) integratorleri koru / sifirla ---------------------
+ MMOV32 MR0, @_KORU
+ MMOV32 MR1, @_IX
+ MMOV32 MR2, @_IY
+ MMPYF32 MR1, MR1, MR0
+ MMPYF32 MR2, MR2, MR0
+ MMOV32 @_IX, MR1
+ MMOV32 @_IY, MR2
+
+; ---------------- 1a) yatay: a_x ve integrator (kosullu) -------------
+ MMOV32 MR0, @_XR
+ MMOV32 MR1, @_X
+ MSUBF32 MR0, MR0, MR1          ; MR0 = ex
+ MMOV32 MR1, @_KPX
+ MMPYF32 MR1, MR0, MR1          ; Kpx*ex
+ MMOV32 MR2, @_IX
+ MMOV32 MR3, @_KIX
+ MMPYF32 MR2, MR2, MR3          ; Kix*ix (onceki ix)
+ MADDF32 MR1, MR1, MR2
+ MMOV32 MR2, @_VX
+ MMOV32 MR3, @_KDX
+ MMPYF32 MR2, MR2, MR3          ; Kdx*vx
+ MSUBF32 MR1, MR1, MR2          ; MR1 = a_x (sinirsiz)
+ MMOV32 MR3, MR1
+ MMOV32 MR2, @_AXMAX
+ MMINF32 MR3, MR2
+ MNEGF32 MR2, MR2
+ MMAXF32 MR3, MR2               ; MR3 = a_x in [-AXMAX, AXMAX]
+ MMOV32 @_S0, MR3               ; S0 = a_x
+ MMOV32 @_S5, MR1               ; S5 = a_x (sinirsiz)
+ MMOV32 MR1, MR0
+ MMOV32 MR2, @_EIMAX
+ MMINF32 MR1, MR2
+ MNEGF32 MR2, MR2
+ MMAXF32 MR1, MR2               ; e in [-EIMAX, EIMAX]
+ MMOV32 MR2, @_DT
+ MMPYF32 MR1, MR1, MR2          ; e*dt
+ MMOV32 MR2, @_IX
+ MADDF32 MR1, MR2, MR1          ; aday = ix + ex*dt
+ MMOV32 MR3, @_IMAXX
+ MMINF32 MR1, MR3
+ MNEGF32 MR3, MR3
+ MMAXF32 MR1, MR3               ; aday in [-IMAXX, IMAXX]
+ MMOV32 MR0, @_VX
+ MABSF32 MR0, MR0
+ MMOV32 MR3, @_VZONE
+ MCMPF32 MR0, MR3               ; NF = 0: |v| >= VZONE (hareket ediyor)
+ MMOV32 MR1, MR2, GEQ           ; hareket ederken integre etme
+ MMOV32 MR0, @_S5
+ MMOV32 MR3, @_S0
+ MCMPF32 MR0, MR3               ; ZF = 1: a_x sinira dayanmadi
+ MMOV32 MR2, MR1, EQ            ; yalniz o zaman integre et (anti-windup)
+ MMOV32 @_IX, MR2
+ MMOV32 @_OIX, MR2
+
+; ---------------- 1b) dikey: a_y, integrator, gy = g + a_y -------------
+ MMOV32 MR0, @_YR
+ MMOV32 MR1, @_Y
+ MSUBF32 MR0, MR0, MR1          ; MR0 = ey
+ MMOV32 MR1, @_KPY
+ MMPYF32 MR1, MR0, MR1
+ MMOV32 MR2, @_IY
+ MMOV32 MR3, @_KIY
+ MMPYF32 MR2, MR2, MR3
+ MADDF32 MR1, MR1, MR2
+ MMOV32 MR2, @_VY
+ MMOV32 MR3, @_KDY
+ MMPYF32 MR2, MR2, MR3
+ MSUBF32 MR1, MR1, MR2          ; MR1 = a_y (sinirsiz)
+ MMOV32 MR3, MR1
+ MMOV32 MR2, @_AYMAX
+ MMINF32 MR3, MR2
+ MMOV32 MR2, @_AYMIN
+ MMAXF32 MR3, MR2               ; MR3 = a_y in [AYMIN, AYMAX]
+ MMOV32 @_S1, MR3               ; S1 = a_y
+ MMOV32 @_S5, MR1               ; S5 = a_y (sinirsiz)
+ MMOV32 MR1, MR0
+ MMOV32 MR2, @_EIMAX
+ MMINF32 MR1, MR2
+ MNEGF32 MR2, MR2
+ MMAXF32 MR1, MR2               ; e in [-EIMAX, EIMAX]
+ MMOV32 MR2, @_DT
+ MMPYF32 MR1, MR1, MR2          ; e*dt
+ MMOV32 MR2, @_IY
+ MADDF32 MR1, MR2, MR1          ; aday = iy + ey*dt
+ MMOV32 MR3, @_IMAXY
+ MMINF32 MR1, MR3
+ MNEGF32 MR3, MR3
+ MMAXF32 MR1, MR3
+ MMOV32 MR0, @_VY
+ MABSF32 MR0, MR0
+ MMOV32 MR3, @_VZONE
+ MCMPF32 MR0, MR3               ; NF = 0: |v| >= VZONE (hareket ediyor)
+ MMOV32 MR1, MR2, GEQ           ; hareket ederken integre etme
+ MMOV32 MR0, @_S5
+ MMOV32 MR3, @_S1               ; a_y
+ MCMPF32 MR0, MR3
+ MMOV32 MR2, MR1, EQ            ; anti-windup
+ MMOV32 @_IY, MR2
+ MMOV32 @_OIY, MR2
+ MMOV32 MR1, @_G
+ MADDF32 MR0, MR3, MR1          ; gy = g + a_y
+ MMOV32 MR1, @_GYMIN
+ MMAXF32 MR0, MR1               ; gy >= GYMIN
+ MMOV32 @_S1, MR0               ; S1 = gy
+
+; ---------------- 2) th_d = -atan(a_x / gy) ---------------------------
+ MEINVF32 MR1, MR0              ; r ~ 1/gy (8 bit)
+ MMPYF32 MR2, MR0, MR1
+ MSUBF32 MR2, #2.0, MR2
+ MMPYF32 MR1, MR1, MR2          ; Newton 1
+ MMPYF32 MR2, MR0, MR1
+ MSUBF32 MR2, #2.0, MR2
+ MMPYF32 MR1, MR1, MR2          ; Newton 2: MR1 = 1/gy
+ MMOV32 MR0, @_S0               ; a_x
+ MMPYF32 MR0, MR0, MR1          ; u = a_x / gy
+ MMOV32 MR1, @_UMAX
+ MMINF32 MR0, MR1
+ MNEGF32 MR1, MR1
+ MMAXF32 MR0, MR1               ; u in [-UMAX, UMAX]
+ MMPYF32 MR1, MR0, MR0          ; u^2
+ MMOV32 MR2, @_C5
+ MMPYF32 MR2, MR2, MR1          ; u^2/5
+ MMOV32 MR3, @_C3
+ MSUBF32 MR2, MR2, MR3          ; u^2/5 - 1/3
+ MMPYF32 MR2, MR2, MR1
+ MADDF32 MR2, #1.0, MR2         ; 1 - u^2/3 + u^4/5
+ MMPYF32 MR0, MR0, MR2          ; atan(u)
+ MNEGF32 MR0, MR0               ; th_d = -atan(u)
+ MMOV32 MR1, @_THMAX
+ MMINF32 MR0, MR1
+ MNEGF32 MR1, MR1
+ MMAXF32 MR0, MR1               ; th_d in [-THMAX, THMAX]
+ MMOV32 @_S2, MR0               ; S2 = th_d
+ MMOV32 @_THD, MR0
+
+; ---------------- 3) T = m * gy / cos(th) -----------------------------
+ MMOV32 MR0, @_TH
+ MMPYF32 MR1, MR0, MR0          ; th^2
+ MMOV32 MR2, @_C24
+ MMPYF32 MR2, MR2, MR1          ; th^2/24
+ MADDF32 MR2, #-0.5, MR2        ; th^2/24 - 1/2
+ MMPYF32 MR2, MR2, MR1
+ MADDF32 MR2, #1.0, MR2         ; cos(th) ~ 1 - th^2/2 + th^4/24
+ MMOV32 MR3, @_CMIN
+ MMAXF32 MR2, MR3               ; cos >= CMIN
+ MEINVF32 MR3, MR2              ; r ~ 1/cos
+ MMPYF32 MR1, MR2, MR3
+ MSUBF32 MR1, #2.0, MR1
+ MMPYF32 MR3, MR3, MR1          ; Newton 1
+ MMPYF32 MR1, MR2, MR3
+ MSUBF32 MR1, #2.0, MR1
+ MMPYF32 MR3, MR3, MR1          ; Newton 2: MR3 = 1/cos
+ MMOV32 MR1, @_S1               ; gy
+ MMOV32 MR2, @_M
+ MMPYF32 MR1, MR1, MR2          ; m * gy
+ MMPYF32 MR1, MR1, MR3          ; T
+ MMOV32 @_T, MR1
+ MMOV32 @_S3, MR1               ; S3 = T
+
+; ---------------- 4) aci PD: dF ----------------------------------------
+ MMOV32 MR0, @_S2               ; th_d
+ MMOV32 MR1, @_TH
+ MSUBF32 MR0, MR0, MR1          ; e_th
+ MMOV32 MR1, @_KPT
+ MMPYF32 MR0, MR0, MR1          ; Kpt * e_th
+ MMOV32 MR1, @_W
+ MMOV32 MR2, @_KDT
+ MMPYF32 MR1, MR1, MR2          ; Kdt * w
+ MSUBF32 MR0, MR0, MR1          ; istenen aci ivmesi
+ MMOV32 MR1, @_KTAU
+ MMPYF32 MR0, MR0, MR1          ; dF = (F_R - F_L) / 2
+
+; ---------------- 5) motorlar ------------------------------------------
+ MMOV32 MR1, @_S3               ; T
+ MMPYF32 MR1, #0.5, MR1         ; T/2
+ MADDF32 MR2, MR1, MR0          ; F_R
+ MSUBF32 MR3, MR1, MR0          ; F_L
+ MMOV32 MR1, @_FMAX
+ MMINF32 MR2, MR1
+ MMINF32 MR3, MR1
+ MMOVIZ MR1, #0.0
+ MMAXF32 MR2, MR1
+ MMAXF32 MR3, MR1
+ MMOV32 @_FR, MR2
+ MMOV32 @_FL, MR3
+ MSTOP
+ MNOP
+ MNOP
+ MNOP

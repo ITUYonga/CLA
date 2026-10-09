@@ -1,0 +1,19 @@
+; 03_k2_mmacf32_toplama_kazanir
+; MMACF32'de MRd = MR3: toplayici carpiciyi yener, MR3 = 5.0; MRa (MR2) EXE'de yuklenir.
+; Uretim: python3.11 ../golden_beklenen.py 03_k2_mmacf32_toplama_kazanir.casm -o beklenen --golden <CLA_GoldenModel>
+;#veri 0x8800 0x41200000
+ MMOVIZ MR0, #2.0
+ MMOVIZ MR1, #3.0
+ MMOVIZ MR2, #4.0
+ MMOVIZ MR3, #1.0
+ MNOP
+ MNOP
+ MNOP
+ MMACF32 MR3, MR2, MR3, MR0, MR1 || MMOV32 MR2, @0x8800
+ MNOP
+ MNOP
+ MNOP
+ MSTOP
+ MNOP
+ MNOP
+ MNOP

@@ -1,0 +1,17 @@
+; 04_k2_paralel_yukleme
+; MMPYF32 || MMOV32: yukleme (MR3) EXE'de, carpim (MR0) bir cevrim sonra W'de.
+; Uretim: python3.11 ../golden_beklenen.py 04_k2_paralel_yukleme.casm -o beklenen --golden <CLA_GoldenModel>
+;#veri 0x8800 0x40400000
+ MMOVIZ MR1, #2.0
+ MMOVIZ MR2, #3.0
+ MNOP
+ MNOP
+ MNOP
+ MMPYF32 MR0, MR1, MR2 || MMOV32 MR3, @0x8800
+ MNOP
+ MNOP
+ MNOP
+ MSTOP
+ MNOP
+ MNOP
+ MNOP

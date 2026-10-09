@@ -1,0 +1,4 @@
+  lint: UYARI       S5.2-bayrak komut 4    (pc 0x008)  MCMPF32 bayrak degistiriyor ama komut 7'deki dallanmaya YETISMEZ (karar D2'de)
+                                          | MCMPF32 MR0, #1.0
+18_dal_onceki_3_bayrak_yetismez: 16 komut, 1 gorev kostu (MIRUN, cevrim): [(1, 19)] -> /Users/oguzhand/Desktop/CLA_ALL/ALU_teslim/golden_paket/boru_hatti_testleri/beklenen
+UYARI: 1 durmaya duyarli kalip (S5.2-bayrak / S5.3-mar). Golden ve RTL ayni sonucu verir, ama sonuc bellek durmasina bagli; kabul programinda kacinin.

@@ -1,0 +1,1074 @@
+<title>ALU Entegrasyon Sözleşmesi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+/* Düzen: veri sayfası (datasheet). Üstte durum ve iş bölümü, ortada port ve buyruk referansı, altta zamanlama, yazma kuralları ve kabul testi. Proje sayfalarıyla aynı renk dili: turkuaz veri yolu, turuncu kontrol, mor yazmaç. */
+:root {
+  --bg: #f3f5f6;
+  --panel: #ffffff;
+  --panel-2: #eef2f3;
+  --ink: #17212b;
+  --muted: #56646f;
+  --line: #d3dbe0;
+  --accent: #0d6b73;
+  --accent-soft: #e2f0f1;
+  --ctl: #b35f00;
+  --ctl-soft: #fbeedd;
+  --reg: #6b4fb3;
+  --reg-soft: #ece6f8;
+  --ok: #2f7d32;
+  --ok-soft: #e4f2e4;
+  --warn: #a4331f;
+  --warn-soft: #fbe6e1;
+  --f-display: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11171c; --panel: #182128; --panel-2: #1e2932; --ink: #e3e9ed; --muted: #97a6b1; --line: #2c3a45;
+    --accent: #4fb8c0; --accent-soft: #16333a; --ctl: #f0a14a; --ctl-soft: #3a2a17; --reg: #a891ec; --reg-soft: #2a2442;
+    --ok: #7cc47f; --ok-soft: #1b3320; --warn: #f08a74; --warn-soft: #3d1f19; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11171c; --panel: #182128; --panel-2: #1e2932; --ink: #e3e9ed; --muted: #97a6b1; --line: #2c3a45;
+  --accent: #4fb8c0; --accent-soft: #16333a; --ctl: #f0a14a; --ctl-soft: #3a2a17; --reg: #a891ec; --reg-soft: #2a2442;
+  --ok: #7cc47f; --ok-soft: #1b3320; --warn: #f08a74; --warn-soft: #3d1f19; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.55; }
+.sayfa { max-width: 1240px; margin: 0 auto; padding-inline: 20px; padding-block: 28px 64px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; line-height: 1.2; margin: 0; }
+h1 { font-size: clamp(28px, 4vw, 40px); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 24px; font-weight: 600; }
+h3 { font-size: 17px; font-weight: 600; }
+p { margin: 0; max-width: 76ch; }
+code, .m { font-family: var(--f-mono); font-size: 0.88em; }
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible, input:focus-visible, tr:focus-visible, label:focus-within { outline: 2px solid var(--ctl); outline-offset: 2px; }
+.ust { display: grid; gap: 14px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+.etiket { font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.ozet { color: var(--muted); }
+.durum { display: flex; flex-wrap: wrap; gap: 8px; }
+.pil { font-family: var(--f-mono); font-size: 12px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); color: var(--muted); }
+.pil.iyi { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 45%, transparent); }
+.pil.bekle { color: var(--ctl); border-color: color-mix(in srgb, var(--ctl) 45%, transparent); }
+nav.icindekiler { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; }
+nav.icindekiler a { text-decoration: none; border-bottom: 1px solid transparent; }
+nav.icindekiler a:hover { border-bottom-color: var(--accent); }
+section { padding-top: 40px; display: grid; gap: 16px; }
+.bolum-bas { display: grid; gap: 6px; }
+.duzeltme { background: var(--warn-soft); border: 1px solid color-mix(in srgb, var(--warn) 40%, transparent); border-radius: 8px; padding: 16px 18px; display: grid; gap: 8px; margin-top: 22px; }
+.duzeltme h2 { font-size: 18px; color: var(--warn); }
+.duzeltme p { max-width: 96ch; }
+.kartlar { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); gap: 14px; }
+.kartlar.iki { grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)); }
+.kart { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 16px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.kart.genis { grid-column: 1 / -1; }
+.kart-bas { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; }
+.sinyal { font-family: var(--f-mono); font-weight: 600; color: var(--ctl); font-size: 15px; }
+.birim { font-size: 12.5px; color: var(--muted); }
+.kart p { font-size: 14px; }
+.rol { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+.rol.k { color: var(--ctl); }
+.rol.t { color: var(--reg); }
+.rol.a { color: var(--accent); }
+.tablo-sar { overflow-x: auto; min-width: 0; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th, td { text-align: left; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--f-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+td.kod, td .kod { font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--ctl); font-weight: 600; }
+td.cik { font-family: var(--f-mono); white-space: nowrap; color: var(--accent); font-weight: 600; }
+td.yaz { font-family: var(--f-mono); white-space: nowrap; color: var(--reg); font-weight: 600; }
+td.num { font-variant-numeric: tabular-nums; font-family: var(--f-mono); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+.panel-tablo { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow-x: auto; }
+.panel-tablo table { min-width: 860px; }
+.panel-tablo th:first-child, .panel-tablo td:first-child { padding-left: 14px; }
+.panel-tablo tr.ara td { background: var(--panel-2); font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding-block: 5px; }
+.not { font-size: 13.5px; color: var(--muted); border-left: 3px solid var(--line); padding-left: 10px; max-width: 96ch; }
+.not.dikkat { border-left-color: var(--ctl); color: var(--ink); }
+.not.hata { border-left-color: var(--warn); color: var(--ink); }
+.port-duzeni { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 10px; }
+.port { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: grid; gap: 4px; }
+.port .harf { font-family: var(--f-mono); font-size: 22px; font-weight: 600; color: var(--accent); }
+.ul-sade { margin: 0; padding-left: 18px; display: grid; gap: 6px; max-width: 86ch; font-size: 14px; }
+ol.adimlar { margin: 0; padding-left: 22px; display: grid; gap: 8px; max-width: 96ch; }
+pre.kod-blok { margin: 0; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; overflow-x: auto; font-family: var(--f-mono); font-size: 12.5px; line-height: 1.55; color: var(--ink); }
+pre.kod-blok .yorum { color: var(--muted); }
+/* buyruk tablosu */
+.arac { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.arac input { font: inherit; padding: 8px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--ink); min-width: 0; flex: 1 1 240px; max-width: 420px; }
+.filtre { display: flex; flex-wrap: wrap; gap: 6px; }
+.filtre button { font: inherit; font-size: 13px; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; }
+.filtre button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.buyruklar { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow-x: auto; }
+.buyruklar table { min-width: 1080px; }
+.buyruklar th:first-child, .buyruklar td:first-child { padding-left: 14px; }
+.buyruklar tbody tr.satir { cursor: pointer; }
+.buyruklar tbody tr.satir:hover td { background: var(--panel-2); }
+.buyruklar td.ad { font-family: var(--f-mono); font-weight: 600; min-width: 220px; }
+.buyruklar td.ad small { display: block; font-family: var(--f-body); font-weight: 400; color: var(--muted); font-size: 12.5px; }
+.cip { display: inline-block; font-family: var(--f-mono); font-size: 12px; padding: 1px 7px; margin: 0 4px 4px 0; border-radius: 4px; background: var(--ctl-soft); color: var(--ink); white-space: nowrap; }
+.cip b { color: var(--ctl); font-weight: 600; }
+.cip.port { background: var(--accent-soft); }
+.cip.port b { color: var(--accent); }
+.cip.oku { background: var(--reg-soft); }
+.cip.oku b { color: var(--reg); }
+.bos { color: var(--muted); font-size: 12.5px; }
+.birim-rozet { font-family: var(--f-mono); font-size: 11px; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; display: inline-block; margin-bottom: 3px; }
+.birim-rozet.top { border-style: dashed; }
+tr.detay td { background: var(--panel-2); padding: 12px 14px; }
+.vektor { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 4px 18px; font-family: var(--f-mono); font-size: 12.5px; }
+.vektor div { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px dotted var(--line); padding: 2px 0; }
+.vektor span:last-child { color: var(--ctl); font-weight: 600; text-align: right; }
+.vektor span.x { color: var(--muted); font-weight: 400; }
+.detay-not { margin-top: 10px; font-size: 13px; color: var(--ink); max-width: 110ch; }
+.sayac { font-size: 13px; color: var(--muted); }
+/* zamanlama */
+.zaman-sar { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px; overflow-x: auto; display: grid; gap: 10px; }
+.zaman { font-family: var(--f-mono); font-size: 12.5px; display: grid; grid-template-columns: minmax(220px, 1.6fr) repeat(4, minmax(118px, 1fr)); min-width: 760px; }
+.zaman div { padding: 6px 8px; border-bottom: 1px solid var(--line); }
+.zaman .bas { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+.zaman .k1 { background: var(--accent-soft); }
+.zaman .k2 { background: var(--reg-soft); }
+.zaman .dur { background: var(--ctl-soft); }
+.zaman .ex { background: var(--ok-soft); }
+.zaman-bas { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; justify-content: space-between; }
+.lejant { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 12.5px; color: var(--muted); }
+.lejant span { display: inline-flex; gap: 6px; align-items: center; }
+.lejant i { width: 14px; height: 10px; border-radius: 2px; display: inline-block; border: 1px solid var(--line); }
+/* kontrol listesi */
+.liste { display: grid; gap: 6px; }
+.liste label { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; padding: 6px 8px; border-radius: 6px; cursor: pointer; }
+.liste label:hover { background: var(--panel-2); }
+.liste input { margin-top: 3px; accent-color: var(--accent); flex: none; }
+.liste input:checked + span { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line); }
+.ilerleme { font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; display: grid; gap: 6px; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+
+<div class="sayfa">
+
+<header class="ust">
+  <div class="etiket">TMS320F2803x CLA · Tip 0 · ALU entegrasyonu</div>
+  <h1>ALU Entegrasyon Sözleşmesi</h1>
+  <p class="ozet">Top modül ve kontrol birimi sorumluları için. ALU'nun her portu, her buyrukta alacağı kontrol değerleri, sonuçların ne zaman ve hangi öncelikle yazılacağı, interlock, bayrakların birleştirilmesi ve FPGA'daki sonucun golden modelle nasıl karşılaştırılacağı. Kaynak: <code>CLA_ALU/ALU.sv</code> ve alt modülleri, <code>CLA_GoldenModel</code>, TRM SPRUI10A Bölüm 10.</p>
+  <div class="durum">
+    <span class="pil iyi">RTL ↔ golden: 289.648 vektör, 0 fark</span>
+    <span class="pil iyi">TRM ↔ golden: 0 ihlal</span>
+    <span class="pil iyi">Golden: K1/K2, interlock, R1/W durması uygulandı (05.10)</span>
+    <span class="pil bekle">Vivado sentezi: henüz koşulmadı</span>
+    <span class="pil">Hedef: 11 Ekim 2026, FPGA'da golden ile birebir</span>
+  </div>
+  <nav class="icindekiler" aria-label="İçindekiler">
+    <a href="#roller">İş bölümü</a>
+    <a href="#portlar">ALU portları</a>
+    <a href="#kontrol">Kontrol kodları</a>
+    <a href="#yerlesim">İşlenen yerleşimi</a>
+    <a href="#buyruk">Buyruk tablosu</a>
+    <a href="#zamanlama">Zamanlama</a>
+    <a href="#yazma">Yazma ve interlock</a>
+    <a href="#disari">ALU dışı kurallar</a>
+    <a href="#fpga">Saat, reset, sentez</a>
+    <a href="#kabul">Kabul testi</a>
+    <a href="#kararlar">Açık kararlar</a>
+    <a href="#liste">Kontrol listesi</a>
+  </nav>
+</header>
+
+<div class="duzeltme" role="note">
+  <h2>Önceki sayfalara göre düzeltme: MR yazma önceliği</h2>
+  <p>"CLA ALU Kontrol Referansı" ve "CLA FPU Boru Hattı" sayfalarında öncelik <b>EXE &gt; çarpıcı &gt; toplayıcı</b> diye yazıyor ve gerekçe olarak "TRM, MMACF32'de MRd ≠ MR3 ister" deniyor. İkisi de yanlış. TRM MMACF32 için yalnız <b>MRa ≠ MR3</b> ve <b>MRa ≠ MRd</b> kısıtını koyuyor. MRd = MR3 serbest ve o durumda iki birim aynı kenarda MR3'e yazar.</p>
+  <p>Golden model (<code>ops_parallel.py</code>, <code>mmacf32_rrrrr_mmov32_ri</code>) önce çarpımı, sonra birikimi yazar, yani <b>toplama kazanır</b>. FPGA'nın golden ile aynı sonucu vermesi için doğru öncelik: <b>EXE yazması &gt; toplayıcı K2 &gt; çarpıcı K2</b>. Bu sayfadaki bütün kurallar bu sıraya göre yazıldı.</p>
+</div>
+
+<div class="duzeltme" role="note" style="background:var(--accent-soft);border-color:color-mix(in srgb, var(--accent) 35%, transparent)">
+  <h2 style="color:var(--accent)">Boru hattı kuralları ayrı sayfada</h2>
+  <p>Durmalar (<code>dur_exe</code>, <code>dur_r1</code>), yazma önceliği, bekleyen bayraklar, D2 kuralı, dallar ve bellek: golden çıktısından çizilmiş çevrim şemaları ve "uygulanmazsa ne olur" örnekleriyle <a href="https://claude.ai/artifact/2gSrWkVvfNAcPjBAdbnpwV" target="_blank" rel="noopener">CLA Boru Hattı Kuralları</a>. Golden bunların hepsini uyguluyor; RTL izi golden iziyle çevrim çevrim karşılaştırılabilir.</p>
+</div>
+
+<!-- ============================================================ -->
+<section id="roller">
+  <div class="bolum-bas">
+    <h2>İş bölümü</h2>
+    <p class="ozet">Önerilen ayrım. Takımınız işleri farklı bölüşebilir; önemli olan her satırın birinin sorumluluğunda olması.</p>
+  </div>
+  <div class="kartlar">
+    <div class="kart">
+      <div class="rol k">Kontrol birimi (kod çözücü)</div>
+      <h3>Buyruk başına üretir</h3>
+      <ul class="ul-sade">
+        <li>17 ALU kontrol girişinin değeri: <a href="#buyruk">buyruk tablosu</a>.</li>
+        <li>a, b, c, d portlarına hangi MR'nin, anlığın ya da bellek verisinin konacağı.</li>
+        <li>Okunan MR maskesi <code>exe_oku[3:0]</code> (interlock için).</li>
+        <li>Birim kullanımı: <code>exe_topla</code>, <code>exe_carp</code>.</li>
+        <li>EXE yazma maskesi ve kaynağı (hangi MR, hangi ALU çıkışı ya da bellek).</li>
+        <li>Bayrak yazma izinleri: ZF/NF, LVF/LUF, TF, MSTF tamamı.</li>
+        <li>CNDF ve koşul değerlendirmesi (dallar, MMOV32, MSWAPF, MTESTTF).</li>
+      </ul>
+    </div>
+    <div class="kart">
+      <div class="rol t">Top modül</div>
+      <h3>Bağlar ve zamanlar</h3>
+      <ul class="ul-sade">
+        <li>MR0–MR3 yazmaç dosyası, MSTF, MAR0/1, MPC, RPC.</li>
+        <li><code>dur_exe</code> interlock ve FPU valid kapılaması.</li>
+        <li>MR yazma önceliği: EXE &gt; toplayıcı &gt; çarpıcı.</li>
+        <li>LVF/LUF birleştirme ve görünen bayraklar, <code>mstf_in</code>.</li>
+        <li>8 kademeli boru hattı, <code>dur_r1</code> bellek durması, D2 kuralı.</li>
+        <li>Bellekler, görev hakemi, reset senkronlama, saat.</li>
+        <li>FPGA'da sonucu dışarı okuma yolu (<a href="#kararlar">açık karar</a>).</li>
+      </ul>
+    </div>
+    <div class="kart">
+      <div class="rol a">ALU ve golden sorumlusu sağlar</div>
+      <h3>Teslim edilenler</h3>
+      <ul class="ul-sade">
+        <li><code>CLA_ALU/</code>: 17 SV dosyası ve <code>estimate_lut.hex</code>.</li>
+        <li>Vivado vektör testi: <code>alu_vektor_tb.sv</code> + 289.648 golden vektörü (davranışsal ve sentez sonrası).</li>
+        <li>Sentez denetimi: latch, kaynak, zamanlama raporu (<code>alu_sentez_kontrol.tcl</code>).</li>
+        <li>Kabul paketi üreticisi: <code>golden_beklenen.py</code>. CASM'den bellek görüntüleri ve beklenen son durum.</li>
+        <li>Bu sayfa.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="portlar">
+  <div class="bolum-bas">
+    <h2>ALU portları</h2>
+    <p class="ozet"><code>ALU.sv</code>'deki portların tamamı. "Ne zaman" sütunu, değerin buyruğun hangi çevriminde sürülmesi ya da okunması gerektiğini söyler.</p>
+  </div>
+  <div class="panel-tablo">
+    <table>
+      <thead><tr><th>Port</th><th>Bit</th><th>Kim sürer / kullanır</th><th>Ne zaman</th><th>Anlamı</th></tr></thead>
+      <tbody>
+        <tr class="ara"><td colspan="5">Saat, reset, veri girişleri</td></tr>
+        <tr><td class="kod">clk</td><td class="num">1</td><td>top</td><td>her çevrim</td><td>Boru hattı saati. Yalnız <code>fpu_toplama</code> ve <code>fpu_carpma</code>'nın K1/K2 yazmacına gider (yükselen kenar). Bu yazmacın yükleme izni yok, her kenarda yüklenir.</td></tr>
+        <tr><td class="kod">rst</td><td class="num">1</td><td>top</td><td>asenkron</td><td><b>0'da etkin</b>, düşen kenarda asenkron. K1/K2 yazmacını sıfırlar; <code>valid_topla</code> ve <code>valid_carp</code> 0 olur. Senkronlanmış reset bağlayın.</td></tr>
+        <tr><td class="kod">a, b, c, d</td><td class="num">32</td><td>top</td><td>EXE</td><td>İşlenen portları. Yazmaç okuması, genişletilmiş anlık ya da bellekten okunan değer. Düzen: <a href="#yerlesim">işlenen yerleşimi</a>.</td></tr>
+        <tr class="ara"><td colspan="5">Kontrol girişleri (17)</td></tr>
+        <tr><td class="kod">topla_cntrl</td><td class="num">5</td><td>kontrol; valid biti top kapılar</td><td>EXE</td><td><code>{hedef[1:0], RND32, valid, çıkarma}</code></td></tr>
+        <tr><td class="kod">carpma_cntrl</td><td class="num">5</td><td>kontrol; valid biti top kapılar</td><td>EXE</td><td><code>{hedef[1:0], RND32, valid, 0}</code></td></tr>
+        <tr><td class="kod">tamsayi_cntrl</td><td class="num">3</td><td>kontrol</td><td>EXE</td><td>8 tamsayı işlemi</td></tr>
+        <tr><td class="kod">kestirme_cntrl</td><td class="num">1</td><td>kontrol</td><td>EXE</td><td>0 MEINVF32, 1 MEISQRTF32</td></tr>
+        <tr><td class="kod">karsilastirma_cntrl</td><td class="num">7</td><td>kontrol</td><td>EXE</td><td><code>{işlem[2:0], CNDF[3:0]}</code></td></tr>
+        <tr><td class="kod">mstf_in</td><td class="num">5</td><td>top</td><td>EXE</td><td><code>{TF, ZF, NF, LUF_görünen, LVF_görünen}</code>. Yalnız MNEGF32'nin koşulu için.</td></tr>
+        <tr><td class="kod">donusum_cntrl</td><td class="num">5</td><td>kontrol</td><td>EXE</td><td><code>{RND32, işlem[3:0]}</code>, 11 dönüşüm</td></tr>
+        <tr><td class="kod">mux_1 … mux_10</td><td class="num">2×10</td><td>kontrol</td><td>EXE</td><td>Her birimin işlenen seçimi: <code>00</code> a, <code>01</code> b, <code>10</code> c, <code>11</code> d</td></tr>
+        <tr class="ara"><td colspan="5">Çıkışlar: kayan nokta toplama ve çarpma (K2, W çevrimi)</td></tr>
+        <tr><td class="cik">valid_topla</td><td class="num">1</td><td>top</td><td>W</td><td>Bir önceki çevrimde <code>topla_cntrl[1] = 1</code> idi. Yazmaç çıkışı, çevrim başında kararlı.</td></tr>
+        <tr><td class="cik">hedef_mr_out_topla</td><td class="num">2</td><td>top</td><td>W</td><td>O işlemin hedef MR'si. Yazmaç çıkışı.</td></tr>
+        <tr><td class="cik">result_topla</td><td class="num">32</td><td>top</td><td>W</td><td>K2 sonucu. <code>valid_topla = 1</code> iken geçerli. Çevrimin en geç gelen sinyallerinden.</td></tr>
+        <tr><td class="cik">lvf_topla, luf_topla</td><td class="num">1+1</td><td>top</td><td>W</td><td>ALU içinde <code>valid_topla</code> ile AND'li; doğrudan OR'lanabilir.</td></tr>
+        <tr><td class="cik">valid_carp, hedef_mr_out_carp, result_carp, lvf_carp, luf_carp</td><td class="num">1, 2, 32, 1, 1</td><td>top</td><td>W</td><td>Toplayıcıdakiyle aynı.</td></tr>
+        <tr class="ara"><td colspan="5">Çıkışlar: kombinasyonel birimler (EXE çevrimi)</td></tr>
+        <tr><td class="cik">result_tamsayi</td><td class="num">32</td><td>top</td><td>EXE</td><td>MADD32 … MASR32 sonucu. MCMP32'de yazılmaz.</td></tr>
+        <tr><td class="cik">mstf_out</td><td class="num">5</td><td>top</td><td>EXE</td><td>Yalnız <code>[3]</code> ZF ve <code>[2]</code> NF anlamlı. <code>[4]</code>, <code>[1]</code>, <code>[0]</code> hep 0; TF, LUF, LVF'ye yazılmamalı.</td></tr>
+        <tr><td class="cik">result_kestirme</td><td class="num">32</td><td>top</td><td>EXE</td><td>1/x ya da 1/√x kestirimi.</td></tr>
+        <tr><td class="cik">lvf_kestirme, luf_kestirme</td><td class="num">1+1</td><td>top</td><td>EXE</td><td><b>valid ile AND'li değil.</b> Top yalnız EXE'de MEINVF32/MEISQRTF32 çalışırken OR'lar.</td></tr>
+        <tr><td class="cik">result_karsilastirma</td><td class="num">32</td><td>top</td><td>EXE</td><td>MMAXF32, MMINF32, MABSF32, MNEGF32 sonucu. MCMPF32'de anlamsız.</td></tr>
+        <tr><td class="cik">zf_karsilastirma, nf_karsilastirma</td><td class="num">1+1</td><td>top</td><td>EXE</td><td>Karşılaştırma bayrakları. MNEGF32'de yalnız CNDF = UNCF ise yazılır.</td></tr>
+        <tr><td class="cik">result_donusum</td><td class="num">32</td><td>top</td><td>EXE</td><td>11 dönüşümün sonucu. Bayrak üretmez.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="not dikkat">Kombinasyonel çıkışların geçerlilik biti yok; girişlere göre her çevrim değişirler. Top modül bunları yalnız ilgili buyruk EXE'de gerçekten çalışırken (<code>exe_calisir = exe_gecerli ∧ ¬dur_exe</code>) yazar. Kullanılmayan birimin girişleri önemsizdir; FP birimlerinin valid biti ise mutlaka 0 olmalı.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="kontrol">
+  <div class="bolum-bas">
+    <h2>Kontrol kodları</h2>
+    <p class="ozet">Her kontrol girişinin bit düzeni ve değerleri.</p>
+  </div>
+  <div class="kartlar">
+    <div class="kart">
+      <div class="kart-bas"><span class="sinyal">topla_cntrl[4:0]</span><span class="birim">fpu_toplama</span></div>
+      <div class="tablo-sar"><table>
+        <thead><tr><th>bit</th><th>ad</th><th>anlamı</th></tr></thead>
+        <tbody>
+          <tr><td class="kod">[4:3]</td><td>hedef</td><td>Sonucun MR numarası. Buyruktaki MRa; paralelde MRd; MMACF32'de <code>11</code> (MR3).</td></tr>
+          <tr><td class="kod">[2]</td><td>RND32</td><td>MSTF bit 9'un o anki değeri. 0 sıfıra doğru kes, 1 en yakın çifte yuvarla.</td></tr>
+          <tr><td class="kod">[1]</td><td>valid</td><td><code>exe_calisir ∧ exe_topla</code>. Balon, durma ve toplayıcıyı kullanmayan buyrukta 0.</td></tr>
+          <tr><td class="kod">[0]</td><td>çıkarma</td><td>0: 1. + 2. · 1: 1. − 2.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="kart">
+      <div class="kart-bas"><span class="sinyal">carpma_cntrl[4:0]</span><span class="birim">fpu_carpma</span></div>
+      <div class="tablo-sar"><table>
+        <thead><tr><th>bit</th><th>ad</th><th>anlamı</th></tr></thead>
+        <tbody>
+          <tr><td class="kod">[4:3]</td><td>hedef</td><td>Sonucun MR numarası. MRa; paralel ‖ MMOV32 ve MMACF32'de MRd.</td></tr>
+          <tr><td class="kod">[2]</td><td>RND32</td><td>MSTF bit 9.</td></tr>
+          <tr><td class="kod">[1]</td><td>valid</td><td><code>exe_calisir ∧ exe_carp</code>.</td></tr>
+          <tr><td class="kod">[0]</td><td>—</td><td>Kullanılmıyor, 0 verin.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="kart">
+      <div class="kart-bas"><span class="sinyal">tamsayi_cntrl[2:0]</span><span class="birim">tamsayi_islem</span></div>
+      <div class="tablo-sar"><table>
+        <thead><tr><th>kod</th><th>işlem</th><th>buyruk</th></tr></thead>
+        <tbody>
+          <tr><td class="kod">000</td><td>1. + 2.</td><td>MADD32</td></tr>
+          <tr><td class="kod">001</td><td>1. − 2.</td><td>MSUB32, MCMP32</td></tr>
+          <tr><td class="kod">010</td><td>1. &amp; 2.</td><td>MAND32</td></tr>
+          <tr><td class="kod">011</td><td>1. | 2.</td><td>MOR32</td></tr>
+          <tr><td class="kod">100</td><td>1. ^ 2.</td><td>MXOR32</td></tr>
+          <tr><td class="kod">101</td><td>1. &lt;&lt; 2.</td><td>MLSL32</td></tr>
+          <tr><td class="kod">110</td><td>1. &gt;&gt; 2. mantıksal</td><td>MLSR32</td></tr>
+          <tr><td class="kod">111</td><td>1. &gt;&gt;&gt; 2. aritmetik</td><td>MASR32</td></tr>
+        </tbody>
+      </table></div>
+      <p class="not">ZF = sonuç 32 bit sıfır, NF = sonucun 31. biti. Kaydırmada 2. işlenen <code>{26'b0, SHIFT}</code>, SHIFT 1–32.</p>
+    </div>
+    <div class="kart">
+      <div class="kart-bas"><span class="sinyal">kestirme_cntrl</span><span class="birim">fpu_kestirme</span></div>
+      <div class="tablo-sar"><table>
+        <thead><tr><th>değer</th><th>buyruk</th><th>sonuç</th></tr></thead>
+        <tbody>
+          <tr><td class="kod">0</td><td>MEINVF32</td><td>1/x kestirimi</td></tr>
+          <tr><td class="kod">1</td><td>MEISQRTF32</td><td>1/√x kestirimi</td></tr>
+        </tbody>
+      </table></div>
+      <p class="not dikkat">Tabloyu <code>estimate_lut.hex</code>'ten okur (768 satır, 8 bit). Dosya Vivado projesinde yoksa tablo sessizce sıfır sentezlenir: <a href="#fpga">sentez notları</a>.</p>
+    </div>
+    <div class="kart">
+      <div class="kart-bas"><span class="sinyal">karsilastirma_cntrl[6:4]</span><span class="birim">işlem</span></div>
+      <div class="tablo-sar"><table>
+        <thead><tr><th>kod</th><th>buyruk</th><th>sonuç</th></tr></thead>
+        <tbody>
+          <tr><td class="kod">000</td><td>MCMPF32</td><td>yalnız ZF, NF</td></tr>
+          <tr><td class="kod">001</td><td>MMAXF32</td><td>büyük olan; ZF, NF</td></tr>
+          <tr><td class="kod">010</td><td>MMINF32</td><td>küçük olan; ZF, NF</td></tr>
+          <tr><td class="kod">011</td><td>MABSF32</td><td>2. işlenenin mutlak değeri</td></tr>
+          <tr><td class="kod">100</td><td>MNEGF32</td><td>koşul tutarsa −(2.), tutmazsa 2. işlenen</td></tr>
+        </tbody>
+      </table></div>
+      <p class="not">1. &gt; 2.: ZF=0 NF=0 · 1. &lt; 2.: ZF=0 NF=1 · eşit: ZF=1 NF=0. MNEGF32 dışındaki işlemlerde CNDF alanına <code>1111</code> verin.</p>
+    </div>
+    <div class="kart">
+      <div class="kart-bas"><span class="sinyal">CNDF[3:0]</span><span class="birim">karsilastirma_cntrl[3:0] ve kontrol biriminin koşul değerlendiricisi</span></div>
+      <div class="tablo-sar"><table>
+        <thead><tr><th>kod</th><th>ad</th><th>tutar, eğer</th></tr></thead>
+        <tbody>
+          <tr><td class="kod">0000</td><td>NEQ</td><td>ZF = 0</td></tr>
+          <tr><td class="kod">0001</td><td>EQ</td><td>ZF = 1</td></tr>
+          <tr><td class="kod">0010</td><td>GT</td><td>ZF = 0 ve NF = 0</td></tr>
+          <tr><td class="kod">0011</td><td>GEQ</td><td>NF = 0</td></tr>
+          <tr><td class="kod">0100</td><td>LT</td><td>NF = 1</td></tr>
+          <tr><td class="kod">0101</td><td>LEQ</td><td>ZF = 1 ya da NF = 1</td></tr>
+          <tr><td class="kod">1010</td><td>TF</td><td>TF = 1</td></tr>
+          <tr><td class="kod">1011</td><td>NTF</td><td>TF = 0</td></tr>
+          <tr><td class="kod">1100</td><td>LU</td><td>LUF_görünen = 1</td></tr>
+          <tr><td class="kod">1101</td><td>LV</td><td>LVF_görünen = 1</td></tr>
+          <tr><td class="kod">1110</td><td>UNC</td><td>her zaman</td></tr>
+          <tr><td class="kod">1111</td><td>UNCF</td><td>her zaman; ZF/NF de yazılır</td></tr>
+        </tbody>
+      </table></div>
+      <p class="not">TRM Tablo 10-9. <code>0110</code>–<code>1001</code> ayrılmış. Buyrukta CNDF yazılmamışsa UNCF. Aynı tabloyu kontrol birimi dallar (D2) ve MMOV32, MSWAPF, MTESTTF (EXE) için ayrıca değerlendirir.</p>
+    </div>
+    <div class="kart">
+      <div class="kart-bas"><span class="sinyal">donusum_cntrl[4:0]</span><span class="birim">fpu_donusum</span></div>
+      <div class="tablo-sar"><table>
+        <thead><tr><th>[3:0]</th><th>buyruk</th><th>sonuç</th></tr></thead>
+        <tbody>
+          <tr><td class="kod">0000</td><td>MF32TOI16</td><td>16 bit işaretli, kesme; üst 16 bit işaret uzatması</td></tr>
+          <tr><td class="kod">0001</td><td>MF32TOI16R</td><td>aynısı, en yakın çift</td></tr>
+          <tr><td class="kod">0010</td><td>MF32TOI32</td><td>32 bit işaretli, kesme</td></tr>
+          <tr><td class="kod">0011</td><td>MF32TOUI16</td><td>16 bit işaretsiz, kesme; negatif → 0</td></tr>
+          <tr><td class="kod">0100</td><td>MF32TOUI16R</td><td>aynısı, en yakın çift</td></tr>
+          <tr><td class="kod">0101</td><td>MF32TOUI32</td><td>32 bit işaretsiz, kesme; negatif → 0</td></tr>
+          <tr><td class="kod">0110</td><td>MFRACF32</td><td>kesirli kısım, işaret korunur</td></tr>
+          <tr><td class="kod">0111</td><td>MI16TOF32</td><td>alt 16 bit işaretli → float</td></tr>
+          <tr><td class="kod">1000</td><td>MI32TOF32</td><td>32 bit işaretli → float (RND32)</td></tr>
+          <tr><td class="kod">1001</td><td>MUI16TOF32</td><td>alt 16 bit işaretsiz → float</td></tr>
+          <tr><td class="kod">1010</td><td>MUI32TOF32</td><td>32 bit işaretsiz → float (RND32)</td></tr>
+        </tbody>
+      </table></div>
+      <p class="not"><code>[4]</code> = MSTF.RND32, yalnız <code>1000</code> ve <code>1010</code>'da etkili. R'li buyruklar her zaman en yakın çifte yuvarlar. Hiçbir dönüşüm bayrak değiştirmez.</p>
+    </div>
+    <div class="kart">
+      <div class="kart-bas"><span class="sinyal">mux_1 … mux_10</span><span class="birim">00 a · 01 b · 10 c · 11 d</span></div>
+      <div class="tablo-sar"><table>
+        <thead><tr><th>mux</th><th>nereye gider</th></tr></thead>
+        <tbody>
+          <tr><td class="kod">mux_1</td><td>toplayıcı 1. işlenen (çıkarmada eksilen)</td></tr>
+          <tr><td class="kod">mux_2</td><td>toplayıcı 2. işlenen (çıkan)</td></tr>
+          <tr><td class="kod">mux_3</td><td>çarpıcı 1. işlenen</td></tr>
+          <tr><td class="kod">mux_4</td><td>çarpıcı 2. işlenen</td></tr>
+          <tr><td class="kod">mux_5</td><td>tamsayı 1. işlenen (kaydırılan)</td></tr>
+          <tr><td class="kod">mux_6</td><td>tamsayı 2. işlenen (kaydırma miktarı)</td></tr>
+          <tr><td class="kod">mux_7</td><td>kestirim işleneni</td></tr>
+          <tr><td class="kod">mux_8</td><td>karşılaştırma 1. işlenen</td></tr>
+          <tr><td class="kod">mux_9</td><td>karşılaştırma 2. işlenen; MABSF32 ve MNEGF32'nin tek işleneni</td></tr>
+          <tr><td class="kod">mux_10</td><td>dönüşüm işleneni</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="yerlesim">
+  <div class="bolum-bas">
+    <h2>İşlenen yerleşimi</h2>
+    <p class="ozet">Buyruk tablosundaki mux değerleri bu düzene göre. Top modül işlenenleri başka portlara koyarsa mux değerleri de ona göre değişir; ALU'yu değiştirmeye gerek yok.</p>
+  </div>
+  <div class="port-duzeni">
+    <div class="port"><span class="harf">a</span><b>1. kaynak</b><span class="birim">MRb; MRa'yı okuyan buyruklarda MRa; paralelde MRb ya da MRe; MMACF32'de MR3</span></div>
+    <div class="port"><span class="harf">b</span><b>2. kaynak</b><span class="birim">MRc; karşılaştırmada MRb; paralelde MRc ya da MRf; MMACF32'de MR2</span></div>
+    <div class="port"><span class="harf">c</span><b>3. kaynak</b><span class="birim">İki aritmetikli paralel buyrukta ve MMACF32'de MRe</span></div>
+    <div class="port"><span class="harf">d</span><b>4. kaynak ya da sabit</b><span class="birim">MRf, anlık, SHIFT ya da bellekten okunan değer</span></div>
+  </div>
+  <div class="kartlar iki">
+    <div class="kart">
+      <h3>Anlıklar top modülde genişletilir</h3>
+      <ul class="ul-sade">
+        <li><code>#16FHi</code> → <code>{#16FHi, 16'h0000}</code>. MADDF32, MSUBF32, MMPYF32, MCMPF32, MMAXF32, MMINF32 anlık biçimleri.</li>
+        <li><code>MSUBF32 MRa, #16FHi, MRb</code> = <b>anlık − MRb</b>: <code>mux_1 = 11</code> (d), <code>mux_2 = 00</code> (a).</li>
+        <li><code>#SHIFT</code> → <code>{26'b0, SHIFT}</code>, 1–32. 32 değeri 6 bit ister.</li>
+        <li>Bellekten dönüşümde okunan değer d'ye konur. 16 bitlik biçimlerde yalnız alt 16 bit kullanılır.</li>
+      </ul>
+    </div>
+    <div class="kart">
+      <h3>MR'ler EXE çevriminde okunur, ileri besleme yok</h3>
+      <p>a–d'yi buyruk EXE'deyken doğrudan MR0–MR3 yazmaçlarından seçin. Bütün yazmalar kenarda tamamlandığı ve K2 sonucunu bekleyen okuma interlock ile durdurulduğu için ileri besleme (bypass) gerekmez. K2 çıkışını a–d'ye geri veren bir yol <b>eklemeyin</b>: en uzun yolu ikiye katlar.</p>
+      <p>Bellekten okunan veri R2'de gelir; EXE'ye bir boru yazmacıyla taşınır.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="buyruk">
+  <div class="bolum-bas">
+    <h2>Buyruk tablosu</h2>
+    <p class="ozet">ISA tablosundaki 74 buyruk biçiminin hepsi (<code>isa/cla_type0.yaml</code>). "Okunan MR" sütunu interlock içindir: K2'de bekleyen bir yazmanın hedefi bu kümedeyse buyruk EXE'de 1 çevrim bekler. Satıra tıklayınca 17 kontrol girişinin tam değeri ve notlar açılır.</p>
+  </div>
+  <div class="arac">
+    <label for="ara" class="m" style="font-size:12px;color:var(--muted)">Buyruk ara</label>
+    <input id="ara" type="search" placeholder="ör. MMACF32, MRb, MSTF" autocomplete="off">
+    <div class="filtre" id="filtre" role="group" aria-label="Birime göre süz"></div>
+  </div>
+  <div class="sayac" id="sayac" aria-live="polite"></div>
+  <div class="buyruklar">
+    <table>
+      <thead><tr><th>Buyruk</th><th>Birim</th><th>Portlar</th><th>Kontrol değerleri</th><th>Okunan MR</th><th>Yazma</th><th>Bayraklar</th></tr></thead>
+      <tbody id="govde"></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="zamanlama">
+  <div class="bolum-bas">
+    <h2>Zamanlama</h2>
+    <p class="ozet">FP toplama ve çarpma iki kademeli: K1 buyruğun EXE çevriminde, K2 W çevriminde çalışır. Sonuç ve LVF/LUF W'nin sonunda yazılır. Diğer dört birim kombinasyonel; sonuç EXE'nin sonunda yazılır.</p>
+  </div>
+  <div class="lejant">
+    <span><i style="background:var(--accent-soft)"></i>FPU K1 (EXE)</span>
+    <span><i style="background:var(--reg-soft)"></i>FPU K2 (W), kenarda yazılır</span>
+    <span><i style="background:var(--ctl-soft)"></i>durma (dur_exe)</span>
+    <span><i style="background:var(--ok-soft)"></i>kombinasyonel EXE</span>
+  </div>
+
+  <div class="zaman-sar">
+    <div class="zaman-bas"><h3>1. Sonucu hemen okuyan buyruk bekler</h3><span class="birim">interlock</span></div>
+    <div class="zaman">
+      <div class="bas">çevrim</div><div class="bas">n</div><div class="bas">n+1</div><div class="bas">n+2</div><div class="bas">n+3</div>
+      <div>MADDF32 MR0, MR1, MR2</div><div class="k1">EXE · topla valid=1</div><div class="k2">W · valid_topla=1, hedef=0 → MR0</div><div></div><div></div>
+      <div>MMPYF32 MR3, MR0, MR1</div><div>R2</div><div class="dur">EXE · dur_exe=1, carp valid=0</div><div class="k1">EXE · carp valid=1</div><div class="k2">W → MR3</div>
+      <div>MADD32 MR2, MR1, MR1</div><div>R1</div><div>R2</div><div>R2 (bekler)</div><div class="ex">EXE → MR2</div>
+    </div>
+    <p class="not">n+1'de MMPYF32 MR0'ı okuyor ve MR0 K2'de bekliyor: <code>dur_exe = 1</code>. F1 … EXE yerinde kalır, W'ye balon girer. n+1 sonunda MR0 yazılır, n+2'de MMPYF32 yeni değeri okur. Bekleme en çok 1 çevrim. Sonucu okumayan buyruk beklemez.</p>
+  </div>
+
+  <div class="zaman-sar">
+    <div class="zaman-bas"><h3>2. Aynı MR'ye art arda yazma: EXE kazanır</h3><span class="birim">durma yok</span></div>
+    <div class="zaman">
+      <div class="bas">çevrim</div><div class="bas">n</div><div class="bas">n+1</div><div class="bas">n+2</div><div class="bas">n+3</div>
+      <div>MADDF32 MR0, MR1, MR2</div><div class="k1">EXE</div><div class="k2">W · result_topla → MR0 ?</div><div></div><div></div>
+      <div>MMOV32 MR0, @x</div><div>R2</div><div class="ex">EXE · [x] → MR0, kazanır</div><div>W</div><div></div>
+    </div>
+    <p class="not">n+1 sonunda iki yazma aynı MR0'a düşer. EXE'deki buyruk program sırasında sonra geldiği için onun değeri yazılır. Son değer TRM'deki sıralı sonuçla aynı.</p>
+  </div>
+
+  <div class="zaman-sar">
+    <div class="zaman-bas"><h3>3. MMACF32, MRd = MR3: toplayıcı kazanır</h3><span class="birim">golden ile aynı</span></div>
+    <div class="zaman">
+      <div class="bas">çevrim</div><div class="bas">n</div><div class="bas">n+1</div><div class="bas">n+2</div><div class="bas">n+3</div>
+      <div>MMACF32 MR3, MR2, MR3, MR0, MR1 ‖ MMOV32 MR2, @x</div><div class="k1">EXE · topla hedef=11, carp hedef=11; [x] → MR2</div><div class="k2">W · MR3 ← result_topla (result_carp düşer)</div><div></div><div></div>
+    </div>
+    <p class="not">TRM bu biçimi yasaklamıyor (yalnız MRa ≠ MR3, MRa ≠ MRd). Golden'da MR3 = MR3 + MR2 olur. MR2'nin eski değeri toplamaya girer; yeni [x] değeri EXE sonunda MR2'ye yazılır.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="yazma">
+  <div class="bolum-bas">
+    <h2>Yazma, interlock ve bayraklar</h2>
+    <p class="ozet">Top modülün ALU çıkışlarıyla yapması gerekenler. Aşağıdaki kod bir başlangıç taslağı; sinyal adları örnek.</p>
+  </div>
+  <div class="kartlar">
+    <div class="kart">
+      <h3>MR yazma önceliği</h3>
+      <p>Her MRx için ayrı yazma mantığı:</p>
+      <ol class="adimlar">
+        <li>EXE'deki buyruğun MRx yazması (<code>exe_calisir</code> iken)</li>
+        <li><code>valid_topla ∧ hedef_mr_out_topla == x</code> → <code>result_topla</code></li>
+        <li><code>valid_carp ∧ hedef_mr_out_carp == x</code> → <code>result_carp</code></li>
+      </ol>
+      <p class="not">Aynı kenarda en çok 4 yazma olabilir: EXE'de MSWAPF iki MR, K2'de iki birim. 2 ile 3 yalnız MMACF32'de MRd = MR3 iken aynı MR'ye düşer.</p>
+    </div>
+    <div class="kart">
+      <h3>Interlock (dur_exe)</h3>
+      <p><code>dur_exe = exe_gecerli ∧ (exe_oku ∩ K2_bekleyen ≠ ∅)</code>. K2_bekleyen, <code>valid_*</code> = 1 olan birimlerin hedef MR'leri.</p>
+      <p>dur_exe çevriminde EXE'deki buyruk hiçbir şey yazmaz (MR, MSTF, MAR), bellek yazma isteği W'ye geçmez ve FPU'ya girmez. K2'deki işlem normal biter.</p>
+      <p class="not">Yalnız okuma durdurur. Yazılıp okunmayan hedef durdurmaz.</p>
+    </div>
+    <div class="kart">
+      <h3>FPU valid kuralı</h3>
+      <p><code>topla_cntrl[1] = exe_gecerli ∧ exe_topla ∧ ¬dur_exe</code>, <code>carpma_cntrl[1]</code> aynı kuralla. Her FP buyruğu FPU'ya tam bir kez girer.</p>
+      <p class="not dikkat">K1/K2 yazmacının yükleme izni yok. K2 sonucu yalnız bir çevrim görünür. <code>valid_*</code> = 1 olan çevrimde, durma olsun olmasın, <b>mutlaka</b> yazılmalı. Yazma iznini durma sinyaliyle AND'lemeyin.</p>
+    </div>
+    <div class="kart">
+      <h3>LVF ve LUF</h3>
+      <ul class="ul-sade">
+        <li>Kenarda: <code>LVF ← LVF ∨ lvf_topla ∨ lvf_carp ∨ (EXE'de kestirim ∧ lvf_kestirme)</code>. LUF aynı.</li>
+        <li>EXE'deki buyruk aynı biti kendisi yazıyorsa (MMOV32 MSTF, mem32 hepsini; MSETFLG maskesindekileri) onun değeri kazanır.</li>
+        <li>Okuyan her yer bekleyeni de görür: <code>LVF_görünen = LVF ∨ lvf_topla ∨ lvf_carp</code>. Kullananlar: D2'de LV/LU dallar; EXE'de MTESTTF, CNDF'li MNEGF32, MSWAPF, MMOV32; <code>MMOV32 mem32, MSTF</code>'in yazdığı değer; <code>mstf_in</code>.</li>
+      </ul>
+    </div>
+    <div class="kart">
+      <h3>ZF, NF, TF</h3>
+      <ul class="ul-sade">
+        <li>Yalnız EXE'de yazılır. Kaynak buyruğa göre: <code>mstf_out[3:2]</code>, <code>zf/nf_karsilastirma</code>, yükleme kuralı (<a href="#disari">ALU dışı</a>), MSETFLG, MMOV32 MSTF.</li>
+        <li>FP aritmetiği, kestirim ve dönüşüm ZF, NF, TF'ye dokunmaz.</li>
+        <li>MNEGF32: ZF/NF yalnız CNDF = UNCF ise.</li>
+      </ul>
+    </div>
+    <div class="kart">
+      <h3>RND32</h3>
+      <p><code>topla_cntrl[2]</code>, <code>carpma_cntrl[2]</code> ve <code>donusum_cntrl[4]</code> = MSTF bit 9'un o çevrimdeki değeri. Önceki buyruktaki MSETFLG ya da MMOV32 MSTF EXE sonunda yazıldığı için ek yol gerekmez. Reset değeri 0 (sıfıra kes).</p>
+    </div>
+  </div>
+
+<pre class="kod-blok" aria-label="Top modül taslak kodu"><span class="yorum">// Kontrol biriminden, buyruk EXE'deyken:
+//   exe_gecerli  EXE'de gerçek buyruk var (balon değil)
+//   exe_oku[3:0] buyruğun okuduğu MR'ler (tablodaki "Okunan MR")
+//   exe_topla, exe_carp  buyruk toplayıcıyı / çarpıcıyı kullanıyor
+//   exe_yaz[3:0], exe_veri[x]  EXE'de yazılacak MR'ler ve değerleri</span>
+logic [3:0] k2_bekleyen;
+always_comb begin
+  k2_bekleyen = 4'b0000;
+  if (valid_topla) k2_bekleyen[hedef_mr_out_topla] = 1'b1;
+  if (valid_carp)  k2_bekleyen[hedef_mr_out_carp]  = 1'b1;
+end
+assign dur_exe     = exe_gecerli & |(exe_oku & k2_bekleyen);
+assign exe_calisir = exe_gecerli & ~dur_exe;
+
+assign topla_cntrl  = {topla_hedef, mstf_q[9], exe_calisir & exe_topla, topla_cikarma};
+assign carpma_cntrl = {carp_hedef,  mstf_q[9], exe_calisir & exe_carp,  1'b0};
+
+<span class="yorum">// MR yazma: öncelik EXE > toplayıcı K2 > çarpıcı K2</span>
+for (genvar x = 0; x < 4; x++) begin : g_mr
+  always_ff @(posedge clk or negedge rst_n)
+    if (!rst_n)                                      MR[x] <= 32'h0;
+    else if (exe_calisir && exe_yaz[x])              MR[x] <= exe_veri[x];
+    else if (valid_topla && hedef_mr_out_topla == x) MR[x] <= result_topla;
+    else if (valid_carp  && hedef_mr_out_carp  == x) MR[x] <= result_carp;
+end
+
+<span class="yorum">// LVF/LUF: bekleyen K2 bayrakları okuyan herkese görünür</span>
+wire lvf_k2 = lvf_topla | lvf_carp;          <span class="yorum">// ALU içinde valid ile AND'li</span>
+wire luf_k2 = luf_topla | luf_carp;
+wire lvf_gorunen = mstf_q[0] | lvf_k2;
+wire luf_gorunen = mstf_q[1] | luf_k2;
+assign mstf_in = {mstf_q[6], mstf_q[3], mstf_q[2], luf_gorunen, lvf_gorunen};
+
+<span class="yorum">// MSTF.LVF (LUF aynı): EXE yazıcısı kazanır, yoksa OR</span>
+always_ff @(posedge clk or negedge rst_n)
+  if (!rst_n)                             mstf_q[0] <= 1'b0;
+  else if (exe_calisir && exe_lvf_yaz)    mstf_q[0] <= exe_lvf_deger;
+  else mstf_q[0] <= mstf_q[0] | lvf_k2 | (exe_calisir & exe_kestirim & lvf_kestirme);</pre>
+</section>
+
+<!-- ============================================================ -->
+<section id="disari">
+  <div class="bolum-bas">
+    <h2>ALU dışında kalan kurallar</h2>
+    <p class="ozet">ALU'ya girmeyen ama golden ile aynı sonucu almak için şart olan davranışlar. Ayrıntılı RTL şartları: <code>CLA_GoldenModel/golden_model_notlari/04_rtl_sartlari.md</code>.</p>
+  </div>
+  <div class="kartlar">
+    <div class="kart">
+      <h3>Yükleme bayrakları</h3>
+      <ul class="ul-sade">
+        <li>MMOV32 MRa, mem32 · MMOV32 MRa, MRb · MMOVD32 · paralel buyrukların yükleme yarısı: <code>ZF = (değer[30:23] == 0)</code>, <code>NF = değer[31] ∧ ¬ZF</code>. Koşullu biçimde yalnız CNDF = UNCF ise.</li>
+        <li>MMOVZ16: <code>NF = 0</code>, <code>ZF = (16 bit değer == 0)</code>.</li>
+        <li>MMOVIZ, MMOVXI, MSWAPF, MMOV16 ailesi: bayrak yok.</li>
+      </ul>
+    </div>
+    <div class="kart">
+      <h3>MSTF yazmaları</h3>
+      <ul class="ul-sade">
+        <li><code>MMOV32 MSTF, mem32</code>: <code>MSTF ← değer &amp; 0x00FFFA4F</code>, MEALLOW (bit 11) korunur.</li>
+        <li><code>MSETFLG FLAG, VALUE</code>: FLAG'in 1 olan her biti için o bayrak ← VALUE'nun aynı biti. Eşleme: bit 7 → RND32 (9), 6 → TF, 3 → ZF, 2 → NF, 1 → LUF, 0 → LVF.</li>
+        <li><code>MTESTTF CNDF</code>: TF ← koşul (görünen LVF/LUF ile).</li>
+        <li><code>MEALLOW</code> / <code>MEDIS</code>: bit 11 ← 1 / 0.</li>
+      </ul>
+    </div>
+    <div class="kart">
+      <h3>Dallar</h3>
+      <ul class="ul-sade">
+        <li>Karar D2'de, D2'deki bayraklarla. Her zaman 3 gecikme yuvası.</li>
+        <li>Hedef = dalın kendi adresi + işaretli ofset. Kendine dönen dalın ofseti 0.</li>
+        <li>MCCNDD: <code>RPC ← pc + 8</code> (D2'de). MRCNDD: <code>MPC ← RPC</code>.</li>
+        <li>MPC her çevrim D2'deki buyruğun adresi; getirme adresi ayrı sayaç.</li>
+      </ul>
+    </div>
+    <div class="kart">
+      <h3>MAR</h3>
+      <ul class="ul-sade">
+        <li>Yükleme (MMOVI16, MMOV16 MARx, …) EXE'de; post-increment D2'de.</li>
+        <li>Yüklemeden sonraki 1.–3. buyruk eski MAR'ı görür. 3. buyruk aynı MAR'ı artırırsa artış kazanır, yükleme kaybolur.</li>
+      </ul>
+    </div>
+    <div class="kart">
+      <h3>Bellek durması (dur_r1)</h3>
+      <p>W'deki buyruk bir bloğa yazıyor ve R1'deki aynı bloktan okuyorsa R1 bir çevrim durur: F1 … R1 bekler, R2'ye balon girer. Bloklar L1, L2, CLA→CPU mesaj RAM'i; adres değil blok karşılaştırılır. dur_exe ile aynı çevrimde dur_exe baskın.</p>
+    </div>
+    <div class="kart">
+      <h3>D2 kuralı</h3>
+      <p>D2'nin işleri (adres üretimi, MAR artışı, dal kararı, RPC, MSTOP algısı) her buyrukta bir kez yapılır: buyruk D2'den <b>ilerlediği</b> çevrimde (<code>dur_exe</code> ve <code>dur_r1</code>'de aynı kural). MPC her çevrim D2'deki buyruk, durmada da. Koşullu yüklemede de MAR artışı koşuldan bağımsızdır.</p>
+    </div>
+    <div class="kart">
+      <h3>Görev sonu ve hatalar</h3>
+      <ul class="ul-sade">
+        <li>MSTOP D2'de (n): MIRUN temizlenir, PIE kesmesi gider, arkasındaki 3 buyruk silinir. n+1, n+2 hakem çevrimleri; bekleyen görevin ilk F1'i n+3.</li>
+        <li>Öncelik en küçük görev numarasında.</li>
+        <li>Geçersiz opcode: D2'de durur, PIE kesmesi gider, MIRUN set kalır.</li>
+      </ul>
+    </div>
+    <div class="kart">
+      <h3>Paralel buyruk kısıtları</h3>
+      <ul class="ul-sade">
+        <li>Bütün kaynaklar yazmadan önce okunur. Saklama yarısı MRa'nın eski değerini yazar.</li>
+        <li>Yükleme ve iki aritmetikli biçimlerde MRa ≠ MRd. MMACF32'de MRa ≠ MR3 ve MRa ≠ MRd.</li>
+        <li>Saklama biçiminde kısıt yok: <code>MADDF32 MR0,MR1,MR2 ‖ MMOV32 @X,MR0</code> eski MR0'ı saklar.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="fpga">
+  <div class="bolum-bas">
+    <h2>Saat, reset, sentez</h2>
+  </div>
+  <div class="kartlar">
+    <div class="kart">
+      <h3>estimate_lut.hex</h3>
+      <p><code>kestirme.sv</code> tabloyu göreli yoldan okur: <code>$readmemh("estimate_lut.hex")</code>. Dosyayı (<code>CLA_GoldenModel/isa/estimate_lut.hex</code>) Vivado projesine hem design source hem simulation source olarak ekleyin.</p>
+      <p class="not hata">Dosya bulunamazsa sentez yalnız uyarı verir ve tablo sıfır olur. MEINVF32 ve MEISQRTF32 yanlış sonuç verir, başka hiçbir şey bozulmaz. Vektör testi bunu yakalar.</p>
+    </div>
+    <div class="kart">
+      <h3>Reset ve saat</h3>
+      <ul class="ul-sade">
+        <li><code>rst</code> 0'da etkin ve asenkron. Asenkron basıp senkron bırakan bir reset senkronlayıcı kullanın.</li>
+        <li>ALU'nun tek saatli kısmı FPU K1/K2 yazmacı; boru hattıyla aynı saat.</li>
+        <li>Başlangıç frekansı için öneri: 50 MHz. Sentez raporunda WNS ≥ 0 görüldükten sonra artırılabilir. 11 Ekim hedefi hız değil, doğruluk.</li>
+      </ul>
+    </div>
+    <div class="kart">
+      <h3>Beklenen en uzun yollar</h3>
+      <ul class="ul-sade">
+        <li>K1/K2 yazmacı → toplayıcı K2 (normalize) → pack (yuvarlama) → MR yazma mux'ı.</li>
+        <li>MR → a–d mux → dönüşüm ya da karşılaştırma → MR yazma mux'ı.</li>
+        <li>Ölçüm: <code>dogrulama/alu_vivado/alu_sentez_kontrol.tcl</code> (girişleri ve çıkışları yazmaçlı sarmalayıcı ile WNS raporu).</li>
+      </ul>
+    </div>
+    <div class="kart">
+      <h3>ALU sorumlusunun açık işleri</h3>
+      <ul class="ul-sade">
+        <li><code>clasify.sv</code>: <code>ozel_durumlar</code>'ın varsayılan ataması yok; sentez latch uyarısı verebilir.</li>
+        <li><code>topla_k2.sv</code>: <code>ara_deger_top</code> ve <code>ara_deger_cik</code> yalnız bir dalda atanıyor; aynı risk.</li>
+        <li>İkisi de birer satırlık varsayılan atamayla kapanır; arayüz değişmez. Düzeltmeden sonra vektör testi yeniden koşulur.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="kabul">
+  <div class="bolum-bas">
+    <h2>Golden ile kabul testi</h2>
+    <p class="ozet">FPGA'daki CLA'nın golden ile "birebir aynı" olduğunu göstermenin yolu: aynı programı ve aynı başlangıç belleğini iki tarafa verip görev bittikten sonraki belleği ve yazmaçları karşılaştırmak.</p>
+  </div>
+  <div class="kart">
+    <h3>Akış</h3>
+    <ol class="adimlar">
+      <li>Test programı CASM olarak yazılır. Başlangıç verisi ve görev giriş noktaları yorum satırı yönergeleriyle verilir: <code>;#sembol</code>, <code>;#veri</code>, <code>;#veri16</code>, <code>;#gorev</code>.</li>
+      <li><code>python3.11 golden_beklenen.py test.casm -o cikti</code> programı derler, lint'ten geçirir, golden boru hattında koşar ve dosyaları üretir. Lint hatası varsa çıkış kodu 1 olur; o program kabul testinde kullanılmaz. <code>S5.2-bayrak</code> ve <code>S5.3-mar</code> uyarı olarak basılır: golden ile RTL aynı sonucu verir ama program bellek durmasına bağlıdır.</li>
+      <li>Top modül L3, L1, L2 ve mesaj RAM'lerini bu <code>.hex</code> dosyalarından <code>$readmemh</code> ile başlatır. MVECTx ve MIER <code>yazmac_baslangic.txt</code>'ten alınır.</li>
+      <li>Görev MIFRC ile tetiklenir (FPGA'da örneğin bir düğme ya da reset bırakılınca).</li>
+      <li>RTL simülasyonunda test tezgâhı her kenarda iz satırı basar; <code>tools/compare_trace.py</code> ile <code>golden.trace</code>'e karşı çevrim çevrim karşılaştırılır. <code>AYRISMA YOK</code> beklenir.</li>
+      <li>FPGA'da MIRUN = 0 olunca bellek ve yazmaçlar dışarı okunur ve <code>beklenen_*</code> dosyalarıyla karşılaştırılır.</li>
+    </ol>
+  </div>
+  <div class="panel-tablo">
+    <table>
+      <thead><tr><th>Dosya (&lt;ad&gt;_ önekiyle)</th><th>İçerik</th><th>Biçim</th></tr></thead>
+      <tbody>
+        <tr><td class="kod">L3.hex</td><td>Program, 0x9000–0x9FFF</td><td>4096 satır, satır başına 16 bit; 32 bit buyruğun LSW'si alt adreste</td></tr>
+        <tr><td class="kod">L1.hex · L2.hex</td><td>Veri, 0x8800 ve 0x8C00</td><td>1024 satır, 16 bit</td></tr>
+        <tr><td class="kod">M2C.hex · C2M.hex</td><td>CPU→CLA 0x1500, CLA→CPU 0x1480 mesaj RAM'i</td><td>128 satır, 16 bit</td></tr>
+        <tr><td class="kod">yazmac_baslangic.txt</td><td>MVECT1–8, MIER, MIFRC, MSTF</td><td><code>AD değer</code> satırları</td></tr>
+        <tr><td class="kod">beklenen_L1/L2/C2M.hex</td><td>Görevler bittikten sonraki bellek</td><td>başlangıç dosyalarıyla aynı</td></tr>
+        <tr><td class="kod">beklenen_yazmac.txt</td><td>MR0–3, MAR0–1, MSTF, MPC, MIRUN, MIFR, MIOVF, PIE kesme sırası</td><td><code>MR0 5555aaaa</code> gibi</td></tr>
+        <tr><td class="kod">golden.trace</td><td>Çevrim başına iz (trace_format v1)</td><td>RTL iziyle çevrim çevrim karşılaştırılır (<code>compare_trace.py</code>)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="kartlar">
+    <div class="kart">
+      <h3>Bellek haritası</h3>
+      <div class="tablo-sar"><table>
+        <thead><tr><th>bölge</th><th>adres</th><th>CLA</th></tr></thead>
+        <tbody>
+          <tr><td>CLA→CPU mesaj</td><td class="num">0x1480–0x14FF</td><td>okur, yazar</td></tr>
+          <tr><td>CPU→CLA mesaj</td><td class="num">0x1500–0x157F</td><td>yalnız okur; yazması yok sayılır</td></tr>
+          <tr><td>L1 veri</td><td class="num">0x8800–0x8BFF</td><td>okur, yazar</td></tr>
+          <tr><td>L2 veri</td><td class="num">0x8C00–0x8FFF</td><td>okur, yazar</td></tr>
+          <tr><td>L3 program</td><td class="num">0x9000–0x9FFF</td><td>getirme; MPC 12 bit ofset</td></tr>
+        </tbody>
+      </table></div>
+      <p class="not">16 bitlik kelime adresleme. 32 bit erişim çift adrese hizalanır, LSW alt adreste.</p>
+    </div>
+    <div class="kart">
+      <h3>MSTF bit düzeni</h3>
+      <div class="tablo-sar"><table>
+        <thead><tr><th>bit</th><th>ad</th><th>not</th></tr></thead>
+        <tbody>
+          <tr><td class="kod">0</td><td>LVF</td><td>yapışkan</td></tr>
+          <tr><td class="kod">1</td><td>LUF</td><td>yapışkan</td></tr>
+          <tr><td class="kod">2</td><td>NF</td><td></td></tr>
+          <tr><td class="kod">3</td><td>ZF</td><td></td></tr>
+          <tr><td class="kod">6</td><td>TF</td><td></td></tr>
+          <tr><td class="kod">9</td><td>RND32</td><td>0 kes, 1 en yakın çift</td></tr>
+          <tr><td class="kod">11</td><td>MEALLOW</td><td></td></tr>
+          <tr><td class="kod">23:12</td><td>RPC</td><td>12 bit</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="kart">
+      <h3>CLA yazmaçları (CPU tarafı ofsetleri)</h3>
+      <div class="tablo-sar"><table>
+        <thead><tr><th>ofset</th><th>yazmaç</th></tr></thead>
+        <tbody>
+          <tr><td class="kod">0x00–0x07</td><td>MVECT1–8 (L3 içinde 12 bit)</td></tr>
+          <tr><td class="kod">0x10</td><td>MCTL</td></tr>
+          <tr><td class="kod">0x14, 0x15</td><td>MPISRCSEL1</td></tr>
+          <tr><td class="kod">0x20</td><td>MIFR</td></tr>
+          <tr><td class="kod">0x21</td><td>MIOVF</td></tr>
+          <tr><td class="kod">0x22</td><td>MIFRC (görevi tetikler)</td></tr>
+          <tr><td class="kod">0x23</td><td>MICLR</td></tr>
+          <tr><td class="kod">0x24</td><td>MICLROVF</td></tr>
+          <tr><td class="kod">0x25</td><td>MIER</td></tr>
+          <tr><td class="kod">0x26</td><td>MIRUN</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+  <div class="kart">
+    <h3>Golden RTL'in boru hattını çevrim çevrim uyguluyor</h3>
+    <p>05.10'dan beri golden (<code>pipeline.py</code>) FPU K1/K2 zamanlamasını, interlock'u (<code>dur_exe</code>), R1/W bellek durmasını (<code>dur_r1</code>) ve D2 kuralını uyguluyor (<code>model_kararlari.md</code> §51). Bu yüzden:</p>
+    <ul class="ul-sade">
+      <li><b>İz çevrim çevrim karşılaştırılır.</b> FP sonucu W satırında görünür; <code>dur_exe</code> çevriminde E sütunu bekleyen buyruğu iki satır üst üste gösterir; <code>dur_r1</code> balonu iki çevrim sonra E'de boş satırdır; MPC durmada da D2'deki buyruktur.</li>
+      <li><b>Kural başına test programı hazır:</b> <code>dogrulama/golden_paket/boru_hatti_testleri/</code> (23 program, beklenen izleriyle).</li>
+      <li><b>Kurallar ve şekiller:</b> <a href="https://claude.ai/artifact/2gSrWkVvfNAcPjBAdbnpwV" target="_blank" rel="noopener">CLA Boru Hattı Kuralları</a>.</li>
+    </ul>
+    <p class="not">Örnek paket: <code>dogrulama/golden_paket/ornekler/alu_kabul_1.casm</code>. ALU'nun bütün birimlerini kullanır; 48 buyruk, görev 1 golden'da 122 çevrim (13 <code>dur_exe</code>). Sonuçları 0x1480'den itibaren CLA→CPU mesaj RAM'ine yazar.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="kararlar">
+  <div class="bolum-bas">
+    <h2>Açık kararlar</h2>
+    <p class="ozet">11 Ekim'den önce takımın vermesi gerekenler.</p>
+  </div>
+  <div class="panel-tablo">
+    <table>
+      <thead><tr><th>Karar</th><th>Öneri</th><th>Kimde</th></tr></thead>
+      <tbody>
+        <tr><td>Kabul yöntemi</td><td>RTL simülasyonunda çevrim çevrim iz karşılaştırması (golden M2–M5'i uyguluyor); FPGA'da görev sonundaki bellek ve yazmaçların karşılaştırılması.</td><td>Takım (golden hazır)</td></tr>
+        <tr><td>FPGA'dan sonucu okuma yolu</td><td>UART ile döküm ve PC'de dosya karşılaştırması en sade yol. Alternatif: Vivado ILA/VIO ile Hardware Manager'dan okumak.</td><td>Top modül</td></tr>
+        <tr><td>MMACF32, MRd = MR3</td><td>Golden ile aynı: toplayıcı kazanır. Öncelik EXE &gt; toplayıcı &gt; çarpıcı.</td><td>Top modül (karar verildi)</td></tr>
+        <tr><td>Saat frekansı</td><td>50 MHz ile başlayın, WNS'e göre artırın.</td><td>Top modül</td></tr>
+        <tr><td>Koşullu MMOV32 + MAR post-increment</td><td>Referans boru hattı modelinde artış D2'de, koşuldan bağımsız: koşul tutmasa da MAR artar. RTL de aynısını yapmalı. (Ardışık modelde artmıyor, borç 3b.4; ardışık model referans değil.)</td><td>Top modül (karar verildi)</td></tr>
+        <tr><td>Aynı buyrukta MAR hem hedef hem adres</td><td><code>MMOV16 MAR0, *MAR0[1]++</code> gibi kalıplar TRM'de tanımsız. Kabul programlarında kullanmayın.</td><td>Golden</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="liste">
+  <div class="bolum-bas">
+    <h2>Kontrol listesi</h2>
+    <p class="ozet">İşaretler yalnız bu tarayıcıda saklanır.</p>
+  </div>
+  <div class="kartlar">
+    <div class="kart">
+      <div class="kart-bas"><span class="rol k">Kontrol birimi</span><span class="ilerleme" data-grup="k"></span></div>
+      <div class="liste" data-grup="k">
+        <label><input type="checkbox" id="k1"><span>74 buyruk biçiminin hepsi için 17 kontrol değeri tabloyla aynı.</span></label>
+        <label><input type="checkbox" id="k2"><span>Okunan MR maskesi tablodaki "Okunan MR" sütunuyla aynı (MMOVXI, MMOV16 MARx,MRa,#16I ve saklamalar dahil).</span></label>
+        <label><input type="checkbox" id="k3"><span>MNEGF32'de ZF/NF yazma izni yalnız CNDF = UNCF iken.</span></label>
+        <label><input type="checkbox" id="k4"><span>MCMPF32 ve MCMP32 MR yazmıyor.</span></label>
+        <label><input type="checkbox" id="k5"><span>Kullanılmayan FP biriminin valid biti 0.</span></label>
+        <label><input type="checkbox" id="k6"><span>Koşul değerlendiricisi LV/LU için görünen bayrakları kullanıyor.</span></label>
+        <label><input type="checkbox" id="k7"><span>Anlık ve SHIFT genişletmesi doğru; MSUBF32 #imm anlık − MRb.</span></label>
+      </div>
+    </div>
+    <div class="kart">
+      <div class="kart-bas"><span class="rol t">Top modül</span><span class="ilerleme" data-grup="t"></span></div>
+      <div class="liste" data-grup="t">
+        <label><input type="checkbox" id="t1"><span>MR yazma önceliği EXE &gt; toplayıcı &gt; çarpıcı.</span></label>
+        <label><input type="checkbox" id="t2"><span>K2 sonucu durmadan bağımsız olarak <code>valid_*</code> çevriminde yazılıyor.</span></label>
+        <label><input type="checkbox" id="t3"><span><code>dur_exe</code> çevriminde EXE hiçbir şey yazmıyor ve FPU valid'i 0.</span></label>
+        <label><input type="checkbox" id="t4"><span>LVF/LUF: OR birleştirme, EXE yazıcısı kazanır, görünen bayraklar okuyuculara gidiyor.</span></label>
+        <label><input type="checkbox" id="t5"><span><code>lvf/luf_kestirme</code> yalnız kestirim buyruğu çalışırken OR'lanıyor.</span></label>
+        <label><input type="checkbox" id="t6"><span><code>estimate_lut.hex</code> Vivado projesinde; <code>rst</code> 0'da etkin bağlı.</span></label>
+        <label><input type="checkbox" id="t7"><span><code>dur_r1</code>, D2 kuralı ve görev sonu zamanlaması uygulanmış.</span></label>
+        <label><input type="checkbox" id="t8"><span>Bellekler <code>golden_beklenen.py</code> çıktısıyla başlatılıyor; sonuç dışarı okunabiliyor.</span></label>
+        <label><input type="checkbox" id="t9"><span>RTL simülasyonunda kabul programları golden son durumuyla aynı.</span></label>
+        <label><input type="checkbox" id="t10"><span>23 programlık boru hattı test paketinde <code>compare_trace.py</code>: <code>AYRISMA YOK</code>.</span></label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>Kaynaklar: <code>CLA_ALU/ALU.sv</code> ve alt modülleri · <code>CLA_GoldenModel/golden_model</code> (ops_*.py, pipeline.py, erisim.py) · <code>golden_model_notlari/04_rtl_sartlari.md</code> · TRM SPRUI10A Bölüm 10.</span>
+  <span>Doğrulama: ALU, golden'ın ops_*.py fonksiyonlarına karşı 289.648 vektörle Verilator'da 0 fark. Aynı testbench Vivado'da davranışsal ve sentez sonrası simülasyonda koşulacak.</span>
+</footer>
+</div>
+
+<script>
+(function () {
+  var AD = {
+    topla_cntrl: "topla_cntrl[4:0]", carpma_cntrl: "carpma_cntrl[4:0]", tamsayi_cntrl: "tamsayi_cntrl[2:0]",
+    kestirme_cntrl: "kestirme_cntrl", karsilastirma_cntrl: "karsilastirma_cntrl[6:0]", mstf_in: "mstf_in[4:0]",
+    donusum_cntrl: "donusum_cntrl[4:0]"
+  };
+  var SIRA = ["topla_cntrl", "carpma_cntrl", "tamsayi_cntrl", "kestirme_cntrl", "karsilastirma_cntrl", "mstf_in", "donusum_cntrl",
+    "mux_1", "mux_2", "mux_3", "mux_4", "mux_5", "mux_6", "mux_7", "mux_8", "mux_9", "mux_10"];
+  var VARSAYILAN = { topla_cntrl: "{x, x, 0, x}", carpma_cntrl: "{x, x, 0, x}" };
+  var BIRIM = { topla: "fpu_toplama", carp: "fpu_carpma", int: "tamsayi_islem", kes: "fpu_kestirme", kar: "fpu_karsilastirma", don: "fpu_donusum", top: "top modül" };
+  var LL = "LVF, LUF ← OR (W sonunda)";
+  var NZ = "ZF/NF ← yüklenen değer (yükleme kuralı)";
+  var W = function (u) { return "W sonu: MR[hedef_mr_out_" + u + "] ← result_" + u; };
+  var E = function (u) { return "EXE sonu: MRa ← result_" + u; };
+  var B = [
+    // ---------- FP toplama / çarpma ----------
+    { g: "fp", ad: "MADDF32 MRa, MRb, MRc", ne: "MRa = MRb + MRc", b: ["topla"], p: "a = MRb, b = MRc", o: ["MRb", "MRc"],
+      s: { topla_cntrl: "{MRa, RND32, 1, 0}", mux_1: "00", mux_2: "01" }, y: W("topla"), f: LL },
+    { g: "fp", ad: "MADDF32 MRa, #16FHi, MRb", ne: "MRa = anlık + MRb", b: ["topla"], p: "a = MRb, d = {#16FHi, 16'h0}", o: ["MRb"],
+      s: { topla_cntrl: "{MRa, RND32, 1, 0}", mux_1: "11", mux_2: "00" }, y: W("topla"), f: LL },
+    { g: "fp", ad: "MSUBF32 MRa, MRb, MRc", ne: "MRa = MRb − MRc", b: ["topla"], p: "a = MRb, b = MRc", o: ["MRb", "MRc"],
+      s: { topla_cntrl: "{MRa, RND32, 1, 1}", mux_1: "00", mux_2: "01" }, y: W("topla"), f: LL },
+    { g: "fp", ad: "MSUBF32 MRa, #16FHi, MRb", ne: "MRa = anlık − MRb", b: ["topla"], p: "a = MRb, d = {#16FHi, 16'h0}", o: ["MRb"],
+      s: { topla_cntrl: "{MRa, RND32, 1, 1}", mux_1: "11", mux_2: "00" }, y: W("topla"), f: LL,
+      n: "Eksilen anlıktır: mux_1 = 11 (d), mux_2 = 00 (a)." },
+    { g: "fp", ad: "MMPYF32 MRa, MRb, MRc", ne: "MRa = MRb × MRc", b: ["carp"], p: "a = MRb, b = MRc", o: ["MRb", "MRc"],
+      s: { carpma_cntrl: "{MRa, RND32, 1, 0}", mux_3: "00", mux_4: "01" }, y: W("carp"), f: LL },
+    { g: "fp", ad: "MMPYF32 MRa, #16FHi, MRb", ne: "MRa = anlık × MRb", b: ["carp"], p: "a = MRb, d = {#16FHi, 16'h0}", o: ["MRb"],
+      s: { carpma_cntrl: "{MRa, RND32, 1, 0}", mux_3: "11", mux_4: "00" }, y: W("carp"), f: LL },
+    { g: "fp", ad: "MMPYF32 MRa, MRb, MRc ‖ MADDF32 MRd, MRe, MRf", ne: "MRa = MRb × MRc, MRd = MRe + MRf", b: ["carp", "topla"], p: "a = MRb, b = MRc, c = MRe, d = MRf", o: ["MRb", "MRc", "MRe", "MRf"],
+      s: { carpma_cntrl: "{MRa, RND32, 1, 0}", mux_3: "00", mux_4: "01", topla_cntrl: "{MRd, RND32, 1, 0}", mux_1: "10", mux_2: "11" },
+      y: "W sonu: MRa ← result_carp, MRd ← result_topla", f: LL + ", iki birimden", n: "Kısıt: MRa ≠ MRd." },
+    { g: "fp", ad: "MMPYF32 MRa, MRb, MRc ‖ MSUBF32 MRd, MRe, MRf", ne: "MRa = MRb × MRc, MRd = MRe − MRf", b: ["carp", "topla"], p: "a = MRb, b = MRc, c = MRe, d = MRf", o: ["MRb", "MRc", "MRe", "MRf"],
+      s: { carpma_cntrl: "{MRa, RND32, 1, 0}", mux_3: "00", mux_4: "01", topla_cntrl: "{MRd, RND32, 1, 1}", mux_1: "10", mux_2: "11" },
+      y: "W sonu: MRa ← result_carp, MRd ← result_topla", f: LL + ", iki birimden", n: "Kısıt: MRa ≠ MRd." },
+    { g: "fp", ad: "MADDF32 MRd, MRe, MRf ‖ MMOV32 MRa, mem32", ne: "MRd = MRe + MRf, MRa = [mem32]", b: ["topla"], p: "a = MRe, b = MRf", o: ["MRe", "MRf"],
+      s: { topla_cntrl: "{MRd, RND32, 1, 0}", mux_1: "00", mux_2: "01" }, y: "EXE sonu: MRa ← [mem32] (top) · " + W("topla"), f: LL + "; " + NZ, n: "Kısıt: MRa ≠ MRd. Bellek R2'de okunur." },
+    { g: "fp", ad: "MSUBF32 MRd, MRe, MRf ‖ MMOV32 MRa, mem32", ne: "MRd = MRe − MRf, MRa = [mem32]", b: ["topla"], p: "a = MRe, b = MRf", o: ["MRe", "MRf"],
+      s: { topla_cntrl: "{MRd, RND32, 1, 1}", mux_1: "00", mux_2: "01" }, y: "EXE sonu: MRa ← [mem32] (top) · " + W("topla"), f: LL + "; " + NZ, n: "Kısıt: MRa ≠ MRd." },
+    { g: "fp", ad: "MMPYF32 MRd, MRe, MRf ‖ MMOV32 MRa, mem32", ne: "MRd = MRe × MRf, MRa = [mem32]", b: ["carp"], p: "a = MRe, b = MRf", o: ["MRe", "MRf"],
+      s: { carpma_cntrl: "{MRd, RND32, 1, 0}", mux_3: "00", mux_4: "01" }, y: "EXE sonu: MRa ← [mem32] (top) · " + W("carp"), f: LL + "; " + NZ, n: "Kısıt: MRa ≠ MRd." },
+    { g: "fp", ad: "MADDF32 MRd, MRe, MRf ‖ MMOV32 mem32, MRa", ne: "MRd = MRe + MRf, [mem32] = MRa (eski)", b: ["topla"], p: "a = MRe, b = MRf", o: ["MRe", "MRf", "MRa"],
+      s: { topla_cntrl: "{MRd, RND32, 1, 0}", mux_1: "00", mux_2: "01" }, y: W("topla") + " · W: [mem32] ← MRa (EXE'de okunan)", f: LL, n: "Kısıt yok: MRa = MRd olabilir, eski değer saklanır." },
+    { g: "fp", ad: "MSUBF32 MRd, MRe, MRf ‖ MMOV32 mem32, MRa", ne: "MRd = MRe − MRf, [mem32] = MRa (eski)", b: ["topla"], p: "a = MRe, b = MRf", o: ["MRe", "MRf", "MRa"],
+      s: { topla_cntrl: "{MRd, RND32, 1, 1}", mux_1: "00", mux_2: "01" }, y: W("topla") + " · W: [mem32] ← MRa", f: LL },
+    { g: "fp", ad: "MMPYF32 MRd, MRe, MRf ‖ MMOV32 mem32, MRa", ne: "MRd = MRe × MRf, [mem32] = MRa (eski)", b: ["carp"], p: "a = MRe, b = MRf", o: ["MRe", "MRf", "MRa"],
+      s: { carpma_cntrl: "{MRd, RND32, 1, 0}", mux_3: "00", mux_4: "01" }, y: W("carp") + " · W: [mem32] ← MRa", f: LL },
+    { g: "fp", ad: "MMACF32 MR3, MR2, MRd, MRe, MRf ‖ MMOV32 MRa, mem32", ne: "MR3 = MR3 + MR2, MRd = MRe × MRf, MRa = [mem32]", b: ["topla", "carp"], p: "a = MR3, b = MR2, c = MRe, d = MRf", o: ["MR3", "MR2", "MRe", "MRf"],
+      s: { topla_cntrl: "{11, RND32, 1, 0}", mux_1: "00", mux_2: "01", carpma_cntrl: "{MRd, RND32, 1, 0}", mux_3: "10", mux_4: "11" },
+      y: "EXE sonu: MRa ← [mem32] (top) · W sonu: MR3 ← result_topla, MRd ← result_carp", f: LL + ", iki birimden; " + NZ,
+      n: "Kısıt: MRa ≠ MR3, MRa ≠ MRd. MRd = MR3 serbest: iki K2 yazması MR3'e düşer, toplayıcı kazanır (golden ile aynı)." },
+    // ---------- tamsayı ----------
+    { g: "int", ad: "MADD32 MRa, MRb, MRc", ne: "MRa = MRb + MRc", b: ["int"], p: "a = MRb, b = MRc", o: ["MRb", "MRc"], s: { tamsayi_cntrl: "000", mux_5: "00", mux_6: "01" }, y: E("tamsayi"), f: "ZF ← mstf_out[3], NF ← mstf_out[2]" },
+    { g: "int", ad: "MSUB32 MRa, MRb, MRc", ne: "MRa = MRb − MRc", b: ["int"], p: "a = MRb, b = MRc", o: ["MRb", "MRc"], s: { tamsayi_cntrl: "001", mux_5: "00", mux_6: "01" }, y: E("tamsayi"), f: "ZF, NF" },
+    { g: "int", ad: "MAND32 MRa, MRb, MRc", ne: "MRa = MRb & MRc", b: ["int"], p: "a = MRb, b = MRc", o: ["MRb", "MRc"], s: { tamsayi_cntrl: "010", mux_5: "00", mux_6: "01" }, y: E("tamsayi"), f: "ZF, NF" },
+    { g: "int", ad: "MOR32 MRa, MRb, MRc", ne: "MRa = MRb | MRc", b: ["int"], p: "a = MRb, b = MRc", o: ["MRb", "MRc"], s: { tamsayi_cntrl: "011", mux_5: "00", mux_6: "01" }, y: E("tamsayi"), f: "ZF, NF" },
+    { g: "int", ad: "MXOR32 MRa, MRb, MRc", ne: "MRa = MRb ^ MRc", b: ["int"], p: "a = MRb, b = MRc", o: ["MRb", "MRc"], s: { tamsayi_cntrl: "100", mux_5: "00", mux_6: "01" }, y: E("tamsayi"), f: "ZF, NF" },
+    { g: "int", ad: "MCMP32 MRa, MRb", ne: "MRa − MRb, yalnız bayrak", b: ["int"], p: "a = MRa, b = MRb", o: ["MRa", "MRb"], s: { tamsayi_cntrl: "001", mux_5: "00", mux_6: "01" }, y: "Yazılmaz", f: "ZF, NF (farkın işaretinden; TRM notuyla aynı)" },
+    { g: "int", ad: "MLSL32 MRa, #SHIFT", ne: "MRa = MRa << SHIFT", b: ["int"], p: "a = MRa, d = {26'b0, SHIFT}", o: ["MRa"], s: { tamsayi_cntrl: "101", mux_5: "00", mux_6: "11" }, y: E("tamsayi"), f: "ZF, NF" },
+    { g: "int", ad: "MLSR32 MRa, #SHIFT", ne: "MRa = MRa >> SHIFT (mantıksal)", b: ["int"], p: "a = MRa, d = {26'b0, SHIFT}", o: ["MRa"], s: { tamsayi_cntrl: "110", mux_5: "00", mux_6: "11" }, y: E("tamsayi"), f: "ZF, NF" },
+    { g: "int", ad: "MASR32 MRa, #SHIFT", ne: "MRa = MRa >> SHIFT (aritmetik)", b: ["int"], p: "a = MRa, d = {26'b0, SHIFT}", o: ["MRa"], s: { tamsayi_cntrl: "111", mux_5: "00", mux_6: "11" }, y: E("tamsayi"), f: "ZF, NF" },
+    // ---------- kestirim ----------
+    { g: "kes", ad: "MEINVF32 MRa, MRb", ne: "MRa ≈ 1 / MRb", b: ["kes"], p: "a = MRb", o: ["MRb"], s: { kestirme_cntrl: "0", mux_7: "00" }, y: E("kestirme"), f: "LVF, LUF ← OR lvf/luf_kestirme (EXE sonu)" },
+    { g: "kes", ad: "MEISQRTF32 MRa, MRb", ne: "MRa ≈ 1 / √MRb", b: ["kes"], p: "a = MRb", o: ["MRb"], s: { kestirme_cntrl: "1", mux_7: "00" }, y: E("kestirme"), f: "LVF, LUF ← OR (EXE sonu)" },
+    // ---------- karşılaştırma ----------
+    { g: "kar", ad: "MCMPF32 MRa, MRb", ne: "MRa ile MRb karşılaştırılır", b: ["kar"], p: "a = MRa, b = MRb", o: ["MRa", "MRb"], s: { karsilastirma_cntrl: "{000, 1111}", mux_8: "00", mux_9: "01" }, y: "Yazılmaz", f: "ZF ← zf_karsilastirma, NF ← nf_karsilastirma" },
+    { g: "kar", ad: "MCMPF32 MRa, #16FHi", ne: "MRa ile anlık karşılaştırılır", b: ["kar"], p: "a = MRa, d = {#16FHi, 16'h0}", o: ["MRa"], s: { karsilastirma_cntrl: "{000, 1111}", mux_8: "00", mux_9: "11" }, y: "Yazılmaz", f: "ZF, NF" },
+    { g: "kar", ad: "MMAXF32 MRa, MRb", ne: "MRa = büyük(MRa, MRb)", b: ["kar"], p: "a = MRa, b = MRb", o: ["MRa", "MRb"], s: { karsilastirma_cntrl: "{001, 1111}", mux_8: "00", mux_9: "01" }, y: E("karsilastirma"), f: "ZF, NF" },
+    { g: "kar", ad: "MMAXF32 MRa, #16FHi", ne: "MRa = büyük(MRa, anlık)", b: ["kar"], p: "a = MRa, d = {#16FHi, 16'h0}", o: ["MRa"], s: { karsilastirma_cntrl: "{001, 1111}", mux_8: "00", mux_9: "11" }, y: E("karsilastirma"), f: "ZF, NF" },
+    { g: "kar", ad: "MMINF32 MRa, MRb", ne: "MRa = küçük(MRa, MRb)", b: ["kar"], p: "a = MRa, b = MRb", o: ["MRa", "MRb"], s: { karsilastirma_cntrl: "{010, 1111}", mux_8: "00", mux_9: "01" }, y: E("karsilastirma"), f: "ZF, NF" },
+    { g: "kar", ad: "MMINF32 MRa, #16FHi", ne: "MRa = küçük(MRa, anlık)", b: ["kar"], p: "a = MRa, d = {#16FHi, 16'h0}", o: ["MRa"], s: { karsilastirma_cntrl: "{010, 1111}", mux_8: "00", mux_9: "11" }, y: E("karsilastirma"), f: "ZF, NF" },
+    { g: "kar", ad: "MABSF32 MRa, MRb", ne: "MRa = |MRb|", b: ["kar"], p: "a = MRb", o: ["MRb"], s: { karsilastirma_cntrl: "{011, 1111}", mux_9: "00" }, y: E("karsilastirma"), f: "ZF, NF (NF hep 0)" },
+    { g: "kar", ad: "MNEGF32 MRa, MRb {, CNDF}", ne: "koşul tutarsa MRa = −MRb, tutmazsa MRa = MRb", b: ["kar"], p: "a = MRb", o: ["MRb"], s: { karsilastirma_cntrl: "{100, CNDF}", mux_9: "00", mstf_in: "{TF, ZF, NF, LUF_g, LVF_g}" },
+      y: "EXE sonu: MRa ← result_karsilastirma (koşuldan bağımsız her zaman)", f: "Yalnız CNDF = 1111 (UNCF) ise ZF, NF", n: "mstf_in'in LUF/LVF bitleri görünen değer olmalı (K2'de bekleyenlerle OR)." },
+    // ---------- dönüşüm ----------
+    { g: "don", ad: "MF32TOI16 MRa, MRb", ne: "float → 16 bit işaretli (kesme)", b: ["don"], p: "a = MRb", o: ["MRb"], s: { donusum_cntrl: "{x, 0000}", mux_10: "00" }, y: E("donusum"), f: "Yok" },
+    { g: "don", ad: "MF32TOI16R MRa, MRb", ne: "float → 16 bit işaretli (en yakın çift)", b: ["don"], p: "a = MRb", o: ["MRb"], s: { donusum_cntrl: "{x, 0001}", mux_10: "00" }, y: E("donusum"), f: "Yok" },
+    { g: "don", ad: "MF32TOI32 MRa, MRb", ne: "float → 32 bit işaretli (kesme)", b: ["don"], p: "a = MRb", o: ["MRb"], s: { donusum_cntrl: "{x, 0010}", mux_10: "00" }, y: E("donusum"), f: "Yok" },
+    { g: "don", ad: "MF32TOUI16 MRa, MRb", ne: "float → 16 bit işaretsiz (kesme)", b: ["don"], p: "a = MRb", o: ["MRb"], s: { donusum_cntrl: "{x, 0011}", mux_10: "00" }, y: E("donusum"), f: "Yok" },
+    { g: "don", ad: "MF32TOUI16R MRa, MRb", ne: "float → 16 bit işaretsiz (en yakın çift)", b: ["don"], p: "a = MRb", o: ["MRb"], s: { donusum_cntrl: "{x, 0100}", mux_10: "00" }, y: E("donusum"), f: "Yok" },
+    { g: "don", ad: "MF32TOUI32 MRa, MRb", ne: "float → 32 bit işaretsiz (kesme)", b: ["don"], p: "a = MRb", o: ["MRb"], s: { donusum_cntrl: "{x, 0101}", mux_10: "00" }, y: E("donusum"), f: "Yok" },
+    { g: "don", ad: "MFRACF32 MRa, MRb", ne: "MRa = MRb'nin kesirli kısmı", b: ["don"], p: "a = MRb", o: ["MRb"], s: { donusum_cntrl: "{x, 0110}", mux_10: "00" }, y: E("donusum"), f: "Yok" },
+    { g: "don", ad: "MI16TOF32 MRa, MRb", ne: "16 bit işaretli → float", b: ["don"], p: "a = MRb", o: ["MRb"], s: { donusum_cntrl: "{x, 0111}", mux_10: "00" }, y: E("donusum"), f: "Yok" },
+    { g: "don", ad: "MI16TOF32 MRa, mem16", ne: "bellekteki 16 bit işaretli → float", b: ["don"], p: "d = okunan mem16", o: [], s: { donusum_cntrl: "{x, 0111}", mux_10: "11" }, y: E("donusum"), f: "Yok" },
+    { g: "don", ad: "MI32TOF32 MRa, MRb", ne: "32 bit işaretli → float", b: ["don"], p: "a = MRb", o: ["MRb"], s: { donusum_cntrl: "{RND32, 1000}", mux_10: "00" }, y: E("donusum"), f: "Yok" },
+    { g: "don", ad: "MI32TOF32 MRa, mem32", ne: "bellekteki 32 bit işaretli → float", b: ["don"], p: "d = okunan mem32", o: [], s: { donusum_cntrl: "{RND32, 1000}", mux_10: "11" }, y: E("donusum"), f: "Yok" },
+    { g: "don", ad: "MUI16TOF32 MRa, MRb", ne: "16 bit işaretsiz → float", b: ["don"], p: "a = MRb", o: ["MRb"], s: { donusum_cntrl: "{x, 1001}", mux_10: "00" }, y: E("donusum"), f: "Yok" },
+    { g: "don", ad: "MUI16TOF32 MRa, mem16", ne: "bellekteki 16 bit işaretsiz → float", b: ["don"], p: "d = okunan mem16", o: [], s: { donusum_cntrl: "{x, 1001}", mux_10: "11" }, y: E("donusum"), f: "Yok" },
+    { g: "don", ad: "MUI32TOF32 MRa, MRb", ne: "32 bit işaretsiz → float", b: ["don"], p: "a = MRb", o: ["MRb"], s: { donusum_cntrl: "{RND32, 1010}", mux_10: "00" }, y: E("donusum"), f: "Yok" },
+    { g: "don", ad: "MUI32TOF32 MRa, mem32", ne: "bellekteki 32 bit işaretsiz → float", b: ["don"], p: "d = okunan mem32", o: [], s: { donusum_cntrl: "{RND32, 1010}", mux_10: "11" }, y: E("donusum"), f: "Yok" },
+    // ---------- ALU dışı ----------
+    { g: "top", ad: "MMOV32 MRa, mem32 {, CNDF}", ne: "koşul tutarsa MRa = [mem32]", b: ["top"], p: "", o: [], s: {}, y: "EXE sonu: koşul tutarsa MRa ← [mem32]", f: "Yalnız UNCF ise " + NZ, n: "MAR post-increment D2'de ve koşuldan bağımsız: koşul tutmasa da MAR artar (referans boru hattı modeli). Yalnız yükleme ve ZF/NF koşula bağlı." },
+    { g: "top", ad: "MMOV32 MRa, MRb {, CNDF}", ne: "koşul tutarsa MRa = MRb", b: ["top"], p: "", o: ["MRb"], s: {}, y: "EXE sonu: koşul tutarsa MRa ← MRb", f: "Yalnız UNCF ise ZF/NF ← MRb (yükleme kuralı)", n: "MRb koşuldan bağımsız okunur, interlock da koşuldan bağımsız." },
+    { g: "top", ad: "MMOV32 mem32, MRa", ne: "[mem32] = MRa", b: ["top"], p: "", o: ["MRa"], s: {}, y: "W: [mem32] ← MRa (EXE'de okunan)", f: "Yok" },
+    { g: "top", ad: "MMOV32 MSTF, mem32", ne: "MSTF = [mem32]", b: ["top"], p: "", o: [], s: {}, y: "EXE sonu: MSTF ← [mem32] & 0x00FFFA4F, MEALLOW korunur", f: "Hepsi; aynı kenardaki K2 LVF/LUF'una karşı kazanır" },
+    { g: "top", ad: "MMOV32 mem32, MSTF", ne: "[mem32] = MSTF", b: ["top"], p: "", o: [], s: {}, y: "W: [mem32] ← MSTF (LVF/LUF görünen değerle)", f: "Yok" },
+    { g: "top", ad: "MMOVD32 MRa, mem32", ne: "MRa = [mem32], [mem32+2] = [mem32]", b: ["top"], p: "", o: [], s: {}, y: "EXE sonu: MRa ← [mem32] · W: [mem32+2] ← [mem32]", f: NZ },
+    { g: "top", ad: "MMOVIZ MRa, #16FHi", ne: "MRa = {#16FHi, 16'h0}", b: ["top"], p: "", o: [], s: {}, y: "EXE sonu: MRa ← {imm, 16'h0}", f: "Yok" },
+    { g: "top", ad: "MMOVXI MRa, #16FLoHex", ne: "MRa[15:0] = imm, üst yarı korunur", b: ["top"], p: "", o: ["MRa"], s: {}, y: "EXE sonu: MRa ← {MRa[31:16], imm}", f: "Yok", n: "MRa'nın üst yarısını okuduğu için okunan kümesinde." },
+    { g: "top", ad: "MMOVZ16 MRa, mem16", ne: "MRa = {16'h0, [mem16]}", b: ["top"], p: "", o: [], s: {}, y: "EXE sonu: MRa ← {16'h0, [mem16]}", f: "NF = 0, ZF = (değer == 0)" },
+    { g: "top", ad: "MMOV16 mem16, MRa", ne: "[mem16] = MRa[15:0]", b: ["top"], p: "", o: ["MRa"], s: {}, y: "W: [mem16] ← MRa[15:0]", f: "Yok" },
+    { g: "top", ad: "MMOV16 MARx, MRa, #16I", ne: "MARx = MRa[15:0] + #16I", b: ["top"], p: "", o: ["MRa"], s: {}, y: "EXE sonu: MARx ← MRa[15:0] + imm", f: "Yok", n: "MAR yüklemesi; sonraki 1.–3. buyruk eski MAR'ı görür." },
+    { g: "top", ad: "MMOV16 MARx, mem16", ne: "MARx = [mem16]", b: ["top"], p: "", o: [], s: {}, y: "EXE sonu: MARx ← [mem16]", f: "Yok" },
+    { g: "top", ad: "MMOV16 mem16, MARx", ne: "[mem16] = MARx", b: ["top"], p: "", o: [], s: {}, y: "W: [mem16] ← MARx", f: "Yok" },
+    { g: "top", ad: "MMOVI16 MARx, #16I", ne: "MARx = #16I", b: ["top"], p: "", o: [], s: {}, y: "EXE sonu: MARx ← imm", f: "Yok" },
+    { g: "top", ad: "MSWAPF MRa, MRb {, CNDF}", ne: "koşul tutarsa MRa ↔ MRb", b: ["top"], p: "", o: ["MRa", "MRb"], s: {}, y: "EXE sonu: koşul tutarsa iki MR yazılır", f: "Yok" },
+    { g: "top", ad: "MTESTTF CNDF", ne: "TF = koşul", b: ["top"], p: "", o: [], s: {}, y: "EXE sonu: TF", f: "TF (LV/LU koşulunda görünen bayraklar)" },
+    { g: "top", ad: "MSETFLG FLAG, VALUE", ne: "maskedeki bayraklar = VALUE", b: ["top"], p: "", o: [], s: {}, y: "EXE sonu: MSTF bitleri", f: "bit 7→RND32, 6→TF, 3→ZF, 2→NF, 1→LUF, 0→LVF; aynı kenarda K2'ye karşı kazanır" },
+    { g: "top", ad: "MEALLOW", ne: "MEALLOW = 1", b: ["top"], p: "", o: [], s: {}, y: "EXE sonu: MSTF[11] ← 1", f: "Yok" },
+    { g: "top", ad: "MEDIS", ne: "MEALLOW = 0", b: ["top"], p: "", o: [], s: {}, y: "EXE sonu: MSTF[11] ← 0", f: "Yok" },
+    { g: "top", ad: "MBCNDD 16BitDest {, CNDF}", ne: "koşullu dal, 3 gecikme yuvası", b: ["top"], p: "", o: [], s: {}, y: "D2: koşul tutarsa getirme ← dal adresi + ofset", f: "Okur: D2'deki bayraklar, LVF/LUF görünen" },
+    { g: "top", ad: "MCCNDD 16BitDest {, CNDF}", ne: "koşullu çağrı, 3 gecikme yuvası", b: ["top"], p: "", o: [], s: {}, y: "D2: koşul tutarsa RPC ← pc + 8, dal", f: "Okur: D2'deki bayraklar" },
+    { g: "top", ad: "MRCNDD {CNDF}", ne: "koşullu dönüş, 3 gecikme yuvası", b: ["top"], p: "", o: [], s: {}, y: "D2: koşul tutarsa MPC ← RPC", f: "Okur: D2'deki bayraklar" },
+    { g: "top", ad: "MSTOP", ne: "görev sonu", b: ["top"], p: "", o: [], s: {}, y: "D2: MIRUN temizlenir, PIE kesmesi; sonraki 3 buyruk silinir", f: "Yok" },
+    { g: "top", ad: "MNOP", ne: "işlem yok", b: ["top"], p: "", o: [], s: {}, y: "—", f: "Yok" },
+    { g: "top", ad: "MDEBUGSTOP", ne: "hata ayıklayıcı yokken MNOP gibi", b: ["top"], p: "", o: [], s: {}, y: "—", f: "Yok" }
+  ];
+
+  var GRUP = [["hepsi", "Hepsi"], ["fp", "FP toplama / çarpma"], ["int", "Tamsayı"], ["kes", "Kestirim"], ["kar", "Karşılaştırma"], ["don", "Dönüşüm"], ["top", "ALU dışı"]];
+  var secili = "hepsi", acik = {};
+  try { var k = localStorage.getItem("alu-ent-filtre"); if (k) secili = k; } catch (e) {}
+
+  function esc(t) { return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function adi(k) { return AD[k] || k; }
+
+  var filtre = document.getElementById("filtre");
+  GRUP.forEach(function (g) {
+    var bt = document.createElement("button");
+    bt.type = "button"; bt.textContent = g[1]; bt.dataset.g = g[0];
+    bt.setAttribute("aria-pressed", g[0] === secili ? "true" : "false");
+    bt.addEventListener("click", function () {
+      secili = g[0];
+      try { localStorage.setItem("alu-ent-filtre", secili); } catch (e) {}
+      Array.prototype.forEach.call(filtre.children, function (c) { c.setAttribute("aria-pressed", c.dataset.g === secili ? "true" : "false"); });
+      ciz();
+    });
+    filtre.appendChild(bt);
+  });
+
+  function vektor(r) {
+    return SIRA.map(function (k) {
+      var v = r.s[k] !== undefined ? r.s[k] : (VARSAYILAN[k] || "x");
+      var bos = r.s[k] === undefined && !VARSAYILAN[k];
+      return '<div><span>' + esc(adi(k)) + '</span><span class="' + (bos ? "x" : "") + '">' + esc(v) + '</span></div>';
+    }).join("");
+  }
+
+  function ciz() {
+    var q = document.getElementById("ara").value.trim().toLowerCase();
+    var govde = document.getElementById("govde"), html = [], n = 0;
+    B.forEach(function (r, i) {
+      if (secili !== "hepsi" && r.g !== secili) return;
+      var metin = (r.ad + " " + r.ne + " " + r.y + " " + r.f + " " + (r.n || "")).toLowerCase();
+      if (q && metin.indexOf(q) < 0) return;
+      n++;
+      var kk = Object.keys(r.s);
+      var ciplar = kk.length ? kk.map(function (k) { return '<span class="cip">' + esc(adi(k)) + ' = <b>' + esc(r.s[k]) + '</b></span>'; }).join("")
+        : '<span class="bos">ALU kullanılmaz; topla/carpma valid = 0</span>';
+      var portlar = r.p ? r.p.split(", ").map(function (p) { var s = p.split(" = "); return '<span class="cip port"><b>' + esc(s[0]) + '</b> = ' + esc(s.slice(1).join(" = ")) + '</span>'; }).join("")
+        : '<span class="bos">—</span>';
+      var okunan = r.o.length ? r.o.map(function (m) { return '<span class="cip oku"><b>' + esc(m) + '</b></span>'; }).join("") : '<span class="bos">yok</span>';
+      var birim = r.b.map(function (b) { return '<span class="birim-rozet' + (b === "top" ? " top" : "") + '">' + BIRIM[b] + '</span>'; }).join(" ");
+      html.push('<tr class="satir" tabindex="0" data-i="' + i + '" aria-expanded="' + (acik[i] ? "true" : "false") + '">' +
+        '<td class="ad">' + esc(r.ad) + '<small>' + esc(r.ne) + '</small></td><td>' + birim + '</td><td>' + portlar + '</td><td>' + ciplar +
+        '</td><td>' + okunan + '</td><td>' + esc(r.y) + '</td><td>' + esc(r.f) + '</td></tr>');
+      if (acik[i]) html.push('<tr class="detay"><td colspan="7"><div class="vektor">' + vektor(r) + '</div>' +
+        (r.n ? '<p class="detay-not">' + esc(r.n) + '</p>' : '') + '</td></tr>');
+    });
+    govde.innerHTML = html.join("") || '<tr><td colspan="7">Bu aramaya uyan buyruk yok. Aramayı temizleyin ya da "Hepsi"ni seçin.</td></tr>';
+    document.getElementById("sayac").textContent = n + " / " + B.length + " buyruk biçimi · satıra tıklayın: 17 girişin tam değeri (x = önemsiz)";
+  }
+
+  function degistir(e) {
+    var tr = e.target.closest("tr.satir"); if (!tr) return false;
+    var i = +tr.dataset.i; acik[i] = !acik[i]; ciz(); return i;
+  }
+  document.getElementById("govde").addEventListener("click", degistir);
+  document.getElementById("govde").addEventListener("keydown", function (e) {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    e.preventDefault();
+    var i = degistir(e);
+    if (i !== false) { var yeni = document.querySelector('tr.satir[data-i="' + i + '"]'); if (yeni) yeni.focus(); }
+  });
+  document.getElementById("ara").addEventListener("input", ciz);
+  acik[14] = true;   // MMACF32 açık gelir
+  ciz();
+
+  // kontrol listesi (yalnız bu tarayıcı)
+  var kayit = {};
+  try { kayit = JSON.parse(localStorage.getItem("alu-ent-liste") || "{}") || {}; } catch (e) { kayit = {}; }
+  function ilerleme() {
+    document.querySelectorAll(".liste").forEach(function (l) {
+      var kutular = l.querySelectorAll("input"), say = 0;
+      kutular.forEach(function (c) { if (c.checked) say++; });
+      var et = document.querySelector('.ilerleme[data-grup="' + l.dataset.grup + '"]');
+      if (et) et.textContent = say + " / " + kutular.length;
+    });
+  }
+  document.querySelectorAll(".liste input").forEach(function (c) {
+    c.checked = !!kayit[c.id];
+    c.addEventListener("change", function () {
+      kayit[c.id] = c.checked;
+      try { localStorage.setItem("alu-ent-liste", JSON.stringify(kayit)); } catch (e) {}
+      ilerleme();
+    });
+  });
+  ilerleme();
+})();
+</script>

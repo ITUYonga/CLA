@@ -1,0 +1,21 @@
+; 16_d2_dal_bir_kez
+; dur_r1 sirasinda D2'de MBCNDD: karar bir kez, 3 gecikme yuvasi calisir. (lint S5.2 uyarisi beklenir)
+; Uretim: python3.11 ../golden_beklenen.py 16_d2_dal_bir_kez.casm -o beklenen --golden <CLA_GoldenModel>
+ MMOVIZ MR0, #2.0
+ MNOP
+ MNOP
+ MNOP
+ MMOV32 @0x8800, MR0
+ MNOP
+ MNOP
+ MMOV32 MR1, @0x8820
+ MBCNDD HEDEF, UNC
+ MMOVIZ MR1, #1.0
+ MMOVIZ MR2, #2.0
+ MMOVIZ MR3, #3.0
+ MMOVIZ MR0, #4.0
+HEDEF:
+ MSTOP
+ MNOP
+ MNOP
+ MNOP

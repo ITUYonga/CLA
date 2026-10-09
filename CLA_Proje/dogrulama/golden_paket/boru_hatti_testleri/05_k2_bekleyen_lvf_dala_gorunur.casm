@@ -1,0 +1,21 @@
+; 05_k2_bekleyen_lvf_dala_gorunur
+; Tasan carpim + 3 MNOP + MBCNDD LV: dal ALINIR (bekleyen LVF gorunur).
+; Uretim: python3.11 ../golden_beklenen.py 05_k2_bekleyen_lvf_dala_gorunur.casm -o beklenen --golden <CLA_GoldenModel>
+ MMOVIZ MR1, #0x7F00
+ MNOP
+ MNOP
+ MNOP
+ MMPYF32 MR0, MR1, MR1
+ MNOP
+ MNOP
+ MNOP
+ MBCNDD ATLA, LV
+ MMOVIZ MR2, #1.0
+ MNOP
+ MNOP
+ MMOVIZ MR3, #2.0
+ATLA:
+ MSTOP
+ MNOP
+ MNOP
+ MNOP

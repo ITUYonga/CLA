@@ -1,0 +1,20 @@
+; 18_dal_onceki_3_bayrak_yetismez
+; Daldan 3 once MCMPF32: dal bu bayragi GORMEZ (eski ZF ile karar). (lint S5.2 uyarisi beklenir)
+; Uretim: python3.11 ../golden_beklenen.py 18_dal_onceki_3_bayrak_yetismez.casm -o beklenen --golden <CLA_GoldenModel>
+ MMOVIZ MR0, #1.0
+ MNOP
+ MNOP
+ MNOP
+ MCMPF32 MR0, #1.0
+ MNOP
+ MNOP
+ MBCNDD ATLA, EQ
+ MMOVIZ MR1, #1.0
+ MNOP
+ MNOP
+ MMOVIZ MR2, #2.0
+ATLA:
+ MSTOP
+ MNOP
+ MNOP
+ MNOP

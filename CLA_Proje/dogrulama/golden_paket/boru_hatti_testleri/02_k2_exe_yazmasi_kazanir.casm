@@ -1,0 +1,18 @@
+; 02_k2_exe_yazmasi_kazanir
+; Ayni cevrimde EXE'nin MR yazmasi K2'yi yener: MR2 = bellekteki 5.0 (3.0 degil).
+; Uretim: python3.11 ../golden_beklenen.py 02_k2_exe_yazmasi_kazanir.casm -o beklenen --golden <CLA_GoldenModel>
+;#veri 0x8800 0x40A00000
+ MMOVIZ MR0, #1.0
+ MMOVIZ MR1, #2.0
+ MNOP
+ MNOP
+ MNOP
+ MADDF32 MR2, MR0, MR1
+ MMOV32 MR2, @0x8800
+ MNOP
+ MNOP
+ MNOP
+ MSTOP
+ MNOP
+ MNOP
+ MNOP

@@ -1,0 +1,19 @@
+; 12_dur_r1_zincir
+; Ayni bloga art arda 2 saklama + okuma: 2 cevrim zincirleme dur_r1 (20 cevrim).
+; Uretim: python3.11 ../golden_beklenen.py 12_dur_r1_zincir.casm -o beklenen --golden <CLA_GoldenModel>
+;#veri 0x8810 0x40A00000
+ MMOVIZ MR0, #2.0
+ MNOP
+ MNOP
+ MNOP
+ MMOV32 @0x8800, MR0
+ MMOV32 @0x8802, MR0
+ MNOP
+ MMOV32 MR1, @0x8810
+ MNOP
+ MNOP
+ MNOP
+ MSTOP
+ MNOP
+ MNOP
+ MNOP

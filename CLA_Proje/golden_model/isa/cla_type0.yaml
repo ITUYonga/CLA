@@ -1,0 +1,1032 @@
+# CLA Type-0 komut tablosu
+# Kaynak: SPRUI10A Bolum 10.6.3 (s.589-703)
+# tools/extract_isa.py tarafindan uretildi - elle duzenlerken
+# duzeltmeyi ELLE_DUZELTME sozlugune de islemeyi unutma.
+#
+# mask/match: 32-bit word (MSW bit31-16, LSW bit15-0).
+#   (word & mask) == match  ->  bu komut
+# fields: operand harfi -> kapladigi bit konumlari
+#
+# NOT: 'uygulandi mi' bilgisi burada TUTULMAZ - bu dosya uretiliyor,
+# her uretimde silinirdi. O bilgi Python tarafindaki dagitim
+# sozlugunde durur (cla_core.py): mnemonic sozlukte varsa uygulanmistir.
+#
+# aliases: ayni opcode'un kilavuzda gecen diger yazilisi (s.591).
+#
+# KESTIRIM KOMUTLARI - MEINVF32 (s.617) ve MEISQRTF32 (s.618):
+#   Kodlamalari asagida, digerleri gibi. Urettikleri DEGERI TI yayimlamiyor
+#   ("accurate to approximately 8 bits"); o deger proje sozlesmesi:
+#   golden_model/ops_estimate.py (formul), isa/estimate_lut.hex (RTL'in
+#   okudugu tablo; tools/lut_uret.py uretir, --denetle ile dogrular).
+#   Ayrinti: docs/model_kararlari.md, madde 42.
+#
+# TABLODA OLMAYAN 2 KOMUT (kasitli):
+#   MMOVF32 MRa, #32F   (s.660)  ve  MMOVI32 MRa, #32FHex (s.663)
+#   Bunlarin kendi opcode'u YOK. Kilavuz: 'This instruction is an alias
+#   for MMOVIZ and MMOVXI'. Assembler bunlari iki komuta acar.
+#   Faz 2'de assembler'a sahte komut (pseudo-instruction) olarak eklenecek.
+#
+# COZULDU (2026-09-21, cl2000 6.2.0 ile):
+#     MADD32 MRa,MRb,MRc  <->  MF32TOUI16R MRa,MRb  ikisi de MSW 0x7EC0 idi.
+#     Suphe MADD32'nin uzerindeydi ve DOGRU cikti: TI'nin kendi assembler'i
+#     MADD32'yi 0x7CC0 kodluyor. TRM s.590'daki opcode kutusu hatali.
+#     Tablo duzeltildi; artik cakisma yok.
+
+instructions:
+  - syntax: "MABSF32 MRa, MRb"
+    mnemonic: MABSF32
+    page: 589
+    lsw: "000000000000bbaa"
+    msw: "0111111000100000"
+    mask: 0xFFFFFFF0
+    match: 0x7E200000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+    flags: {TF: false, ZF: true, NF: true, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MADD32 MRa, MRb, MRc"
+    mnemonic: MADD32
+    page: 590
+    # DIKKAT - TRM s.590 "MSW: 0111 1110 1100 0000" (0x7EC0) yaziyor, YANLIS.
+    # cl2000 6.2.0 ayni komutu 0x7CC0 kodluyor (olculdu: ti_capraz/kodlama.lst).
+    # Ayni sayfanin LSW satiri da bozuk: "0000 0000 000cc bbaa" = 17 bit
+    # (bolumdeki ayni operand bicimli 8 komutun hepsi "00cc bbaa" = 16 bit).
+    # Yani s.590'in opcode kutusunda iki dizgi hatasi var. 0x7CC0 ayrica
+    # uc operandli tamsayi dizisindeki BOS yuvayi dolduruyor:
+    #   7C60 MAND32 / 7C80 MOR32 / 7CA0 MXOR32 / [7CC0] / 7CE0 MSUB32
+    lsw: "0000000000ccbbaa"
+    msw: "0111110011000000"
+    mask: 0xFFFFFFC0
+    match: 0x7CC00000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+      c: [5, 4]
+    flags: {TF: false, ZF: true, NF: true, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MADDF32 MRa, #16FHi, MRb"
+    mnemonic: MADDF32
+    aliases:
+      - "MADDF32 MRa, MRb, #16FHi"
+    page: 591
+    lsw: "IIIIIIIIIIIIIIII"
+    msw: "011101111100bbaa"
+    mask: 0xFFF00000
+    match: 0x77C00000
+    fields:
+      I: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+      a: [17, 16]
+      b: [19, 18]
+    flags: {TF: false, ZF: false, NF: false, LUF: true, LVF: true}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MADDF32 MRa, MRb, MRc"
+    mnemonic: MADDF32
+    page: 594
+    lsw: "0000000000ccbbaa"
+    msw: "0111110000100000"
+    mask: 0xFFFFFFC0
+    match: 0x7C200000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+      c: [5, 4]
+    flags: {TF: false, ZF: false, NF: false, LUF: true, LVF: true}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MADDF32 MRd, MRe, MRf||MMOV32 mem32, MRa"
+    mnemonic: MADDF32
+    page: 595
+    lsw: "mmmmmmmmmmmmmmmm"
+    msw: "0101ffeeddaaaddr"
+    mask: 0xF0000000
+    match: 0x50000000
+    fields:
+      a: [21, 20]
+      addr: [19, 18, 17, 16]
+      d: [23, 22]
+      e: [25, 24]
+      f: [27, 26]
+      m: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: false, NF: false, LUF: true, LVF: true}
+    pipeline: "Both MADDF32 and MMOV32 complete in a single cycle."
+  - syntax: "MADDF32 MRd, MRe, MRf ||MMOV32 MRa, mem32"
+    mnemonic: MADDF32
+    page: 596
+    lsw: "mmmmmmmmmmmmmmmm"
+    msw: "0001ffeeddaaaddr"
+    mask: 0xF0000000
+    match: 0x10000000
+    fields:
+      a: [21, 20]
+      addr: [19, 18, 17, 16]
+      d: [23, 22]
+      e: [25, 24]
+      f: [27, 26]
+      m: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: true, NF: true, LUF: true, LVF: true}
+    pipeline: "The MADDF32 and the MMOV32 both complete in a single cycle."
+  - syntax: "MAND32 MRa, MRb, MRc"
+    mnemonic: MAND32
+    page: 598
+    lsw: "0000000000ccbbaa"
+    msw: "0111110001100000"
+    mask: 0xFFFFFFC0
+    match: 0x7C600000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+      c: [5, 4]
+    flags: {TF: false, ZF: true, NF: true, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MASR32 MRa, #SHIFT"
+    mnemonic: MASR32
+    page: 599
+    lsw: "000000000shiftaa"
+    msw: "0111101101000000"
+    mask: 0xFFFFFF80
+    match: 0x7B400000
+    fields:
+      a: [1, 0]
+      shift: [6, 5, 4, 3, 2]
+    flags: {TF: false, ZF: true, NF: true, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MBCNDD 16BitDest {, CNDF}"
+    mnemonic: MBCNDD
+    page: 600
+    lsw: "destdestdestdest"
+    msw: "011110011000cndf"
+    mask: 0xFFF00000
+    match: 0x79800000
+    fields:
+      cndf: [19, 18, 17, 16]
+      dest: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "number of cycles for a branch taken may not be the same as for a branch not taken."
+  - syntax: "MCCNDD 16BitDest {, CNDF}"
+    mnemonic: MCCNDD
+    page: 605
+    lsw: "destdestdestdest"
+    msw: "011110011001cndf"
+    mask: 0xFFF00000
+    match: 0x79900000
+    fields:
+      cndf: [19, 18, 17, 16]
+      dest: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "The MCCNDD instruction by itself is a single-cycle instruction. As shown in Table 10-12,"
+  - syntax: "MCMP32 MRa, MRb"
+    mnemonic: MCMP32
+    page: 609
+    lsw: "000000000000bbaa"
+    msw: "0111111100100000"
+    mask: 0xFFFFFFF0
+    match: 0x7F200000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+    flags: {TF: false, ZF: true, NF: true, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MCMPF32 MRa, MRb"
+    mnemonic: MCMPF32
+    page: 611
+    lsw: "000000000000bbaa"
+    msw: "0111110100000000"
+    mask: 0xFFFFFFF0
+    match: 0x7D000000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+    flags: {TF: false, ZF: true, NF: true, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MCMPF32 MRa, #16FHi"
+    mnemonic: MCMPF32
+    page: 612
+    lsw: "IIIIIIIIIIIIIIII"
+    msw: "01111000110000aa"
+    mask: 0xFFFC0000
+    match: 0x78C00000
+    fields:
+      I: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+      a: [17, 16]
+    flags: {TF: false, ZF: true, NF: true, LUF: false, LVF: false}
+    pipeline: "Example 1"
+  - syntax: "MDEBUGSTOP"
+    mnemonic: MDEBUGSTOP
+    page: 614
+    lsw: "0000000000000000"
+    msw: "0111111101100000"
+    mask: 0xFFFFFFFF
+    match: 0x7F600000
+    fields: {}
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MEALLOW"
+    mnemonic: MEALLOW
+    page: 615
+    lsw: "0000000000000000"
+    msw: "0111111110010000"
+    mask: 0xFFFFFFFF
+    match: 0x7F900000
+    fields: {}
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MEDIS"
+    mnemonic: MEDIS
+    page: 616
+    lsw: "0000000000000000"
+    msw: "0111111110110000"
+    mask: 0xFFFFFFFF
+    match: 0x7FB00000
+    fields: {}
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MEINVF32 MRa, MRb"
+    mnemonic: MEINVF32
+    page: 617
+    lsw: "000000000000bbaa"
+    msw: "0111111100000000"
+    mask: 0xFFFFFFF0
+    match: 0x7F000000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+    flags: {TF: false, ZF: false, NF: false, LUF: true, LVF: true}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MEISQRTF32 MRa, MRb"
+    mnemonic: MEISQRTF32
+    page: 618
+    lsw: "000000000000bbaa"
+    msw: "0111111001000000"
+    mask: 0xFFFFFFF0
+    match: 0x7E400000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+    flags: {TF: false, ZF: false, NF: false, LUF: true, LVF: true}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MF32TOI16 MRa, MRb"
+    mnemonic: MF32TOI16
+    page: 620
+    lsw: "000000000000bbaa"
+    msw: "0111110111100000"
+    mask: 0xFFFFFFF0
+    match: 0x7DE00000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MF32TOI16R MRa, MRb"
+    mnemonic: MF32TOI16R
+    page: 621
+    lsw: "000000000000bbaa"
+    msw: "0111111001100000"
+    mask: 0xFFFFFFF0
+    match: 0x7E600000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MF32TOI32 MRa, MRb"
+    mnemonic: MF32TOI32
+    page: 622
+    lsw: "000000000000bbaa"
+    msw: "0111110101100000"
+    mask: 0xFFFFFFF0
+    match: 0x7D600000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MF32TOUI16 MRa, MRb"
+    mnemonic: MF32TOUI16
+    page: 623
+    lsw: "000000000000bbaa"
+    msw: "0111111010100000"
+    mask: 0xFFFFFFF0
+    match: 0x7EA00000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MF32TOUI16R MRa, MRb"
+    mnemonic: MF32TOUI16R
+    page: 624
+    lsw: "000000000000bbaa"
+    msw: "0111111011000000"
+    mask: 0xFFFFFFF0
+    match: 0x7EC00000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MF32TOUI32 MRa, MRb"
+    mnemonic: MF32TOUI32
+    page: 625
+    lsw: "000000000000bbaa"
+    msw: "0111110110100000"
+    mask: 0xFFFFFFF0
+    match: 0x7DA00000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MFRACF32 MRa, MRb"
+    mnemonic: MFRACF32
+    page: 626
+    lsw: "000000000000bbaa"
+    msw: "0111111000000000"
+    mask: 0xFFFFFFF0
+    match: 0x7E000000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MI16TOF32 MRa, MRb"
+    mnemonic: MI16TOF32
+    page: 627
+    lsw: "000000000000bbaa"
+    msw: "0111111010000000"
+    mask: 0xFFFFFFF0
+    match: 0x7E800000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MI16TOF32 MRa, mem16"
+    mnemonic: MI16TOF32
+    page: 628
+    lsw: "mmmmmmmmmmmmmmmm"
+    msw: "0111010100aaaddr"
+    mask: 0xFFC00000
+    match: 0x75000000
+    fields:
+      a: [21, 20]
+      addr: [19, 18, 17, 16]
+      m: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This instruction does not affect any flags:"
+  - syntax: "MI32TOF32 MRa, mem32"
+    mnemonic: MI32TOF32
+    page: 629
+    lsw: "mmmmmmmmmmmmmmmm"
+    msw: "0111010001aaaddr"
+    mask: 0xFFC00000
+    match: 0x74400000
+    fields:
+      a: [21, 20]
+      addr: [19, 18, 17, 16]
+      m: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MI32TOF32 MRa, MRb"
+    mnemonic: MI32TOF32
+    page: 630
+    lsw: "000000000000bbaa"
+    msw: "0111110110000000"
+    mask: 0xFFFFFFF0
+    match: 0x7D800000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MLSL32 MRa, #SHIFT"
+    mnemonic: MLSL32
+    page: 631
+    lsw: "000000000shiftaa"
+    msw: "0111101111000000"
+    mask: 0xFFFFFF80
+    match: 0x7BC00000
+    fields:
+      a: [1, 0]
+      shift: [6, 5, 4, 3, 2]
+    flags: {TF: false, ZF: true, NF: true, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MLSR32 MRa, #SHIFT"
+    mnemonic: MLSR32
+    page: 632
+    lsw: "000000000shiftaa"
+    msw: "0111101110000000"
+    mask: 0xFFFFFF80
+    match: 0x7B800000
+    fields:
+      a: [1, 0]
+      shift: [6, 5, 4, 3, 2]
+    flags: {TF: false, ZF: true, NF: true, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MMACF32 MR3, MR2, MRd, MRe, MRf ||MMOV32 MRa, mem32"
+    mnemonic: MMACF32
+    page: 633
+    lsw: "mmmmmmmmmmmmmmmm"
+    msw: "0011ffeeddaaaddr"
+    mask: 0xF0000000
+    match: 0x30000000
+    fields:
+      a: [21, 20]
+      addr: [19, 18, 17, 16]
+      d: [23, 22]
+      e: [25, 24]
+      f: [27, 26]
+      m: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: true, NF: true, LUF: true, LVF: true}
+    pipeline: "MMACF32 and MMOV32 complete in a single cycle."
+  - syntax: "MMAXF32 MRa, MRb"
+    mnemonic: MMAXF32
+    page: 636
+    lsw: "000000000000bbaa"
+    msw: "0111110100100000"
+    mask: 0xFFFFFFF0
+    match: 0x7D200000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+    flags: {TF: false, ZF: true, NF: true, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MMAXF32 MRa, #16FHi"
+    mnemonic: MMAXF32
+    page: 638
+    lsw: "IIIIIIIIIIIIIIII"
+    msw: "01111001000000aa"
+    mask: 0xFFFC0000
+    match: 0x79000000
+    fields:
+      I: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+      a: [17, 16]
+    flags: {TF: false, ZF: true, NF: true, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MMINF32 MRa, MRb"
+    mnemonic: MMINF32
+    page: 639
+    lsw: "000000000000bbaa"
+    msw: "0111110101000000"
+    mask: 0xFFFFFFF0
+    match: 0x7D400000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+    flags: {TF: false, ZF: true, NF: true, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MMINF32 MRa, #16FHi"
+    mnemonic: MMINF32
+    page: 641
+    lsw: "IIIIIIIIIIIIIIII"
+    msw: "01111001010000aa"
+    mask: 0xFFFC0000
+    match: 0x79400000
+    fields:
+      I: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+      a: [17, 16]
+    flags: {TF: false, ZF: true, NF: true, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MMOV16 MARx, MRa, #16I"
+    mnemonic: MMOV16
+    page: 642
+    note: "MMOV16 MAR0, MRa, #16I"
+    lsw: "IIIIIIIIIIIIIIII"
+    msw: "01111111110100AA"
+    mask: 0xFFFC0000
+    match: 0x7FD00000
+    fields:
+      A: [17, 16]
+      I: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This instruction does not modify flags in the MSTF register:"
+  - syntax: "MMOV16 MARx, MRa, #16I"
+    mnemonic: MMOV16
+    page: 642
+    note: "MMOV16 MAR1, MRa, #16I"
+    lsw: "IIIIIIIIIIIIIIII"
+    msw: "01111111111100AA"
+    mask: 0xFFFC0000
+    match: 0x7FF00000
+    fields:
+      A: [17, 16]
+      I: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This instruction does not modify flags in the MSTF register:"
+  - syntax: "MMOV16 MARx, mem16"
+    mnemonic: MMOV16
+    page: 645
+    lsw: "mmmmmmmmmmmmmmmm"
+    msw: "011101100000addr"
+    mask: 0xFFF00000
+    match: 0x76000000
+    fields:
+      addr: [19, 18, 17, 16]
+      m: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "No flags MSTF flags are affected."
+  - syntax: "MMOV16 MARx, mem16"
+    mnemonic: MMOV16
+    page: 645
+    lsw: "mmmmmmmmmmmmmmmm"
+    msw: "011101100100addr"
+    mask: 0xFFF00000
+    match: 0x76400000
+    fields:
+      addr: [19, 18, 17, 16]
+      m: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "No flags MSTF flags are affected."
+  - syntax: "MMOV16 mem16, MARx"
+    mnemonic: MMOV16
+    page: 648
+    lsw: "mmmmmmmmmmmmmmmm"
+    msw: "011101101000addr"
+    mask: 0xFFF00000
+    match: 0x76800000
+    fields:
+      addr: [19, 18, 17, 16]
+      m: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MMOV16 mem16, MARx"
+    mnemonic: MMOV16
+    page: 648
+    lsw: "mmmmmmmmmmmmmmmm"
+    msw: "011101101100addr"
+    mask: 0xFFF00000
+    match: 0x76C00000
+    fields:
+      addr: [19, 18, 17, 16]
+      m: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MMOV16 mem16, MRa"
+    mnemonic: MMOV16
+    page: 649
+    lsw: "mmmmmmmmmmmmmmmm"
+    msw: "0111010111aaaddr"
+    mask: 0xFFC00000
+    match: 0x75C00000
+    fields:
+      a: [21, 20]
+      addr: [19, 18, 17, 16]
+      m: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MMOV32 mem32, MRa"
+    mnemonic: MMOV32
+    page: 651
+    lsw: "mmmmmmmmmmmmmmmm"
+    msw: "0111010011aaaddr"
+    mask: 0xFFC00000
+    match: 0x74C00000
+    fields:
+      a: [21, 20]
+      addr: [19, 18, 17, 16]
+      m: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MMOV32 mem32, MSTF"
+    mnemonic: MMOV32
+    page: 652
+    lsw: "mmmmmmmmmmmmmmmm"
+    msw: "011101110100addr"
+    mask: 0xFFF00000
+    match: 0x77400000
+    fields:
+      addr: [19, 18, 17, 16]
+      m: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MMOV32 MRa, mem32 {, CNDF}"
+    mnemonic: MMOV32
+    page: 653
+    lsw: "mmmmmmmmmmmmmmmm"
+    msw: "011100cndfaaaddr"
+    mask: 0xFC000000
+    match: 0x70000000
+    fields:
+      a: [21, 20]
+      addr: [19, 18, 17, 16]
+      cndf: [25, 24, 23, 22]
+      m: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: true, NF: true, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MMOV32 MRa, MRb {, CNDF}"
+    mnemonic: MMOV32
+    page: 655
+    lsw: "00000000cndfbbaa"
+    msw: "0111101011000000"
+    mask: 0xFFFFFF00
+    match: 0x7AC00000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+      cndf: [7, 6, 5, 4]
+    flags: {TF: false, ZF: true, NF: true, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MMOV32 MSTF, mem32"
+    mnemonic: MMOV32
+    page: 657
+    lsw: "mmmmmmmmmmmmmmmm"
+    msw: "011101110000addr"
+    mask: 0xFFF00000
+    match: 0x77000000
+    fields:
+      addr: [19, 18, 17, 16]
+      m: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: true, ZF: true, NF: true, LUF: true, LVF: true}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MMOVD32 MRa, mem32"
+    mnemonic: MMOVD32
+    page: 658
+    lsw: "mmmmmmmmmmmmmmmm"
+    msw: "0111010000aaaddr"
+    mask: 0xFFC00000
+    match: 0x74000000
+    fields:
+      a: [21, 20]
+      addr: [19, 18, 17, 16]
+      m: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: true, NF: true, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MMOVI16 MARx, #16I"
+    mnemonic: MMOVI16
+    page: 661
+    note: "MMOVI16 MAR0, #16I"
+    lsw: "IIIIIIIIIIIIIIII"
+    msw: "0111111111000000"
+    mask: 0xFFFF0000
+    match: 0x7FC00000
+    fields:
+      I: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This instruction does not modify flags in the MSTF register:"
+  - syntax: "MMOVI16 MARx, #16I"
+    mnemonic: MMOVI16
+    page: 661
+    note: "MMOVI16 MAR1, #16I"
+    lsw: "IIIIIIIIIIIIIIII"
+    msw: "0111111111100000"
+    mask: 0xFFFF0000
+    match: 0x7FE00000
+    fields:
+      I: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This instruction does not modify flags in the MSTF register:"
+  - syntax: "MMOVIZ MRa, #16FHi"
+    mnemonic: MMOVIZ
+    page: 665
+    lsw: "IIIIIIIIIIIIIIII"
+    msw: "01111000010000aa"
+    mask: 0xFFFC0000
+    match: 0x78400000
+    fields:
+      I: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+      a: [17, 16]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MMOVZ16 MRa, mem16"
+    mnemonic: MMOVZ16
+    page: 666
+    lsw: "mmmmmmmmmmmmmmmm"
+    msw: "0111010110aaaddr"
+    mask: 0xFFC00000
+    match: 0x75800000
+    fields:
+      a: [21, 20]
+      addr: [19, 18, 17, 16]
+      m: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: true, NF: true, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MMOVXI MRa, #16FLoHex"
+    mnemonic: MMOVXI
+    page: 667
+    lsw: "IIIIIIIIIIIIIIII"
+    msw: "01111000100000aa"
+    mask: 0xFFFC0000
+    match: 0x78800000
+    fields:
+      I: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+      a: [17, 16]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MMPYF32 MRa, MRb, MRc"
+    mnemonic: MMPYF32
+    page: 668
+    lsw: "0000000000ccbbaa"
+    msw: "0111110000000000"
+    mask: 0xFFFFFFC0
+    match: 0x7C000000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+      c: [5, 4]
+    flags: {TF: false, ZF: false, NF: false, LUF: true, LVF: true}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MMPYF32 MRa, #16FHi, MRb"
+    mnemonic: MMPYF32
+    aliases:
+      - "MMPYF32 MRa, MRb, #16FHi"
+    page: 669
+    lsw: "IIIIIIIIIIIIIIII"
+    msw: "011101111000bbaa"
+    mask: 0xFFF00000
+    match: 0x77800000
+    fields:
+      I: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+      a: [17, 16]
+      b: [19, 18]
+    flags: {TF: false, ZF: false, NF: false, LUF: true, LVF: true}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MMPYF32 MRa, MRb, MRc||MADDF32 MRd, MRe, MRf"
+    mnemonic: MMPYF32
+    page: 673
+    lsw: "0000ffeeddccbbaa"
+    msw: "0111101000000000"
+    mask: 0xFFFFF000
+    match: 0x7A000000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+      c: [5, 4]
+      d: [7, 6]
+      e: [9, 8]
+      f: [11, 10]
+    flags: {TF: false, ZF: false, NF: false, LUF: true, LVF: true}
+    pipeline: "Both MMPYF32 and MADDF32 complete in a single cycle."
+  - syntax: "MMPYF32 MRd, MRe, MRf ||MMOV32 MRa, mem32"
+    mnemonic: MMPYF32
+    page: 675
+    lsw: "mmmmmmmmmmmmmmmm"
+    msw: "0000ffeeddaaaddr"
+    mask: 0xF0000000
+    match: 0x00000000
+    fields:
+      a: [21, 20]
+      addr: [19, 18, 17, 16]
+      d: [23, 22]
+      e: [25, 24]
+      f: [27, 26]
+      m: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: true, NF: true, LUF: true, LVF: true}
+    pipeline: "Both MMPYF32 and MMOV32 complete in a single cycle."
+  - syntax: "MMPYF32 MRd, MRe, MRf ||MMOV32 mem32, MRa"
+    mnemonic: MMPYF32
+    page: 677
+    lsw: "mmmmmmmmmmmmmmmm"
+    msw: "0100ffeeddaaaddr"
+    mask: 0xF0000000
+    match: 0x40000000
+    fields:
+      a: [21, 20]
+      addr: [19, 18, 17, 16]
+      d: [23, 22]
+      e: [25, 24]
+      f: [27, 26]
+      m: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: false, NF: false, LUF: true, LVF: true}
+    pipeline: "MMPYF32 and MMOV32 both complete in a single cycle."
+  - syntax: "MMPYF32 MRa, MRb, MRc ||MSUBF32 MRd, MRe, MRf"
+    mnemonic: MMPYF32
+    page: 678
+    lsw: "0000ffeeddccbbaa"
+    msw: "0111101001000000"
+    mask: 0xFFFFF000
+    match: 0x7A400000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+      c: [5, 4]
+      d: [7, 6]
+      e: [9, 8]
+      f: [11, 10]
+    flags: {TF: false, ZF: false, NF: false, LUF: true, LVF: true}
+    pipeline: "MMPYF32 and MSUBF32 both complete in a single cycle."
+  - syntax: "MNEGF32 MRa, MRb{, CNDF}"
+    mnemonic: MNEGF32
+    page: 679
+    lsw: "00000000cndfbbaa"
+    msw: "0111101010000000"
+    mask: 0xFFFFFF00
+    match: 0x7A800000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+      cndf: [7, 6, 5, 4]
+    flags: {TF: false, ZF: true, NF: true, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MNOP"
+    mnemonic: MNOP
+    page: 681
+    lsw: "0000000000000000"
+    msw: "0111111110100000"
+    mask: 0xFFFFFFFF
+    match: 0x7FA00000
+    fields: {}
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MOR32 MRa, MRb, MRc"
+    mnemonic: MOR32
+    page: 682
+    lsw: "0000000000ccbbaa"
+    msw: "0111110010000000"
+    mask: 0xFFFFFFC0
+    match: 0x7C800000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+      c: [5, 4]
+    flags: {TF: false, ZF: true, NF: true, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MRCNDD {CNDF}"
+    mnemonic: MRCNDD
+    page: 683
+    lsw: "0000000000000000"
+    msw: "011110011010cndf"
+    mask: 0xFFF0FFFF
+    match: 0x79A00000
+    fields:
+      cndf: [19, 18, 17, 16]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "number of cycles for a return taken may not be the same as for a return not taken."
+  - syntax: "MSETFLG FLAG, VALUE"
+    mnemonic: MSETFLG
+    page: 686
+    lsw: "FFFFFFFFVVVVVVVV"
+    msw: "0111100111000000"
+    mask: 0xFFFF0000
+    match: 0x79C00000
+    fields:
+      F: [15, 14, 13, 12, 11, 10, 9, 8]
+      V: [7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: true, ZF: true, NF: true, LUF: true, LVF: true}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MSTOP"
+    mnemonic: MSTOP
+    page: 687
+    lsw: "0000000000000000"
+    msw: "0111111110000000"
+    mask: 0xFFFFFFFF
+    match: 0x7F800000
+    fields: {}
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction. Table 10-19 shows the pipeline behavior of the MSTOP"
+  - syntax: "MSUB32 MRa, MRb, MRc"
+    mnemonic: MSUB32
+    page: 689
+    lsw: "0000000000ccbbaa"
+    msw: "0111110011100000"
+    mask: 0xFFFFFFC0
+    match: 0x7CE00000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+      c: [5, 4]
+    flags: {TF: false, ZF: true, NF: true, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MSUBF32 MRa, MRb, MRc"
+    mnemonic: MSUBF32
+    page: 690
+    lsw: "0000000000ccbbaa"
+    msw: "0111110001000000"
+    mask: 0xFFFFFFC0
+    match: 0x7C400000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+      c: [5, 4]
+    flags: {TF: false, ZF: false, NF: false, LUF: true, LVF: true}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MSUBF32 MRa, #16FHi, MRb"
+    mnemonic: MSUBF32
+    page: 691
+    lsw: "IIIIIIIIIIIIIIII"
+    msw: "011110000000bbaa"
+    mask: 0xFFF00000
+    match: 0x78000000
+    fields:
+      I: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+      a: [17, 16]
+      b: [19, 18]
+    flags: {TF: false, ZF: false, NF: false, LUF: true, LVF: true}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MSUBF32 MRd, MRe, MRf ||MMOV32 MRa, mem32"
+    mnemonic: MSUBF32
+    page: 693
+    lsw: "mmmmmmmmmmmmmmmm"
+    msw: "0010ffeeddaaaddr"
+    mask: 0xF0000000
+    match: 0x20000000
+    fields:
+      a: [21, 20]
+      addr: [19, 18, 17, 16]
+      d: [23, 22]
+      e: [25, 24]
+      f: [27, 26]
+      m: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: true, NF: true, LUF: true, LVF: true}
+    pipeline: "Both MSUBF32 and MMOV32 complete in a single cycle."
+  - syntax: "MSUBF32 MRd, MRe, MRf ||MMOV32 mem32, MRa"
+    mnemonic: MSUBF32
+    page: 694
+    lsw: "mmmmmmmmmmmmmmmm"
+    msw: "0110ffeeddaaaddr"
+    mask: 0xF0000000
+    match: 0x60000000
+    fields:
+      a: [21, 20]
+      addr: [19, 18, 17, 16]
+      d: [23, 22]
+      e: [25, 24]
+      f: [27, 26]
+      m: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: false, NF: false, LUF: true, LVF: true}
+    pipeline: "Both MSUBF32 and MMOV32 complete in a single cycle."
+  - syntax: "MSWAPF MRa, MRb {, CNDF}"
+    mnemonic: MSWAPF
+    page: 695
+    lsw: "00000000CNDFbbaa"
+    msw: "0111101100000000"
+    mask: 0xFFFFFF00
+    match: 0x7B000000
+    fields:
+      CNDF: [7, 6, 5, 4]
+      a: [1, 0]
+      b: [3, 2]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MTESTTF CNDF"
+    mnemonic: MTESTTF
+    page: 697
+    lsw: "000000000000cndf"
+    msw: "0111111101000000"
+    mask: 0xFFFFFFF0
+    match: 0x7F400000
+    fields:
+      cndf: [3, 2, 1, 0]
+    flags: {TF: true, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MUI16TOF32 MRa, mem16"
+    mnemonic: MUI16TOF32
+    page: 699
+    lsw: "mmmmmmmmmmmmmmmm"
+    msw: "0111010101aaaddr"
+    mask: 0xFFC00000
+    match: 0x75400000
+    fields:
+      a: [21, 20]
+      addr: [19, 18, 17, 16]
+      m: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MUI16TOF32 MRa, MRb"
+    mnemonic: MUI16TOF32
+    page: 700
+    lsw: "000000000000bbaa"
+    msw: "0111111011100000"
+    mask: 0xFFFFFFF0
+    match: 0x7EE00000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MUI32TOF32 MRa, mem32"
+    mnemonic: MUI32TOF32
+    page: 701
+    lsw: "mmmmmmmmmmmmmmmm"
+    msw: "0111010010aaaddr"
+    mask: 0xFFC00000
+    match: 0x74800000
+    fields:
+      a: [21, 20]
+      addr: [19, 18, 17, 16]
+      m: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MUI32TOF32 MRa, MRb"
+    mnemonic: MUI32TOF32
+    page: 702
+    lsw: "000000000000bbaa"
+    msw: "0111110111000000"
+    mask: 0xFFFFFFF0
+    match: 0x7DC00000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+    flags: {TF: false, ZF: false, NF: false, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."
+  - syntax: "MXOR32 MRa, MRb, MRc"
+    mnemonic: MXOR32
+    page: 703
+    lsw: "0000000000ccbbaa"
+    msw: "0111110010100000"
+    mask: 0xFFFFFFC0
+    match: 0x7CA00000
+    fields:
+      a: [1, 0]
+      b: [3, 2]
+      c: [5, 4]
+    flags: {TF: false, ZF: true, NF: true, LUF: false, LVF: false}
+    pipeline: "This is a single-cycle instruction."

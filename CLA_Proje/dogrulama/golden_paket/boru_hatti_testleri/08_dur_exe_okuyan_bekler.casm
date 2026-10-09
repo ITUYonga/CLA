@@ -1,0 +1,17 @@
+; 08_dur_exe_okuyan_bekler
+; MMPYF32 MR0 -> MADDF32 MR3, MR0, MR1: 1 cevrim dur_exe (18 cevrim, MR3 = 8.0).
+; Uretim: python3.11 ../golden_beklenen.py 08_dur_exe_okuyan_bekler.casm -o beklenen --golden <CLA_GoldenModel>
+ MMOVIZ MR1, #2.0
+ MMOVIZ MR2, #3.0
+ MNOP
+ MNOP
+ MNOP
+ MMPYF32 MR0, MR1, MR2
+ MADDF32 MR3, MR0, MR1
+ MNOP
+ MNOP
+ MNOP
+ MSTOP
+ MNOP
+ MNOP
+ MNOP

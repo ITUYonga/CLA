@@ -1,0 +1,18 @@
+; 22_birikim
+; MADDF32 MR0, MR0, MR1: K2 sonucu birikimde dogru.
+; Uretim: python3.11 ../golden_beklenen.py 22_birikim.casm -o beklenen --golden <CLA_GoldenModel>
+;#veri 0x8800 0x3F800000
+;#veri 0x8802 0x40000000
+ MMOV32 MR0, @0x8800
+ MMOV32 MR1, @0x8802
+ MNOP
+ MNOP
+ MNOP
+ MADDF32 MR0, MR0, MR1
+ MNOP
+ MNOP
+ MNOP
+ MSTOP
+ MNOP
+ MNOP
+ MNOP

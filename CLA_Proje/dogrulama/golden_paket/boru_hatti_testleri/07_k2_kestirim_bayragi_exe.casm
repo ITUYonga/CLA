@@ -1,0 +1,15 @@
+; 07_k2_kestirim_bayragi_exe
+; MEINVF32 kombinasyonel: LVF EXE satirinda kurulur, K2'ye ertelenmez.
+; Uretim: python3.11 ../golden_beklenen.py 07_k2_kestirim_bayragi_exe.casm -o beklenen --golden <CLA_GoldenModel>
+ MMOVIZ MR0, #0.0
+ MNOP
+ MNOP
+ MNOP
+ MEINVF32 MR1, MR0
+ MNOP
+ MNOP
+ MNOP
+ MSTOP
+ MNOP
+ MNOP
+ MNOP

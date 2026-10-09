@@ -1,0 +1,26 @@
+; 20_gorev_sonu_fp
+; Gorev 1'in MSTOP'tan hemen onceki FP sonucu gorev 2'de gorunur (K2 tamamlanir).
+; Uretim: python3.11 ../golden_beklenen.py 20_gorev_sonu_fp.casm -o beklenen --golden <CLA_GoldenModel>
+;#gorev 1 G1
+;#gorev 2 G2
+G1:
+ MMOVIZ MR1, #3.0
+ MNOP
+ MNOP
+ MNOP
+ MMPYF32 MR0, MR1, MR1
+ MSTOP
+ MNOP
+ MNOP
+ MNOP
+G2:
+ MMOV32 @0x1480, MR0
+ MADDF32 MR2, MR0, MR1
+ MNOP
+ MNOP
+ MNOP
+ MMOV32 @0x1482, MR2
+ MSTOP
+ MNOP
+ MNOP
+ MNOP
