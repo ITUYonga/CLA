@@ -27,6 +27,15 @@ UART Lite 100 MHz'den 921600 baud'u tam bölemiyor, içerideki ikinci UART da ge
 
 Kartta sınanmadı: Vivado betiği, psu_init/JTAG akışı, gerçek PS UART baud'u.
 
+## Bilgisayar düzeni
+
+- **x86 Windows/Linux bilgisayar (Vivado + Vitis kurulu):** her şey aynı bilgisayarda; aşağıdaki
+  USB'yi sanal makineye verme / geri alma adımları (2 ve 4) atlanır.
+- **Mac + sanal makine:** aşağıdaki bölüm.
+- **Yalnız yüklemek için** (bitstream hazırsa) Vivado gerekmez: Vitis'in `xsdb`'si (ya da
+  Vivado Lab Edition) yeter. `b_yolu/cikti/kv260_b.bit` ve `psu_init.tcl` repoya eklenebilir
+  (`.gitignore` dışında); bitstream'i üreten kişi `git add fpga_kopru/b_yolu/cikti` ile paylaşır.
+
 ## Mac + sanal makine düzeni
 
 Apple Silicon'da Vivado x86 emülasyonunda çalışır; arayüz çok yavaştır. Bu yüzden:
@@ -67,13 +76,19 @@ Betik: önyükleme kipini JTAG'a alır → bitstream → `psu_init` (saatler, UA
 **4. USB'yi Mac'e geri verin** (sanal makinenin USB menüsünden "bağlantıyı kes"). Kart 12 V'tan
 beslendiği için aktarıcı çalışmaya devam eder. (Kart sıfırlanırsa 3. adımı tekrarlayın.)
 
-**5. Göz kontrolü:** `screen /dev/cu.usbserial-XXXX 921600` → yükleme sonrası
-"CLA aktarici hazir" görünür (çıkış: Ctrl-A, K). Sonraki adımdan önce kapatın.
+**5. Kart testi** (`uygulama/drone_sim` klasöründen; Windows'ta `python` yerine `.venv\Scripts\python`):
+```
+python kart_testi.py --port auto
+```
+7 madde de TAMAM olmalı (bağlantı, program, 2000 adımda golden'la bit bit, OKU, SIFIRLA, hata kodları, hız).
+İsteğe bağlı göz kontrolü: seri terminalde 921600 baud'da "CLA aktarici hazir" (macOS:
+`screen /dev/cu.usbserial-XXXX 921600`, çıkış Ctrl-A, K); testten önce kapatın.
 
-**6. Kart ↔ golden (Mac):** bitstream'deki programla aynı mimari seçilir: ick (varsayılan) için
+**6. Kart ↔ golden:** bitstream'deki programla aynı mimari seçilir: ick (varsayılan) için
 `--sensor gercek`, ic için `--sensor ideal`.
 ```
-cd ../uygulama/drone_sim && .venv/bin/python sim.py --kontrolcu ikisi --port auto
+cd ../uygulama/drone_sim
+python sim.py --kontrolcu ikisi --port auto
 ```
 Drone'u FPGA sürer; aynı girdiler golden'a da gider. Her adımda çıktılar bit bit ve CLA çevrim sayısı
 karşılaştırılır (çevrim: ilk getirmeden boru hattı boşalana kadar, golden'la aynı tanım).
@@ -82,6 +97,8 @@ karşılaştırılır (çevrim: ilk getirmeden boru hattı boşalana kadar, gold
 
 | Belirti | Olası neden |
 |---|---|
+| `kart_testi` / `sim.py`: "Karttaki CLA programi … degil" | bitstream'de başka program var: mesajdaki `--sensor` seçeneği ya da `vivado_olustur.tcl` komutu |
+| `kart_testi` "7 hiz" %95 > 2 ms | USB seri gecikmesi: `uygulama/drone_sim/README.md` "Hız" (Latency Timer = 1 ms) |
 | `sim.py --port auto`: "KV260 bulunamadı" | aktarıcı çalışmıyor (3. adım), USB hâlâ sanal makinede, `screen` portu tutuyor |
 | `screen`'de "HATA: PL kopru bulunamadi" | bitstream yüklenmedi ya da adres 0x8000_0000 değil (`rapor.txt`'ten önce Vivado günlüğündeki "adres:" satırı) |
 | `screen`'de hiçbir şey yok | aktarıcı başka UART'ta olabilir: `xsdb b_yolu/karta_yukle.tcl uart0` |

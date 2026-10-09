@@ -39,33 +39,47 @@ yetişiyor); kartta KV260'ın micro-USB'sine (FTDI) ve işletim sisteminin sür�
 ve çevrim farkı görünür. Çevrim, kartta köprünün sayacından gelir: ilk getirmeden boru hattı
 boşalana kadar, golden'la aynı tanım.
 
-İlk kurulum (yalnız bir kez):
+İlk kurulum (yalnız bir kez; Python 3.10 ya da üstü):
 
-```
-python3.11 -m venv --system-site-packages .venv
-.venv/bin/pip install pygame-ce pyserial
-```
+| Sistem | Kurulum | Çalıştırma |
+|---|---|---|
+| macOS | `python3.11 -m venv --system-site-packages .venv` ve `.venv/bin/pip install pygame-ce pyserial` | `.venv/bin/python sim.py …` (ya da `sim.command`'a çift tık) |
+| Linux | `python3 -m venv .venv` ve `.venv/bin/pip install pygame-ce pyserial`; seri port izni için bir kez `sudo usermod -aG dialout $USER` (oturumu kapatıp açın) | `.venv/bin/python sim.py …` |
+| Windows | `py -3.11 -m venv .venv` ve `.venv\Scripts\pip install pygame-ce pyserial` | `.venv\Scripts\python sim.py …` |
 
 Golden model `../../golden_model/core.py`'den okunur; başka yerdeyse `CLA_GOLDEN=/yol` verin.
 `--kontrolcu rtl` için Verilator 5 gerekir (RTL açılışta birkaç saniyede derlenir).
 
 ## KV260 ile (CLA FPGA'da)
 
-CLA programı bitstream'e gömülür; simülasyonun seçtiği programla aynı olmalı:
+Kart JTAG ile açılır; bitstream kalıcı değildir, **kartın gücü her kesildiğinde yeniden yüklenir**.
+CLA programı bitstream'e gömülüdür ve simülasyonun seçtiği programla aynı olmalıdır:
 
 | Simülasyon | CLA programı | Bitstream (`fpga_kopru` klasöründen) |
 |---|---|---|
 | `sim.py` (varsayılan, `--sensor gercek`) | `ic_kestirim.casm`, 160 çevrim | `vivado -mode batch -source b_yolu/vivado_olustur.tcl -tclargs 4` |
 | `sim.py --sensor ideal` | `ic_dongu.casm`, 59 çevrim | `... -tclargs 4 ../uygulama/drone_sim/ic_dongu_l3.hex` |
 
-1. Program değiştiyse L3 dosyasını yeniden üretin: `.venv/bin/python l3_uret.py` (`--mimari ic` ideal sensör için).
-2. Bitstream'i üretip karta yükleyin: `../../fpga_kopru/b_yolu/README.md` adım 1–4.
-3. Kartı golden'la birlikte sürün: `.venv/bin/python sim.py --kontrolcu ikisi --port auto`.
-4. Panelde golden≠FPGA ve çevrim farkı 0 kalıyorsa yalnız kartla uçun: `--kontrolcu fpga --port auto`.
+Bitstream'deki program `fpga_kopru/b_yolu/cikti/cla_program.hex`'te durur.
 
-Açılışta `FpgaKontrolcu` karttaki programı denetler (bir ADIM, çevrim sayısı programı belirler).
-Yanlış bitstream sessizce yanlış kuvvet üretmez; simülasyon açılmadan hangi programın yüklü olduğunu
-ve hangi komutun gerektiğini yazar.
+1. **Kartı yükleyin** (her güç açılışında): `fpga_kopru` klasöründen `xsdb b_yolu/karta_yukle.tcl`
+   (`b_yolu/cikti/kv260_b.bit` ve `psu_init.tcl` gerekir; ayrıntı `../../fpga_kopru/b_yolu/README.md`).
+2. **Kart testi** (bu klasörden): `python kart_testi.py --port auto`. 7 madde de TAMAM olmalı:
+   bağlantı, program, 2000 adımda golden'la bit bit aynı çıktı ve çevrim, OKU, SIFIRLA, hata kodları, hız.
+3. **Kart + golden:** `python sim.py --kontrolcu ikisi --port auto`. Panelde golden≠FPGA ve çevrim farkı 0 kalmalı.
+4. **Yalnız kart:** `python sim.py --kontrolcu fpga --port auto`.
+
+(`python` yerine yukarıdaki tablodaki venv yolunu kullanın.) Açılışta `FpgaKontrolcu` karttaki programı
+denetler; yanlış bitstream'de simülasyon açılmadan hangi programın yüklü olduğunu ve gereken komutu yazar.
+
+**Hız:** USB seri dönüştürücünün gecikmesi (FTDI, varsayılan 16 ms) her adıma eklenir. 500 Hz için gidiş-dönüş
+2 ms'nin altında olmalı (`kart_testi.py` ölçer); değilse simülasyon ağır çekimde çalışır, sonuç değişmez.
+Düşürmek için: Windows'ta Aygıt Yöneticisi → ilgili COM portu → Bağlantı Noktası Ayarları → Gelişmiş →
+Gecikme Süresi (Latency Timer) = 1 ms; Linux'ta `echo 1 | sudo tee /sys/bus/usb-serial/devices/ttyUSB1/latency_timer`
+(port numarası sizde farklı olabilir); ya da `--ic-hz 250` / `--ic-hz 100`.
+
+Kart yokken aynı akışın provası: `python kart_testi.py --rtl` ve `python sim.py --kontrolcu rtl`
+(karttaki tasarımın RTL'i, Verilator).
 
 ## Kontroller
 
@@ -160,6 +174,7 @@ Sınırlar: tek eksen (yunuslama), PD iç döngü, bozucu ve gürültü modeller
 | `paket.py` | Mesaj RAM sözleşmesi; `ICK` (varsayılan), `IC` (ideal sensör), `TEK` (ilk sürüm) düzenleri, kazanç tablosu |
 | `kontrolcu.py` | CLA arka uçları: `GoldenKontrolcu`, `FpgaKontrolcu` (UART; açılışta karttaki programı denetler), `IkiliKontrolcu` (çıktı + çevrim karşılaştırması) |
 | `uart_protokol.py` | PC ↔ KV260 paket biçimi (`../../fpga_kopru/rtl/cla_kopru_cekirdek.sv` ile aynı) |
+| `kart_testi.py` | Kart testi: bağlantı, program, golden'la bit bit adımlar, OKU, SIFIRLA, hata kodları, hız (`--rtl` / `--sanal` ile kartsız) |
 | `sanal_fpga.py` | Kart yokken: pty üzerinde sanal KV260; içinde golden (`sanal`) ya da karttaki RTL'in Verilator simülasyonu (`rtl`) |
 | `cla_vitrin.py` | CLA paneli ve "CLA nedir?" ekranı (boru hattı izi golden'dan, ölçüm grafiği json'dan) |
 | `dongu_hizi.py` | İç döngü hızı deneyi (bant genişliği, rüzgâr, darbe; iki gövde) |

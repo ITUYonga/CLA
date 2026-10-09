@@ -1,12 +1,13 @@
 # =====================================================================
 #  karta_yukle.tcl - KV260'a JTAG ile: PS kurulumu + bitstream + aktarici
 # ---------------------------------------------------------------------
-#  Calistirma (kart micro-USB ile bagli, 12 V takili; uart_kopru klasorunden):
+#  Calistirma (kart micro-USB ile bagli, 12 V takili; fpga_kopru klasorunden):
 #      xsdb b_yolu/karta_yukle.tcl            (xsdb yoksa: xsct b_yolu/karta_yukle.tcl)
 #      xsdb b_yolu/karta_yukle.tcl uart0      (UART1 cevap vermezse yedek aktarici)
 #  Gerekenler: b_yolu/cikti/{kv260_b.bit, psu_init.tcl}, b_yolu/aktarici/aktarici.elf
 #  Bitince aktarici calisir; PC'de seri port 921600 baud'da "CLA aktarici hazir" yazar.
-#  Kart guc kesilene kadar boyle kalir; xsdb'yi kapatmak sorun degil.
+#  Kart guc kesilene kadar boyle kalir; xsdb'yi kapatmak sorun degil. Guc kesilirse yeniden calistirin
+#  (KV260 JTAG ile acildigi icin bitstream kalici degil).
 # =====================================================================
 set BURASI [file dirname [file normalize [info script]]]
 set CIKTI  [file join $BURASI cikti]
@@ -49,7 +50,8 @@ dow $elf
 con
 after 500
 
-puts "\nTAMAM: aktarici calisiyor. Simdi PC'de:"
-puts "    ../../uygulama/drone_sim/.venv/bin/python -B kart_testi.py --port auto"
+puts "\nTAMAM: aktarici calisiyor. Simdi PC'de (uygulama/drone_sim klasorunden):"
+puts "    python kart_testi.py --port auto"
+puts "    python sim.py --kontrolcu ikisi --port auto"
 disconnect
 exit
