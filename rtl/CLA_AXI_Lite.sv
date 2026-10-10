@@ -7,6 +7,9 @@
 //   0x020 - 0x03C : MVECT1-8
 //   0x040         : IRQ_DURUM (R/W1C) , bit i : gorev i+1 bitti (pie_kesme[i] yukselen kenari)
 //   0x044         : IRQ_MASKE (RW)    , irq = |(IRQ_DURUM & IRQ_MASKE)
+//   0x048         : KONTROL (RW)      , bit0 CLA_SIFIRLA : 1 iken CLA_Top resette tutulur (gorev yazmaclari ,
+//                                       MVECT , boru hatti) ; AXI arayuzu , IRQ yazmaclari ve mesaj RAM'leri etkilenmez
+//   0x04C         : KIMLIK (R)        , 0x434C_4101 ("CLA" + surum 01) : dogru bitstream denetimi
 //   0x100 - 0x1FC : M2C (RW) , paketli : [15:0] cift 16 bit word , [31:16] tek 16 bit word
 //   0x200 - 0x2FC : C2M (R)  , paketli , yazma yok sayilir
 //   diger         : 0 okunur , yazma yok sayilir
@@ -18,7 +21,8 @@
 module CLA_AXI_Lite
 #(
                 parameter string PROGRAM_HEX = "" ,      // CLA_Top'a aynen gecer
-                parameter bit TRIG_SENKRON = 1'b0         // 1 : hw_task_trig asenkron kaynaktan , 2 flop senkronlayici
+                parameter bit TRIG_SENKRON = 1'b0 ,       // 1 : hw_task_trig asenkron kaynaktan , 2 flop senkronlayici
+                parameter logic [31:0]KIMLIK = 32'h434C_4101
 )(
                 //////////////saat , reset
                 input logic S_AXI_ACLK ,
@@ -91,6 +95,8 @@ logic sec_gorev;
 logic sec_mvect;
 logic sec_irq_durum;
 logic sec_irq_maske;
+logic sec_kontrol;
+logic sec_kimlik;
 logic sec_m2c;
 logic sec_c2m;
 logic yaz_cevrim;
@@ -129,6 +135,10 @@ logic [31:0]c2m_dout;
 logic [1:0]m2c_axi_wr_en;
 logic [31:0]m2c_axi_dout;
 logic [31:0]c2m_axi_dout;
+
+// CLA reset
+logic cla_sifirla;
+logic cla_rst_n;
 
 
 
@@ -196,6 +206,8 @@ assign sec_gorev = (islem_adr[11:5] == 7'h00);          // 0x000 - 0x01C
 assign sec_mvect = (islem_adr[11:5] == 7'h01);          // 0x020 - 0x03C
 assign sec_irq_durum = (islem_adr[11:2] == 10'h010);    // 0x040
 assign sec_irq_maske = (islem_adr[11:2] == 10'h011);    // 0x044
+assign sec_kontrol = (islem_adr[11:2] == 10'h012);      // 0x048
+assign sec_kimlik = (islem_adr[11:2] == 10'h013);       // 0x04C
 assign sec_m2c = (islem_adr[11:8] == 4'h1);             // 0x100 - 0x1FC
 assign sec_c2m = (islem_adr[11:8] == 4'h2);             // 0x200 - 0x2FC
 
@@ -229,6 +241,8 @@ always_ff@(posedge clk or negedge rst_n) begin
         else if(sec_mvect) oku_veri <= {16'h0000 , mvect_oku};
         else if(sec_irq_durum) oku_veri <= {24'h000000 , irq_durum};
         else if(sec_irq_maske) oku_veri <= {24'h000000 , irq_maske};
+        else if(sec_kontrol) oku_veri <= {31'h0 , cla_sifirla};
+        else if(sec_kimlik) oku_veri <= KIMLIK;
         else if(sec_m2c) oku_veri <= m2c_axi_dout;
         else if(sec_c2m) oku_veri <= c2m_axi_dout;
         else oku_veri <= 32'h0000_0000;
@@ -302,9 +316,24 @@ assign irq = |(irq_durum & irq_maske);                 // flop cikislarindan , W
 
 
 
+/////////////////////////CLA RESET
+
+// cla_sifirla flop cikisi oldugu icin reset hem kenarsiz hem saate senkron kalkar
+
+always_ff@(posedge clk or negedge rst_n) begin
+
+    if(!rst_n) cla_sifirla <= 1'b0;
+    else if(yaz_cevrim & sec_kontrol & alt_yaz) cla_sifirla <= islem_veri[0];
+
+end
+
+assign cla_rst_n = rst_n & ~cla_sifirla;
+
+
+
 /////////////////////////CLA
 
-CLA_Top #(.PROGRAM_HEX(PROGRAM_HEX)) CLA(.clk(clk) , .rst_n(rst_n) ,
+CLA_Top #(.PROGRAM_HEX(PROGRAM_HEX)) CLA(.clk(clk) , .rst_n(cla_rst_n) ,
         .cpu_wr_en(cpu_wr_en) , .cpu_reg_addr(cpu_reg_addr) , .cpu_wr_data(cpu_wr_data) , .cpu_rd_data(cpu_rd_data) ,
         .mvect_wr_en(mvect_wr_en) , .mvect_gorev(mvect_gorev) , .mvect_veri(mvect_veri) , .mvect_oku(mvect_oku) ,
         .hw_task_trig(trig_kenar) ,

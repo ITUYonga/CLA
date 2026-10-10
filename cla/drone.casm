@@ -1,0 +1,559 @@
+; drone.casm - KV260 CLA drone ucus kontrolcusu (drone_uret.py uretti , elle duzenlemeyin)
+; yerlesim: sw/sim_fizik.h ; algoritma ve kazanclar: doc/cla_drone.md
+
+; ---- semboller (drone_uret.py uretti)
+;#sembol _c_ac_x 0x14A6
+;#sembol _c_ac_y 0x14A8
+;#sembol _c_ac_z 0x14AA
+;#sembol _c_eh_x 0x14B2
+;#sembol _c_eh_y 0x14B4
+;#sembol _c_eh_z 0x14B6
+;#sembol _c_ff_once 0x14C0
+;#sembol _c_ir_x 0x1494
+;#sembol _c_ir_y 0x1496
+;#sembol _c_ir_z 0x1498
+;#sembol _c_iv_x 0x14A0
+;#sembol _c_iv_y 0x14A2
+;#sembol _c_iv_z 0x14A4
+;#sembol _c_pitch_ref 0x1490
+;#sembol _c_roll_ref 0x148E
+;#sembol _c_say1 0x14B8
+;#sembol _c_say2 0x14BA
+;#sembol _c_say3 0x14BC
+;#sembol _c_say4 0x14BE
+;#sembol _c_t 0x1492
+;#sembol _c_u1 0x1480
+;#sembol _c_u2 0x1482
+;#sembol _c_u3 0x1484
+;#sembol _c_u4 0x1486
+;#sembol _c_vh_x 0x14AC
+;#sembol _c_vh_y 0x14AE
+;#sembol _c_vh_z 0x14B0
+;#sembol _c_wp_x 0x149A
+;#sembol _c_wp_y 0x149C
+;#sembol _c_wp_z 0x149E
+;#sembol _c_wref_x 0x1488
+;#sembol _c_wref_y 0x148A
+;#sembol _c_wref_z 0x148C
+;#sembol _k_aci_max 0x1550
+;#sembol _k_ct 0x1556
+;#sembol _k_dlim 0x1534
+;#sembol _k_elim 0x1562
+;#sembol _k_g 0x1552
+;#sembol _k_ilim_r 0x1532
+;#sembol _k_ilim_v 0x154E
+;#sembol _k_inv_ct 0x1566
+;#sembol _k_inv_g 0x1554
+;#sembol _k_ka_xy 0x1536
+;#sembol _k_ka_z 0x1538
+;#sembol _k_kd_r_xy 0x152C
+;#sembol _k_ki_r_xy 0x152A
+;#sembol _k_ki_r_z 0x1530
+;#sembol _k_ki_v_xy 0x154A
+;#sembol _k_ki_v_z 0x154C
+;#sembol _k_kp_p_xy 0x153E
+;#sembol _k_kp_p_z 0x1540
+;#sembol _k_kp_r_xy 0x1528
+;#sembol _k_kp_r_z 0x152E
+;#sembol _k_kp_v_xy 0x1546
+;#sembol _k_kp_v_z 0x1548
+;#sembol _k_l1 0x155C
+;#sembol _k_l2 0x155E
+;#sembol _k_tmax 0x155A
+;#sembol _k_tmin 0x1558
+;#sembol _k_ts_obs 0x1560
+;#sembol _k_vmax_xy 0x1542
+;#sembol _k_vmax_z 0x1544
+;#sembol _k_wmax_xy 0x153A
+;#sembol _k_wmax_z 0x153C
+;#sembol _k_yaw_ref 0x1564
+;#sembol _m_cosy 0x151E
+;#sembol _m_ff 0x1522
+;#sembol _m_hx 0x1518
+;#sembol _m_hy 0x151A
+;#sembol _m_hz 0x151C
+;#sembol _m_p 0x1512
+;#sembol _m_pitch 0x150E
+;#sembol _m_px 0x1500
+;#sembol _m_py 0x1502
+;#sembol _m_pz 0x1504
+;#sembol _m_q 0x1514
+;#sembol _m_r 0x1516
+;#sembol _m_roll 0x150C
+;#sembol _m_siny 0x1520
+;#sembol _m_vx 0x1506
+;#sembol _m_vy 0x1508
+;#sembol _m_vz 0x150A
+;#sembol _m_yaw 0x1510
+;#sembol _l_dx 0x8800
+;#sembol _l_dy 0x8802
+;#sembol _l_dz 0x8804
+;#sembol _l_amx 0x8806
+;#sembol _l_amy 0x8808
+;#gorev 1 GOREV1
+;#gorev 2 GOREV2
+;#gorev 3 GOREV3
+;#gorev 4 GOREV4
+;#gorev 8 GOREV8
+
+; ================================================================ GOREV 1 : hiz dongusu + karistirici
+GOREV1:
+    MSETFLG RNDF32=1
+    ; -- eksen z : d = kirp(kp*e + I - kd*(w - w_once)) , I = kirp(I + ki*e)
+    MMOV32  MR0, @_c_wref_z
+    MMOV32  MR1, @_m_r
+    MSUBF32 MR0, MR0, MR1        ; e
+    MMOV32  MR2, @_k_ki_r_z
+    MMPYF32 MR2, MR2, MR0
+    MMOV32  MR3, @_c_ir_z
+    MADDF32 MR3, MR3, MR2        ; I + ki*e
+    MMOV32  MR2, @_k_ilim_r
+    MMINF32 MR3, MR2
+    MNEGF32 MR2, MR2
+    MMAXF32 MR3, MR2
+    MMOV32  @_c_ir_z, MR3
+    MMOV32  MR2, @_k_kp_r_z
+    MMPYF32 MR0, MR2, MR0
+    MADDF32 MR0, MR0, MR3        ; kp*e + I
+    MMOV32  @_c_wp_z, MR1
+    MMOV32  MR2, @_k_dlim
+    MMINF32 MR0, MR2
+    MNEGF32 MR2, MR2
+    MMAXF32 MR0, MR2
+    MMOV32  @_l_dz, MR0
+    ; -- eksen x : d = kirp(kp*e + I - kd*(w - w_once)) , I = kirp(I + ki*e)
+    MMOV32  MR0, @_c_wref_x
+    MMOV32  MR1, @_m_p
+    MSUBF32 MR0, MR0, MR1        ; e
+    MMOV32  MR2, @_k_ki_r_xy
+    MMPYF32 MR2, MR2, MR0
+    MMOV32  MR3, @_c_ir_x
+    MADDF32 MR3, MR3, MR2        ; I + ki*e
+    MMOV32  MR2, @_k_ilim_r
+    MMINF32 MR3, MR2
+    MNEGF32 MR2, MR2
+    MMAXF32 MR3, MR2
+    MMOV32  @_c_ir_x, MR3
+    MMOV32  MR2, @_k_kp_r_xy
+    MMPYF32 MR0, MR2, MR0
+    MADDF32 MR0, MR0, MR3        ; kp*e + I
+    MMOV32  MR3, @_c_wp_x
+    MSUBF32 MR3, MR1, MR3        ; w - w_once
+    MMOV32  MR2, @_k_kd_r_xy
+    MMPYF32 MR3, MR2, MR3
+    MSUBF32 MR0, MR0, MR3
+    MMOV32  @_c_wp_x, MR1
+    MMOV32  MR2, @_k_dlim
+    MMINF32 MR0, MR2
+    MNEGF32 MR2, MR2
+    MMAXF32 MR0, MR2
+    MMOV32  @_l_dx, MR0
+    ; -- eksen y : d = kirp(kp*e + I - kd*(w - w_once)) , I = kirp(I + ki*e)
+    MMOV32  MR0, @_c_wref_y
+    MMOV32  MR1, @_m_q
+    MSUBF32 MR0, MR0, MR1        ; e
+    MMOV32  MR2, @_k_ki_r_xy
+    MMPYF32 MR2, MR2, MR0
+    MMOV32  MR3, @_c_ir_y
+    MADDF32 MR3, MR3, MR2        ; I + ki*e
+    MMOV32  MR2, @_k_ilim_r
+    MMINF32 MR3, MR2
+    MNEGF32 MR2, MR2
+    MMAXF32 MR3, MR2
+    MMOV32  @_c_ir_y, MR3
+    MMOV32  MR2, @_k_kp_r_xy
+    MMPYF32 MR0, MR2, MR0
+    MADDF32 MR0, MR0, MR3        ; kp*e + I
+    MMOV32  MR3, @_c_wp_y
+    MSUBF32 MR3, MR1, MR3        ; w - w_once
+    MMOV32  MR2, @_k_kd_r_xy
+    MMPYF32 MR3, MR2, MR3
+    MSUBF32 MR0, MR0, MR3
+    MMOV32  @_c_wp_y, MR1
+    MMOV32  MR2, @_k_dlim
+    MMINF32 MR0, MR2
+    MNEGF32 MR2, MR2
+    MMAXF32 MR0, MR2
+    ; -- karistirici : u1 = t-dy+dz , u2 = t+dx-dz , u3 = t+dy+dz , u4 = t-dx-dz ; [0,1]
+    MMOV32  MR1, MR0                ; dy
+    MMOV32  MR0, @_c_t
+    MMOV32  MR2, @_l_dz
+    MSUBF32 MR3, MR0, MR1
+    MADDF32 MR3, MR3, MR2
+    MMINF32 MR3, #1.0
+    MMAXF32 MR3, #0.0
+    MMOV32  @_c_u1, MR3
+    MADDF32 MR3, MR0, MR1
+    MADDF32 MR3, MR3, MR2
+    MMINF32 MR3, #1.0
+    MMAXF32 MR3, #0.0
+    MMOV32  @_c_u3, MR3
+    MMOV32  MR1, @_l_dx
+    MADDF32 MR3, MR0, MR1
+    MSUBF32 MR3, MR3, MR2
+    MMINF32 MR3, #1.0
+    MMAXF32 MR3, #0.0
+    MMOV32  @_c_u2, MR3
+    MSUBF32 MR3, MR0, MR1
+    MSUBF32 MR3, MR3, MR2
+    MMINF32 MR3, #1.0
+    MMAXF32 MR3, #0.0
+    MMOV32  @_c_u4, MR3
+    MMOVIZ  MR1, #0.0
+    MMOVXI  MR1, #1
+    MMOV32  MR0, @_c_say1
+    MADD32  MR0, MR0, MR1
+    MMOV32  @_c_say1, MR0
+    MSTOP
+
+; ================================================================ GOREV 2 : aci dongusu
+GOREV2:
+    MSETFLG RNDF32=1
+    MMOV32  MR0, @_c_roll_ref
+    MMOV32  MR1, @_m_roll
+    MSUBF32 MR0, MR0, MR1
+    MMOV32  MR1, @_k_ka_xy
+    MMPYF32 MR0, MR1, MR0
+    MMOV32  MR2, @_k_wmax_xy
+    MMINF32 MR0, MR2
+    MNEGF32 MR2, MR2
+    MMAXF32 MR0, MR2
+    MMOV32  @_c_wref_x, MR0
+    MMOV32  MR0, @_c_pitch_ref
+    MMOV32  MR1, @_m_pitch
+    MSUBF32 MR0, MR0, MR1
+    MMOV32  MR1, @_k_ka_xy
+    MMPYF32 MR0, MR1, MR0
+    MMOV32  MR2, @_k_wmax_xy
+    MMINF32 MR0, MR2
+    MNEGF32 MR2, MR2
+    MMAXF32 MR0, MR2
+    MMOV32  @_c_wref_y, MR0
+    MMOV32  MR0, @_k_yaw_ref
+    MMOV32  MR1, @_m_yaw
+    MSUBF32 MR0, MR0, MR1
+    MMOV32  MR1, @_k_ka_z
+    MMPYF32 MR0, MR1, MR0
+    MMOV32  MR2, @_k_wmax_z
+    MMINF32 MR0, MR2
+    MNEGF32 MR2, MR2
+    MMAXF32 MR0, MR2
+    MMOV32  @_c_wref_z, MR0
+    MMOVIZ  MR1, #0.0
+    MMOVXI  MR1, #1
+    MMOV32  MR0, @_c_say2
+    MADD32  MR0, MR0, MR1
+    MMOV32  @_c_say2, MR0
+    MSTOP
+
+; ================================================================ GOREV 3 : konum / hiz dongusu
+GOREV3:
+    MSETFLG RNDF32=1
+    ; -- eksen x : vr = kirp(kp*(h-p)) , ev = vr-v , I = kirp(I + dff*eh + ki*ev) , a = kv*ev + I - ff*eh
+    MMOV32  MR0, @_m_hx
+    MMOV32  MR1, @_m_px
+    MSUBF32 MR0, MR0, MR1
+    MMOV32  MR1, @_k_kp_p_xy
+    MMPYF32 MR0, MR1, MR0
+    MMOV32  MR1, @_k_vmax_xy
+    MMINF32 MR0, MR1
+    MNEGF32 MR1, MR1
+    MMAXF32 MR0, MR1
+    MMOV32  MR1, @_m_vx
+    MSUBF32 MR0, MR0, MR1        ; ev
+    MMOV32  MR1, @_m_ff
+    MMOV32  MR2, @_c_ff_once
+    MSUBF32 MR1, MR1, MR2        ; dff : gozlemci acilip kapaninca integrali kaydir
+    MMOV32  MR2, @_c_eh_x
+    MMPYF32 MR1, MR1, MR2
+    MMOV32  MR2, @_c_iv_x
+    MADDF32 MR1, MR2, MR1
+    MMOV32  MR2, @_k_ki_v_xy
+    MMPYF32 MR2, MR2, MR0
+    MADDF32 MR1, MR1, MR2
+    MMOV32  MR2, @_k_ilim_v
+    MMINF32 MR1, MR2
+    MNEGF32 MR2, MR2
+    MMAXF32 MR1, MR2
+    MMOV32  @_c_iv_x, MR1
+    MMOV32  MR2, @_k_kp_v_xy
+    MMPYF32 MR0, MR2, MR0
+    MADDF32 MR0, MR0, MR1
+    MMOV32  MR1, @_m_ff
+    MMOV32  MR2, @_c_eh_x
+    MMPYF32 MR1, MR1, MR2
+    MSUBF32 MR0, MR0, MR1        ; a
+    MMOV32  @_c_ac_x, MR0
+    ; -- eksen y : vr = kirp(kp*(h-p)) , ev = vr-v , I = kirp(I + dff*eh + ki*ev) , a = kv*ev + I - ff*eh
+    MMOV32  MR0, @_m_hy
+    MMOV32  MR1, @_m_py
+    MSUBF32 MR0, MR0, MR1
+    MMOV32  MR1, @_k_kp_p_xy
+    MMPYF32 MR0, MR1, MR0
+    MMOV32  MR1, @_k_vmax_xy
+    MMINF32 MR0, MR1
+    MNEGF32 MR1, MR1
+    MMAXF32 MR0, MR1
+    MMOV32  MR1, @_m_vy
+    MSUBF32 MR0, MR0, MR1        ; ev
+    MMOV32  MR1, @_m_ff
+    MMOV32  MR2, @_c_ff_once
+    MSUBF32 MR1, MR1, MR2        ; dff : gozlemci acilip kapaninca integrali kaydir
+    MMOV32  MR2, @_c_eh_y
+    MMPYF32 MR1, MR1, MR2
+    MMOV32  MR2, @_c_iv_y
+    MADDF32 MR1, MR2, MR1
+    MMOV32  MR2, @_k_ki_v_xy
+    MMPYF32 MR2, MR2, MR0
+    MADDF32 MR1, MR1, MR2
+    MMOV32  MR2, @_k_ilim_v
+    MMINF32 MR1, MR2
+    MNEGF32 MR2, MR2
+    MMAXF32 MR1, MR2
+    MMOV32  @_c_iv_y, MR1
+    MMOV32  MR2, @_k_kp_v_xy
+    MMPYF32 MR0, MR2, MR0
+    MADDF32 MR0, MR0, MR1
+    MMOV32  MR1, @_m_ff
+    MMOV32  MR2, @_c_eh_y
+    MMPYF32 MR1, MR1, MR2
+    MSUBF32 MR0, MR0, MR1        ; a
+    MMOV32  @_c_ac_y, MR0
+    ; -- eksen z : vr = kirp(kp*(h-p)) , ev = vr-v , I = kirp(I + dff*eh + ki*ev) , a = kv*ev + I - ff*eh
+    MMOV32  MR0, @_m_hz
+    MMOV32  MR1, @_m_pz
+    MSUBF32 MR0, MR0, MR1
+    MMOV32  MR1, @_k_kp_p_z
+    MMPYF32 MR0, MR1, MR0
+    MMOV32  MR1, @_k_vmax_z
+    MMINF32 MR0, MR1
+    MNEGF32 MR1, MR1
+    MMAXF32 MR0, MR1
+    MMOV32  MR1, @_m_vz
+    MSUBF32 MR0, MR0, MR1        ; ev
+    MMOV32  MR1, @_m_ff
+    MMOV32  MR2, @_c_ff_once
+    MSUBF32 MR1, MR1, MR2        ; dff : gozlemci acilip kapaninca integrali kaydir
+    MMOV32  MR2, @_c_eh_z
+    MMPYF32 MR1, MR1, MR2
+    MMOV32  MR2, @_c_iv_z
+    MADDF32 MR1, MR2, MR1
+    MMOV32  MR2, @_k_ki_v_z
+    MMPYF32 MR2, MR2, MR0
+    MADDF32 MR1, MR1, MR2
+    MMOV32  MR2, @_k_ilim_v
+    MMINF32 MR1, MR2
+    MNEGF32 MR2, MR2
+    MMAXF32 MR1, MR2
+    MMOV32  @_c_iv_z, MR1
+    MMOV32  MR2, @_k_kp_v_z
+    MMPYF32 MR0, MR2, MR0
+    MADDF32 MR0, MR0, MR1
+    MMOV32  MR1, @_m_ff
+    MMOV32  MR2, @_c_eh_z
+    MMPYF32 MR1, MR1, MR2
+    MSUBF32 MR0, MR0, MR1        ; a
+    MMOV32  @_c_ac_z, MR0
+    ; -- aci referansi (kucuk aci , yaw ile dondur) : pitch = (cy*ax + sy*ay)/g , roll = (sy*ax - cy*ay)/g
+    MMOV32  MR0, @_c_ac_x
+    MMOV32  MR1, @_c_ac_y
+    MMOV32  MR2, @_m_cosy
+    MMOV32  MR3, @_m_siny
+    MMPYF32 MR2, MR2, MR0
+    MMPYF32 MR3, MR3, MR1
+    MADDF32 MR2, MR2, MR3
+    MMOV32  MR3, @_k_inv_g
+    MMPYF32 MR2, MR2, MR3
+    MMOV32  MR3, @_k_aci_max
+    MMINF32 MR2, MR3
+    MNEGF32 MR3, MR3
+    MMAXF32 MR2, MR3
+    MMOV32  @_c_pitch_ref, MR2
+    MMOV32  MR2, @_m_siny
+    MMPYF32 MR0, MR2, MR0
+    MMOV32  MR2, @_m_cosy
+    MMPYF32 MR1, MR2, MR1
+    MSUBF32 MR0, MR0, MR1
+    MMOV32  MR3, @_k_inv_g
+    MMPYF32 MR0, MR0, MR3
+    MMOV32  MR3, @_k_aci_max
+    MMINF32 MR0, MR3
+    MNEGF32 MR3, MR3
+    MMAXF32 MR0, MR3
+    MMOV32  @_c_roll_ref, MR0
+    MMOV32  MR0, @_m_ff
+    MMOV32  @_c_ff_once, MR0
+    ; -- itki : t = [tmin,tmax](ct * (g + az) * (1 + (roll^2 + pitch^2)/2))
+    MMOV32  MR0, @_m_roll
+    MMPYF32 MR0, MR0, MR0
+    MMOV32  MR1, @_m_pitch
+    MMPYF32 MR1, MR1, MR1
+    MADDF32 MR0, MR0, MR1
+    MMPYF32 MR0, #0.5, MR0
+    MADDF32 MR0, #1.0, MR0
+    MMOV32  MR1, @_k_g
+    MMOV32  MR2, @_c_ac_z
+    MADDF32 MR1, MR1, MR2
+    MMOV32  MR2, @_k_ct
+    MMPYF32 MR1, MR2, MR1
+    MMPYF32 MR1, MR1, MR0
+    MMOV32  MR2, @_k_tmin
+    MMAXF32 MR1, MR2
+    MMOV32  MR2, @_k_tmax
+    MMINF32 MR1, MR2
+    MMOV32  @_c_t, MR1
+    MMOVIZ  MR1, #0.0
+    MMOVXI  MR1, #1
+    MMOV32  MR0, @_c_say3
+    MADD32  MR0, MR0, MR1
+    MMOV32  @_c_say3, MR0
+    MSTOP
+
+; ================================================================ GOREV 4 : bozucu gozlemcisi
+; model ivmesi (olculen aci + komut itkisi) : A = t/ct
+;   amx = A*(cy*pitch + sy*roll) , amy = A*(sy*pitch - cy*roll) , amz = A*(1 - (roll^2+pitch^2)/2) - g
+; her eksen: e = v - vh , vh += ts*(am + eh) + l1*e , eh = kirp(eh + l2*e)
+GOREV4:
+    MSETFLG RNDF32=1
+    MMOV32  MR0, @_c_t
+    MMOV32  MR1, @_k_inv_ct
+    MMPYF32 MR0, MR0, MR1        ; A
+    MMOV32  MR1, @_m_cosy
+    MMOV32  MR2, @_m_pitch
+    MMPYF32 MR1, MR1, MR2
+    MMOV32  MR2, @_m_siny
+    MMOV32  MR3, @_m_roll
+    MMPYF32 MR2, MR2, MR3
+    MADDF32 MR1, MR1, MR2
+    MMPYF32 MR1, MR0, MR1
+    MMOV32  @_l_amx, MR1
+    MMOV32  MR1, @_m_siny
+    MMOV32  MR2, @_m_pitch
+    MMPYF32 MR1, MR1, MR2
+    MMOV32  MR2, @_m_cosy
+    MMPYF32 MR2, MR2, MR3
+    MSUBF32 MR1, MR1, MR2
+    MMPYF32 MR1, MR0, MR1
+    MMOV32  @_l_amy, MR1
+    MMPYF32 MR1, MR3, MR3
+    MMOV32  MR2, @_m_pitch
+    MMPYF32 MR2, MR2, MR2
+    MADDF32 MR1, MR1, MR2
+    MMPYF32 MR1, #0.5, MR1
+    MSUBF32 MR1, #1.0, MR1
+    MMPYF32 MR1, MR0, MR1
+    MMOV32  MR2, @_k_g
+    MSUBF32 MR1, MR1, MR2        ; amz
+    ; -- eksen z
+    MMOV32  MR0, @_m_vz
+    MMOV32  MR2, @_c_vh_z
+    MSUBF32 MR0, MR0, MR2        ; e
+    MMOV32  MR3, @_c_eh_z
+    MADDF32 MR1, MR1, MR3        ; am + eh
+    MMOV32  MR3, @_k_ts_obs
+    MMPYF32 MR1, MR3, MR1
+    MADDF32 MR2, MR2, MR1
+    MMOV32  MR3, @_k_l1
+    MMPYF32 MR1, MR3, MR0
+    MADDF32 MR2, MR2, MR1
+    MMOV32  @_c_vh_z, MR2
+    MMOV32  MR3, @_k_l2
+    MMPYF32 MR0, MR3, MR0
+    MMOV32  MR1, @_c_eh_z
+    MADDF32 MR1, MR1, MR0
+    MMOV32  MR2, @_k_elim
+    MMINF32 MR1, MR2
+    MNEGF32 MR2, MR2
+    MMAXF32 MR1, MR2
+    MMOV32  @_c_eh_z, MR1
+    MMOV32  MR1, @_l_amx
+    ; -- eksen x
+    MMOV32  MR0, @_m_vx
+    MMOV32  MR2, @_c_vh_x
+    MSUBF32 MR0, MR0, MR2        ; e
+    MMOV32  MR3, @_c_eh_x
+    MADDF32 MR1, MR1, MR3        ; am + eh
+    MMOV32  MR3, @_k_ts_obs
+    MMPYF32 MR1, MR3, MR1
+    MADDF32 MR2, MR2, MR1
+    MMOV32  MR3, @_k_l1
+    MMPYF32 MR1, MR3, MR0
+    MADDF32 MR2, MR2, MR1
+    MMOV32  @_c_vh_x, MR2
+    MMOV32  MR3, @_k_l2
+    MMPYF32 MR0, MR3, MR0
+    MMOV32  MR1, @_c_eh_x
+    MADDF32 MR1, MR1, MR0
+    MMOV32  MR2, @_k_elim
+    MMINF32 MR1, MR2
+    MNEGF32 MR2, MR2
+    MMAXF32 MR1, MR2
+    MMOV32  @_c_eh_x, MR1
+    MMOV32  MR1, @_l_amy
+    ; -- eksen y
+    MMOV32  MR0, @_m_vy
+    MMOV32  MR2, @_c_vh_y
+    MSUBF32 MR0, MR0, MR2        ; e
+    MMOV32  MR3, @_c_eh_y
+    MADDF32 MR1, MR1, MR3        ; am + eh
+    MMOV32  MR3, @_k_ts_obs
+    MMPYF32 MR1, MR3, MR1
+    MADDF32 MR2, MR2, MR1
+    MMOV32  MR3, @_k_l1
+    MMPYF32 MR1, MR3, MR0
+    MADDF32 MR2, MR2, MR1
+    MMOV32  @_c_vh_y, MR2
+    MMOV32  MR3, @_k_l2
+    MMPYF32 MR0, MR3, MR0
+    MMOV32  MR1, @_c_eh_y
+    MADDF32 MR1, MR1, MR0
+    MMOV32  MR2, @_k_elim
+    MMINF32 MR1, MR2
+    MNEGF32 MR2, MR2
+    MMAXF32 MR1, MR2
+    MMOV32  @_c_eh_y, MR1
+    MMOVIZ  MR1, #0.0
+    MMOVXI  MR1, #1
+    MMOV32  MR0, @_c_say4
+    MADD32  MR0, MR0, MR1
+    MMOV32  @_c_say4, MR0
+    MSTOP
+
+; ================================================================ GOREV 8 : C2M durumunu sifirla
+GOREV8:
+    MMOVIZ  MR0, #0.0
+    MMOV32  @0x1480, MR0
+    MMOV32  @0x1482, MR0
+    MMOV32  @0x1484, MR0
+    MMOV32  @0x1486, MR0
+    MMOV32  @0x1488, MR0
+    MMOV32  @0x148A, MR0
+    MMOV32  @0x148C, MR0
+    MMOV32  @0x148E, MR0
+    MMOV32  @0x1490, MR0
+    MMOV32  @0x1492, MR0
+    MMOV32  @0x1494, MR0
+    MMOV32  @0x1496, MR0
+    MMOV32  @0x1498, MR0
+    MMOV32  @0x149A, MR0
+    MMOV32  @0x149C, MR0
+    MMOV32  @0x149E, MR0
+    MMOV32  @0x14A0, MR0
+    MMOV32  @0x14A2, MR0
+    MMOV32  @0x14A4, MR0
+    MMOV32  @0x14A6, MR0
+    MMOV32  @0x14A8, MR0
+    MMOV32  @0x14AA, MR0
+    MMOV32  @0x14AC, MR0
+    MMOV32  @0x14AE, MR0
+    MMOV32  @0x14B0, MR0
+    MMOV32  @0x14B2, MR0
+    MMOV32  @0x14B4, MR0
+    MMOV32  @0x14B6, MR0
+    MMOV32  @0x14B8, MR0
+    MMOV32  @0x14BA, MR0
+    MMOV32  @0x14BC, MR0
+    MMOV32  @0x14BE, MR0
+    MMOV32  @0x14C0, MR0
+    MSTOP
+
