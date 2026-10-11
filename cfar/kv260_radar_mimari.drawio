@@ -1,0 +1,190 @@
+<mxfile host="app.diagrams.net" agent="Claude" version="24.0.0">
+  <diagram name="KV260 Radar Zinciri" id="radar-chain-1">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="KV260 / Zynq UltraScale+ — Radar Sinyal İşleme Zinciri" style="text;html=1;align=left;verticalAlign=middle;fontSize=20;fontStyle=1;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="700" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="CPI = 20 darbe × 1 ms = 20 ms deadline  |  1000 menzil hücresi / darbe  |  FFT N = 256  |  Dolph-Chebyshev pencereler" style="text;html=1;align=left;verticalAlign=middle;fontSize=12;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="40" y="48" width="900" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="n0s" value="TX ham veri&#10;&#10;MATLAB üretimi&#10;1×20 ham LFM&#10;PS DDR4" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="n0w" value="TX pencereleme&#10;&#10;Dolph-Cheb ROM ×&#10;20 katsayı, 1 DSP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="240" y="100" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="n0" value="Ters çevir + eşlenik&#10;&#10;20 kelime katsayı kaydı&#10;CPI başında bir kez" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="440" y="100" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e0a" value="1×20 ham" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=blockThin;endFill=1;" edge="1" parent="1" source="n0s" target="n0w">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e0b" value="pencereli" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=blockThin;endFill=1;" edge="1" parent="1" source="n0w" target="n0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="n1" value="RX veri kaynağı&#10;&#10;MATLAB üretimi&#10;PS DDR4" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="230" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="n2" value="AXI DMA&#10;&#10;PS → PL akışı&#10;80 KB / CPI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="240" y="230" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="n3" value="Matched filter&#10;&#10;20 tap kompleks FIR&#10;fast-time konvolüsyon&#10;~60 DSP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="440" y="230" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="n4" value="Köşe dönüşü 1&#10;&#10;20 paralel BRAM&#10;ping-pong&#10;40 BRAM36" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="640" y="230" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="n5" value="MTI filtresi&#10;&#10;3-darbeli iptal edici&#10;[1, −2, 1]&#10;çarpansız" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="840" y="230" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="n6" value="Doppler pencere&#10;&#10;Dolph-Cheb ROM&#10;18 katsayı, 1 DSP&#10;+ sıfır dolgu → 256" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="230" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="n7" value="FFT-256 (SDF)&#10;&#10;radix-2 tek yol&#10;8 kademe&#10;derleme zamanı N" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="490" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="n8" value="Kare-yasa + log₂&#10;&#10;I² + Q² → 37b&#10;LZC + mantis → 16b" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;dashed=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="240" y="490" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="n9" value="Köşe dönüşü 2&#10;&#10;URAM (~28)&#10;bit-reversed yazma&#10;→ FFT sırası bedava" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="440" y="490" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="n10" value="OS-CFAR&#10;&#10;sistolik sıralayıcı&#10;k'ıncı sıra + α&#10;eşik üretir" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="640" y="490" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="n11" value="Post-processing&#10;&#10;eşik karşılaştırma&#10;tepe bulma + kümeleme" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="840" y="490" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="n12" value="Tespit listesi&#10;&#10;{menzil, Doppler}&#10;→ PS DDR" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="490" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="n13" value="Gecikme FIFO&#10;CFAR gecikmesini hizalar" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="640" y="630" width="150" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e1" value="1000×20 kompleks" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=blockThin;endFill=1;" edge="1" parent="1" source="n1" target="n2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="16b I/Q" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=blockThin;endFill=1;" edge="1" parent="1" source="n2" target="n3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e0" value="1×20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=blockThin;endFill=1;" edge="1" parent="1" source="n0" target="n3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="1000×20, 18b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=blockThin;endFill=1;" edge="1" parent="1" source="n3" target="n4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="20 paralel&#10;(slow-time)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=blockThin;endFill=1;" edge="1" parent="1" source="n4" target="n5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="1000×18, 20b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=blockThin;endFill=1;" edge="1" parent="1" source="n5" target="n6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e6" value="1000×256 seri&#10;18b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=blockThin;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="n6" target="n7">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1115" y="400" />
+              <mxPoint x="115" y="400" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e7" value="1000×256, 23b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=blockThin;endFill=1;" edge="1" parent="1" source="n7" target="n8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" value="16b log₂ güç" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=blockThin;endFill=1;" edge="1" parent="1" source="n8" target="n9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" value="AXI4-S&#10;256 satır × 1000&#10;tlast / tuser" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=blockThin;endFill=1;strokeWidth=2;" edge="1" parent="1" source="n9" target="n10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" value="eşik" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=blockThin;endFill=1;" edge="1" parent="1" source="n10" target="n11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" value="1×1 idx" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=blockThin;endFill=1;" edge="1" parent="1" source="n11" target="n12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e12" value="bypass (ham güç)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=blockThin;endFill=1;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n9" target="n13">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="515" y="660" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e13" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=blockThin;endFill=1;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="n13" target="n11">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="915" y="660" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="lg_t" value="Açıklama" style="text;html=1;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="620" width="120" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="lg1" value="" style="rounded=0;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="650" width="18" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="lg1t" value="SystemVerilog (bizim)" style="text;html=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1266" y="650" width="200" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="lg2" value="" style="rounded=0;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="678" width="18" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="lg2t" value="HLS (arkadaşın)" style="text;html=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1266" y="678" width="200" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="lg3" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="706" width="18" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="lg3t" value="Bellek / tampon" style="text;html=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1266" y="706" width="200" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="lg4" value="" style="rounded=0;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="734" width="18" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="lg4t" value="Arayüz / IO" style="text;html=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1266" y="734" width="200" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="lg5" value="" style="rounded=1;html=1;fillColor=none;strokeColor=#666666;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="762" width="18" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="lg5t" value="Eskizde yoktu, eklendi" style="text;html=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1266" y="762" width="200" height="18" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note1" value="Bellek bütçesi (N = 256)&#10;&#10;Köşe dönüşü 1:  40 BRAM36&#10;Twiddle ROM:     ~2 BRAM&#10;SDF geri besleme: ~6 BRAM&#10;Köşe dönüşü 2:   ~28 URAM  ← BRAM'e sığmaz&#10;&#10;Zaman: ~1.7 ms / 20 ms  (200 MHz)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;verticalAlign=top;fontSize=11;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="230" width="280" height="180" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note2" value="Açık kalan kararlar&#10;&#10;• OS-CFAR N, guard, k, α değerleri&#10;• Kenar politikası (ilk/son ~21 hücre)&#10;• Tepe bulma / kümeleme kimde?&#10;• Saat hedefi (200 MHz varsayıldı)&#10;&#10;Not: pencere ÇARPIMLARI PL'de, ancak&#10;Dolph-Cheb katsayıları sabit ROM&#10;(offline üretilir, .mem dosyası)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;verticalAlign=top;fontSize=11;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="440" width="280" height="190" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

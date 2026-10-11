@@ -1,0 +1,283 @@
+
+*** Running vivado
+    with args -log designv2_wrapper.vds -m64 -product Vivado -mode batch -messageDb vivado.pb -notrace -source designv2_wrapper.tcl
+
+
+
+****** Vivado v2025.2 (64-bit)
+  **** SW Build 6299465 on Fri Nov 14 19:35:11 GMT 2025
+  **** IP Build 6300035 on Fri Nov 14 10:48:45 MST 2025
+  **** SharedData Build 6298862 on Thu Nov 13 04:50:51 MST 2025
+  **** Start of session at: Sun Oct 11 08:54:20 2026
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+
+source designv2_wrapper.tcl -notrace
+create_project: Time (s): cpu = 00:00:10 ; elapsed = 00:00:06 . Memory (MB): peak = 540.332 ; gain = 221.961
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository 'D:/programs/Vivado/2025.2/Vivado/data/ip'.
+add_files: Time (s): cpu = 00:00:05 ; elapsed = 00:00:06 . Memory (MB): peak = 604.391 ; gain = 64.059
+Command: read_checkpoint -auto_incremental -incremental D:/github/CLA/v2/vivado/systemv2/systemv2.srcs/utils_1/imports/synth_1/designv2_wrapper.dcp
+INFO: [Vivado 12-5825] Read reference checkpoint from D:/github/CLA/v2/vivado/systemv2/systemv2.srcs/utils_1/imports/synth_1/designv2_wrapper.dcp for incremental synthesis
+INFO: [Vivado 12-7989] Please ensure there are no constraint changes
+Command: synth_design -top designv2_wrapper -part xck26-sfvc784-2LV-c
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xck26'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xck26'
+INFO: [Device 21-403] Loading part xck26-sfvc784-2LV-c
+INFO: [Designutils 20-5440] No compile time benefit to using incremental synthesis; A full resynthesis will be run
+INFO: [Designutils 20-4379] Flow is switching to default flow due to incremental criteria not met. If you would like to alter this behaviour and have the flow terminate instead, please set the following parameter config_implementation {autoIncr.Synth.RejectBehavior Terminate}
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 2 processes.
+INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
+INFO: [Synth 8-7075] Helper process launched with PID 7492
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 1899.578 ; gain = 209.418
+---------------------------------------------------------------------------------
+INFO: [Synth 8-6157] synthesizing module 'designv2_wrapper' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/hdl/designv2_wrapper.v:13]
+INFO: [Synth 8-6157] synthesizing module 'designv2' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:13]
+INFO: [Synth 8-6157] synthesizing module 'designv2_axi_dma_0_0' [D:/github/CLA/v2/vivado/systemv2/systemv2.runs/synth_1/.Xil/Vivado-33256-komputer/realtime/designv2_axi_dma_0_0_stub.v:6]
+INFO: [Synth 8-6155] done synthesizing module 'designv2_axi_dma_0_0' (0#1) [D:/github/CLA/v2/vivado/systemv2/systemv2.runs/synth_1/.Xil/Vivado-33256-komputer/realtime/designv2_axi_dma_0_0_stub.v:6]
+WARNING: [Synth 8-7071] port 'mm2s_prmry_reset_out_n' of module 'designv2_axi_dma_0_0' is unconnected for instance 'axi_dma_0' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:183]
+WARNING: [Synth 8-7071] port 'm_axis_mm2s_tkeep' of module 'designv2_axi_dma_0_0' is unconnected for instance 'axi_dma_0' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:183]
+WARNING: [Synth 8-7071] port 'mm2s_introut' of module 'designv2_axi_dma_0_0' is unconnected for instance 'axi_dma_0' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:183]
+WARNING: [Synth 8-7071] port 'axi_dma_tstvec' of module 'designv2_axi_dma_0_0' is unconnected for instance 'axi_dma_0' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:183]
+WARNING: [Synth 8-7023] instance 'axi_dma_0' of module 'designv2_axi_dma_0_0' has 40 connections declared, but only 36 given [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:183]
+INFO: [Synth 8-6157] synthesizing module 'designv2_axi_smc_0' [D:/github/CLA/v2/vivado/systemv2/systemv2.runs/synth_1/.Xil/Vivado-33256-komputer/realtime/designv2_axi_smc_0_stub.v:6]
+INFO: [Synth 8-6155] done synthesizing module 'designv2_axi_smc_0' (0#1) [D:/github/CLA/v2/vivado/systemv2/systemv2.runs/synth_1/.Xil/Vivado-33256-komputer/realtime/designv2_axi_smc_0_stub.v:6]
+WARNING: [Synth 8-7071] port 'M00_AXI_awprot' of module 'designv2_axi_smc_0' is unconnected for instance 'axi_smc' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:220]
+WARNING: [Synth 8-7071] port 'M00_AXI_wstrb' of module 'designv2_axi_smc_0' is unconnected for instance 'axi_smc' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:220]
+WARNING: [Synth 8-7071] port 'M00_AXI_arprot' of module 'designv2_axi_smc_0' is unconnected for instance 'axi_smc' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:220]
+WARNING: [Synth 8-7071] port 'M02_AXI_awprot' of module 'designv2_axi_smc_0' is unconnected for instance 'axi_smc' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:220]
+WARNING: [Synth 8-7071] port 'M02_AXI_arprot' of module 'designv2_axi_smc_0' is unconnected for instance 'axi_smc' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:220]
+WARNING: [Synth 8-7023] instance 'axi_smc' of module 'designv2_axi_smc_0' has 137 connections declared, but only 132 given [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:220]
+INFO: [Synth 8-6157] synthesizing module 'designv2_axi_smc_1_0' [D:/github/CLA/v2/vivado/systemv2/systemv2.runs/synth_1/.Xil/Vivado-33256-komputer/realtime/designv2_axi_smc_1_0_stub.v:6]
+INFO: [Synth 8-6155] done synthesizing module 'designv2_axi_smc_1_0' (0#1) [D:/github/CLA/v2/vivado/systemv2/systemv2.runs/synth_1/.Xil/Vivado-33256-komputer/realtime/designv2_axi_smc_1_0_stub.v:6]
+INFO: [Synth 8-6157] synthesizing module 'designv2_cla_wrapper_0_0' [D:/github/CLA/v2/vivado/systemv2/systemv2.runs/synth_1/.Xil/Vivado-33256-komputer/realtime/designv2_cla_wrapper_0_0_stub.v:6]
+INFO: [Synth 8-6155] done synthesizing module 'designv2_cla_wrapper_0_0' (0#1) [D:/github/CLA/v2/vivado/systemv2/systemv2.runs/synth_1/.Xil/Vivado-33256-komputer/realtime/designv2_cla_wrapper_0_0_stub.v:6]
+WARNING: [Synth 8-7071] port 'irq' of module 'designv2_cla_wrapper_0_0' is unconnected for instance 'cla_wrapper_0' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:386]
+WARNING: [Synth 8-7023] instance 'cla_wrapper_0' of module 'designv2_cla_wrapper_0_0' has 22 connections declared, but only 21 given [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:386]
+INFO: [Synth 8-6157] synthesizing module 'designv2_radar_wrapper_0_0' [D:/github/CLA/v2/vivado/systemv2/systemv2.runs/synth_1/.Xil/Vivado-33256-komputer/realtime/designv2_radar_wrapper_0_0_stub.v:6]
+INFO: [Synth 8-6155] done synthesizing module 'designv2_radar_wrapper_0_0' (0#1) [D:/github/CLA/v2/vivado/systemv2/systemv2.runs/synth_1/.Xil/Vivado-33256-komputer/realtime/designv2_radar_wrapper_0_0_stub.v:6]
+WARNING: [Synth 8-7071] port 'irq' of module 'designv2_radar_wrapper_0_0' is unconnected for instance 'radar_wrapper_0' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:408]
+WARNING: [Synth 8-7023] instance 'radar_wrapper_0' of module 'designv2_radar_wrapper_0_0' has 24 connections declared, but only 23 given [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:408]
+INFO: [Synth 8-6157] synthesizing module 'designv2_rst_ps8_0_99M_0' [D:/github/CLA/v2/vivado/systemv2/systemv2.runs/synth_1/.Xil/Vivado-33256-komputer/realtime/designv2_rst_ps8_0_99M_0_stub.v:6]
+INFO: [Synth 8-6155] done synthesizing module 'designv2_rst_ps8_0_99M_0' (0#1) [D:/github/CLA/v2/vivado/systemv2/systemv2.runs/synth_1/.Xil/Vivado-33256-komputer/realtime/designv2_rst_ps8_0_99M_0_stub.v:6]
+WARNING: [Synth 8-7071] port 'mb_reset' of module 'designv2_rst_ps8_0_99M_0' is unconnected for instance 'rst_ps8_0_99M' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:432]
+WARNING: [Synth 8-7071] port 'bus_struct_reset' of module 'designv2_rst_ps8_0_99M_0' is unconnected for instance 'rst_ps8_0_99M' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:432]
+WARNING: [Synth 8-7071] port 'peripheral_reset' of module 'designv2_rst_ps8_0_99M_0' is unconnected for instance 'rst_ps8_0_99M' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:432]
+WARNING: [Synth 8-7071] port 'interconnect_aresetn' of module 'designv2_rst_ps8_0_99M_0' is unconnected for instance 'rst_ps8_0_99M' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:432]
+WARNING: [Synth 8-7023] instance 'rst_ps8_0_99M' of module 'designv2_rst_ps8_0_99M_0' has 10 connections declared, but only 6 given [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:432]
+INFO: [Synth 8-6157] synthesizing module 'designv2_zynq_ultra_ps_e_0_0' [D:/github/CLA/v2/vivado/systemv2/systemv2.runs/synth_1/.Xil/Vivado-33256-komputer/realtime/designv2_zynq_ultra_ps_e_0_0_stub.v:6]
+INFO: [Synth 8-6155] done synthesizing module 'designv2_zynq_ultra_ps_e_0_0' (0#1) [D:/github/CLA/v2/vivado/systemv2/systemv2.runs/synth_1/.Xil/Vivado-33256-komputer/realtime/designv2_zynq_ultra_ps_e_0_0_stub.v:6]
+WARNING: [Synth 8-7071] port 'saxigp2_awready' of module 'designv2_zynq_ultra_ps_e_0_0' is unconnected for instance 'zynq_ultra_ps_e_0' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:439]
+WARNING: [Synth 8-7071] port 'saxigp2_wready' of module 'designv2_zynq_ultra_ps_e_0_0' is unconnected for instance 'zynq_ultra_ps_e_0' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:439]
+WARNING: [Synth 8-7071] port 'saxigp2_bid' of module 'designv2_zynq_ultra_ps_e_0_0' is unconnected for instance 'zynq_ultra_ps_e_0' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:439]
+WARNING: [Synth 8-7071] port 'saxigp2_bresp' of module 'designv2_zynq_ultra_ps_e_0_0' is unconnected for instance 'zynq_ultra_ps_e_0' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:439]
+WARNING: [Synth 8-7071] port 'saxigp2_bvalid' of module 'designv2_zynq_ultra_ps_e_0_0' is unconnected for instance 'zynq_ultra_ps_e_0' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:439]
+WARNING: [Synth 8-7071] port 'saxigp2_rid' of module 'designv2_zynq_ultra_ps_e_0_0' is unconnected for instance 'zynq_ultra_ps_e_0' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:439]
+WARNING: [Synth 8-7071] port 'pl_clk1' of module 'designv2_zynq_ultra_ps_e_0_0' is unconnected for instance 'zynq_ultra_ps_e_0' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:439]
+WARNING: [Synth 8-7023] instance 'zynq_ultra_ps_e_0' of module 'designv2_zynq_ultra_ps_e_0_0' has 124 connections declared, but only 117 given [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:439]
+INFO: [Synth 8-6155] done synthesizing module 'designv2' (0#1) [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/synth/designv2.v:13]
+INFO: [Synth 8-6155] done synthesizing module 'designv2_wrapper' (0#1) [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/hdl/designv2_wrapper.v:13]
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:07 ; elapsed = 00:00:07 . Memory (MB): peak = 2027.891 ; gain = 337.730
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 2027.891 ; gain = 337.730
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 2027.891 ; gain = 337.730
+---------------------------------------------------------------------------------
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.016 . Memory (MB): peak = 2027.891 ; gain = 0.000
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/ip/designv2_zynq_ultra_ps_e_0_0/designv2_zynq_ultra_ps_e_0_0/designv2_zynq_ultra_ps_e_0_0_in_context.xdc] for cell 'designv2_i/zynq_ultra_ps_e_0'
+Finished Parsing XDC File [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/ip/designv2_zynq_ultra_ps_e_0_0/designv2_zynq_ultra_ps_e_0_0/designv2_zynq_ultra_ps_e_0_0_in_context.xdc] for cell 'designv2_i/zynq_ultra_ps_e_0'
+Parsing XDC File [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/ip/designv2_radar_wrapper_0_0/designv2_radar_wrapper_0_0/designv2_radar_wrapper_0_0_in_context.xdc] for cell 'designv2_i/radar_wrapper_0'
+Finished Parsing XDC File [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/ip/designv2_radar_wrapper_0_0/designv2_radar_wrapper_0_0/designv2_radar_wrapper_0_0_in_context.xdc] for cell 'designv2_i/radar_wrapper_0'
+Parsing XDC File [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/ip/designv2_cla_wrapper_0_0/designv2_cla_wrapper_0_0/designv2_cla_wrapper_0_0_in_context.xdc] for cell 'designv2_i/cla_wrapper_0'
+Finished Parsing XDC File [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/ip/designv2_cla_wrapper_0_0/designv2_cla_wrapper_0_0/designv2_cla_wrapper_0_0_in_context.xdc] for cell 'designv2_i/cla_wrapper_0'
+Parsing XDC File [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/ip/designv2_axi_dma_0_0/designv2_axi_dma_0_0/designv2_axi_dma_0_0_in_context.xdc] for cell 'designv2_i/axi_dma_0'
+Finished Parsing XDC File [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/ip/designv2_axi_dma_0_0/designv2_axi_dma_0_0/designv2_axi_dma_0_0_in_context.xdc] for cell 'designv2_i/axi_dma_0'
+Parsing XDC File [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/ip/designv2_axi_smc_0/designv2_axi_smc_0/designv2_axi_smc_0_in_context.xdc] for cell 'designv2_i/axi_smc'
+Finished Parsing XDC File [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/ip/designv2_axi_smc_0/designv2_axi_smc_0/designv2_axi_smc_0_in_context.xdc] for cell 'designv2_i/axi_smc'
+Parsing XDC File [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/ip/designv2_rst_ps8_0_99M_0/designv2_rst_ps8_0_99M_0/designv2_rst_ps8_0_99M_0_in_context.xdc] for cell 'designv2_i/rst_ps8_0_99M'
+Finished Parsing XDC File [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/ip/designv2_rst_ps8_0_99M_0/designv2_rst_ps8_0_99M_0/designv2_rst_ps8_0_99M_0_in_context.xdc] for cell 'designv2_i/rst_ps8_0_99M'
+Parsing XDC File [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/ip/designv2_axi_smc_1_0/designv2_axi_smc_1_0/designv2_axi_smc_1_0_in_context.xdc] for cell 'designv2_i/axi_smc_1'
+Finished Parsing XDC File [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/ip/designv2_axi_smc_1_0/designv2_axi_smc_1_0/designv2_axi_smc_1_0_in_context.xdc] for cell 'designv2_i/axi_smc_1'
+Parsing XDC File [D:/github/CLA/v2/vivado/systemv2/systemv2.runs/synth_1/dont_touch.xdc]
+Finished Parsing XDC File [D:/github/CLA/v2/vivado/systemv2/systemv2.runs/synth_1/dont_touch.xdc]
+Completed Processing XDC Constraints
+
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2027.891 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.013 . Memory (MB): peak = 2027.891 ; gain = 0.000
+INFO: [Designutils 20-5440] No compile time benefit to using incremental synthesis; A full resynthesis will be run
+INFO: [Designutils 20-4379] Flow is switching to default flow due to incremental criteria not met. If you would like to alter this behaviour and have the flow terminate instead, please set the following parameter config_implementation {autoIncr.Synth.RejectBehavior Terminate}
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:19 ; elapsed = 00:00:20 . Memory (MB): peak = 2027.891 ; gain = 337.730
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xck26-sfvc784-2LV-c
+INFO: [Synth 8-6742] Reading net delay rules and data
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:19 ; elapsed = 00:00:20 . Memory (MB): peak = 2027.891 ; gain = 337.730
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:19 ; elapsed = 00:00:20 . Memory (MB): peak = 2027.891 ; gain = 337.730
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:19 ; elapsed = 00:00:20 . Memory (MB): peak = 2027.891 ; gain = 337.730
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 1248 (col length:96)
+BRAMs: 288 (col length: RAMB18 96 RAMB36 48)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:21 ; elapsed = 00:00:22 . Memory (MB): peak = 2032.715 ; gain = 342.555
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying XDC Timing Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:30 ; elapsed = 00:00:32 . Memory (MB): peak = 2750.809 ; gain = 1060.648
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:30 ; elapsed = 00:00:32 . Memory (MB): peak = 2750.809 ; gain = 1060.648
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:30 ; elapsed = 00:00:32 . Memory (MB): peak = 2762.055 ; gain = 1071.895
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:34 ; elapsed = 00:00:36 . Memory (MB): peak = 3012.043 ; gain = 1321.883
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:34 ; elapsed = 00:00:36 . Memory (MB): peak = 3012.043 ; gain = 1321.883
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:34 ; elapsed = 00:00:36 . Memory (MB): peak = 3012.043 ; gain = 1321.883
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:34 ; elapsed = 00:00:36 . Memory (MB): peak = 3012.043 ; gain = 1321.883
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:34 ; elapsed = 00:00:36 . Memory (MB): peak = 3012.043 ; gain = 1321.883
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:34 ; elapsed = 00:00:36 . Memory (MB): peak = 3012.043 ; gain = 1321.883
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++------+-----------------------------+----------+
+|      |BlackBox name                |Instances |
++------+-----------------------------+----------+
+|1     |designv2_axi_dma_0_0         |         1|
+|2     |designv2_axi_smc_0           |         1|
+|3     |designv2_axi_smc_1_0         |         1|
+|4     |designv2_cla_wrapper_0_0     |         1|
+|5     |designv2_radar_wrapper_0_0   |         1|
+|6     |designv2_rst_ps8_0_99M_0     |         1|
+|7     |designv2_zynq_ultra_ps_e_0_0 |         1|
++------+-----------------------------+----------+
+
+Report Cell Usage: 
++------+---------------------------+------+
+|      |Cell                       |Count |
++------+---------------------------+------+
+|1     |designv2_axi_dma_0         |     1|
+|2     |designv2_axi_smc           |     1|
+|3     |designv2_axi_smc_1         |     1|
+|4     |designv2_cla_wrapper_0     |     1|
+|5     |designv2_radar_wrapper_0   |     1|
+|6     |designv2_rst_ps8_0_99M     |     1|
+|7     |designv2_zynq_ultra_ps_e_0 |     1|
++------+---------------------------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:34 ; elapsed = 00:00:36 . Memory (MB): peak = 3012.043 ; gain = 1321.883
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 0 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:21 ; elapsed = 00:00:30 . Memory (MB): peak = 3012.043 ; gain = 1321.883
+Synthesis Optimization Complete : Time (s): cpu = 00:00:34 ; elapsed = 00:00:36 . Memory (MB): peak = 3012.043 ; gain = 1321.883
+INFO: [Project 1-571] Translating synthesized netlist
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.012 . Memory (MB): peak = 3012.043 ; gain = 0.000
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 3012.043 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Synth Design complete | Checksum: b61a4b76
+INFO: [Common 17-83] Releasing license: Synthesis
+40 Infos, 28 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:00:42 ; elapsed = 00:00:47 . Memory (MB): peak = 3012.043 ; gain = 2402.562
+INFO: [Common 17-1381] The checkpoint 'D:/github/CLA/v2/vivado/systemv2/systemv2.runs/synth_1/designv2_wrapper.dcp' has been generated.
+INFO: [Vivado 12-24828] Executing command : report_utilization -file designv2_wrapper_utilization_synth.rpt -pb designv2_wrapper_utilization_synth.pb
+INFO: [Common 17-206] Exiting Vivado at Sun Oct 11 08:55:24 2026...

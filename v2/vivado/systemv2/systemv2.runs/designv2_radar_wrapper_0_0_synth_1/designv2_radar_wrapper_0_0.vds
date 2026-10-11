@@ -1,0 +1,1714 @@
+#-----------------------------------------------------------
+# Vivado v2025.2 (64-bit)
+# SW Build 6299465 on Fri Nov 14 19:35:11 GMT 2025
+# IP Build 6300035 on Fri Nov 14 10:48:45 MST 2025
+# SharedData Build 6298862 on Thu Nov 13 04:50:51 MST 2025
+# Start of session at: Sun Oct 11 05:21:28 2026
+# Process ID         : 27616
+# Current directory  : D:/github/CLA/v2/vivado/systemv2/systemv2.runs/designv2_radar_wrapper_0_0_synth_1
+# Command line       : vivado.exe -log designv2_radar_wrapper_0_0.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source designv2_radar_wrapper_0_0.tcl
+# Log file           : D:/github/CLA/v2/vivado/systemv2/systemv2.runs/designv2_radar_wrapper_0_0_synth_1/designv2_radar_wrapper_0_0.vds
+# Journal file       : D:/github/CLA/v2/vivado/systemv2/systemv2.runs/designv2_radar_wrapper_0_0_synth_1\vivado.jou
+# Running On         : komputer
+# Platform           : Windows Server 2016 or Windows 10
+# Operating System   : 26200
+# Processor Detail   : AMD Ryzen 7 6800H with Radeon Graphics         
+# CPU Frequency      : 3194 MHz
+# CPU Physical cores : 8
+# CPU Logical cores  : 16
+# Host memory        : 16371 MB
+# Swap memory        : 21474 MB
+# Total Virtual      : 37846 MB
+# Available Virtual  : 10131 MB
+#-----------------------------------------------------------
+source designv2_radar_wrapper_0_0.tcl -notrace
+create_project: Time (s): cpu = 00:00:12 ; elapsed = 00:00:09 . Memory (MB): peak = 540.527 ; gain = 221.098
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository 'D:/programs/Vivado/2025.2/Vivado/data/ip'.
+Command: synth_design -top designv2_radar_wrapper_0_0 -part xck26-sfvc784-2LV-c -incremental_mode off -mode out_of_context
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xck26'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xck26'
+INFO: [Device 21-403] Loading part xck26-sfvc784-2LV-c
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 2 processes.
+INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
+INFO: [Synth 8-7075] Helper process launched with PID 164
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:09 ; elapsed = 00:00:12 . Memory (MB): peak = 1840.984 ; gain = 208.910
+---------------------------------------------------------------------------------
+INFO: [Synth 8-6157] synthesizing module 'designv2_radar_wrapper_0_0' [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/ip/designv2_radar_wrapper_0_0/synth/designv2_radar_wrapper_0_0.v:53]
+INFO: [Synth 8-6157] synthesizing module 'radar_wrapper' [D:/github/CLA/v2/rtl/cfar/wrapper.v:2]
+INFO: [Synth 8-6157] synthesizing module 'top' [D:/github/CLA/v2/rtl/cfar/top.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'axiLiteRegsRTL' [D:/github/CLA/v2/rtl/cfar/axiLiteRegsRTL.sv:1]
+INFO: [Synth 8-6155] done synthesizing module 'axiLiteRegsRTL' (0#1) [D:/github/CLA/v2/rtl/cfar/axiLiteRegsRTL.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'rxPadRTL' [D:/github/CLA/v2/rtl/cfar/rxPadRTL.sv:1]
+INFO: [Synth 8-6155] done synthesizing module 'rxPadRTL' (0#1) [D:/github/CLA/v2/rtl/cfar/rxPadRTL.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'matchedFilterRTL' [D:/github/CLA/v2/rtl/cfar/matchedFilter.sv:1]
+INFO: [Synth 8-6155] done synthesizing module 'matchedFilterRTL' (0#1) [D:/github/CLA/v2/rtl/cfar/matchedFilter.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'mfTrimRTL' [D:/github/CLA/v2/rtl/cfar/mfTrimRTL.sv:1]
+INFO: [Synth 8-6155] done synthesizing module 'mfTrimRTL' (0#1) [D:/github/CLA/v2/rtl/cfar/mfTrimRTL.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'cornerTurn1RTL' [D:/github/CLA/v2/rtl/cfar/cornerTurn1RTL.sv:1]
+INFO: [Synth 8-6155] done synthesizing module 'cornerTurn1RTL' (0#1) [D:/github/CLA/v2/rtl/cfar/cornerTurn1RTL.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'mtiFilterRTL' [D:/github/CLA/v2/rtl/cfar/mtiFilter.sv:1]
+INFO: [Synth 8-6155] done synthesizing module 'mtiFilterRTL' (0#1) [D:/github/CLA/v2/rtl/cfar/mtiFilter.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'winPreFFT' [D:/github/CLA/v2/rtl/cfar/winPreFFT.sv:1]
+INFO: [Synth 8-3876] $readmem data file 'win_pre_fft.mem' is read successfully [D:/github/CLA/v2/rtl/cfar/winPreFFT.sv:26]
+INFO: [Synth 8-6155] done synthesizing module 'winPreFFT' (0#1) [D:/github/CLA/v2/rtl/cfar/winPreFFT.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'dopplerFftRTL' [D:/github/CLA/v2/rtl/cfar/dopplerFftRTL.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'fftRTL' [D:/github/CLA/v2/rtl/cfar/fft128.sv:12]
+INFO: [Synth 8-6157] synthesizing module 'subFFT' [D:/github/CLA/v2/rtl/cfar/subFFT.sv:11]
+	Parameter DW bound to: 32'sb00000000000000000000000000010100 
+	Parameter DEPTH bound to: 32'sb00000000000000000000000001000000 
+	Parameter STEP bound to: 32'sb00000000000000000000000000000001 
+INFO: [Synth 8-3876] $readmem data file 'tw_cos.mem' is read successfully [D:/github/CLA/v2/rtl/cfar/subFFT.sv:79]
+INFO: [Synth 8-6157] synthesizing module 'fftFifoRTL' [D:/github/CLA/v2/rtl/cfar/fftFIFO.sv:1]
+	Parameter WIDTH bound to: 32'sb00000000000000000000000000101010 
+	Parameter FIFO_DEPTH bound to: 32'sb00000000000000000000000001000000 
+INFO: [Synth 8-6155] done synthesizing module 'fftFifoRTL' (0#1) [D:/github/CLA/v2/rtl/cfar/fftFIFO.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'butterflyUnit' [D:/github/CLA/v2/rtl/cfar/subFFT.sv:135]
+	Parameter DW bound to: 32'sb00000000000000000000000000010100 
+INFO: [Synth 8-6155] done synthesizing module 'butterflyUnit' (0#1) [D:/github/CLA/v2/rtl/cfar/subFFT.sv:135]
+INFO: [Synth 8-6157] synthesizing module 'complexMulRTL' [D:/github/CLA/v2/rtl/cfar/complexMul.sv:10]
+	Parameter DW bound to: 32'sb00000000000000000000000000010101 
+	Parameter TW bound to: 32'sb00000000000000000000000000010010 
+	Parameter FRAC bound to: 32'sb00000000000000000000000000010000 
+INFO: [Synth 8-6155] done synthesizing module 'complexMulRTL' (0#1) [D:/github/CLA/v2/rtl/cfar/complexMul.sv:10]
+INFO: [Synth 8-6155] done synthesizing module 'subFFT' (0#1) [D:/github/CLA/v2/rtl/cfar/subFFT.sv:11]
+INFO: [Synth 8-6157] synthesizing module 'subFFT__parameterized0' [D:/github/CLA/v2/rtl/cfar/subFFT.sv:11]
+	Parameter DW bound to: 32'sb00000000000000000000000000010101 
+	Parameter DEPTH bound to: 32'sb00000000000000000000000000100000 
+	Parameter STEP bound to: 32'sb00000000000000000000000000000010 
+INFO: [Synth 8-3876] $readmem data file 'tw_cos.mem' is read successfully [D:/github/CLA/v2/rtl/cfar/subFFT.sv:79]
+INFO: [Synth 8-6157] synthesizing module 'fftFifoRTL__parameterized0' [D:/github/CLA/v2/rtl/cfar/fftFIFO.sv:1]
+	Parameter WIDTH bound to: 32'sb00000000000000000000000000101100 
+	Parameter FIFO_DEPTH bound to: 32'sb00000000000000000000000000100000 
+INFO: [Synth 8-6155] done synthesizing module 'fftFifoRTL__parameterized0' (0#1) [D:/github/CLA/v2/rtl/cfar/fftFIFO.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'butterflyUnit__parameterized0' [D:/github/CLA/v2/rtl/cfar/subFFT.sv:135]
+	Parameter DW bound to: 32'sb00000000000000000000000000010101 
+INFO: [Synth 8-6155] done synthesizing module 'butterflyUnit__parameterized0' (0#1) [D:/github/CLA/v2/rtl/cfar/subFFT.sv:135]
+INFO: [Synth 8-6157] synthesizing module 'complexMulRTL__parameterized0' [D:/github/CLA/v2/rtl/cfar/complexMul.sv:10]
+	Parameter DW bound to: 32'sb00000000000000000000000000010110 
+	Parameter TW bound to: 32'sb00000000000000000000000000010010 
+	Parameter FRAC bound to: 32'sb00000000000000000000000000010000 
+INFO: [Synth 8-6155] done synthesizing module 'complexMulRTL__parameterized0' (0#1) [D:/github/CLA/v2/rtl/cfar/complexMul.sv:10]
+INFO: [Synth 8-6155] done synthesizing module 'subFFT__parameterized0' (0#1) [D:/github/CLA/v2/rtl/cfar/subFFT.sv:11]
+INFO: [Synth 8-6157] synthesizing module 'subFFT__parameterized1' [D:/github/CLA/v2/rtl/cfar/subFFT.sv:11]
+	Parameter DW bound to: 32'sb00000000000000000000000000010110 
+	Parameter DEPTH bound to: 32'sb00000000000000000000000000010000 
+	Parameter STEP bound to: 32'sb00000000000000000000000000000100 
+INFO: [Synth 8-3876] $readmem data file 'tw_cos.mem' is read successfully [D:/github/CLA/v2/rtl/cfar/subFFT.sv:79]
+INFO: [Synth 8-6157] synthesizing module 'fftFifoRTL__parameterized1' [D:/github/CLA/v2/rtl/cfar/fftFIFO.sv:1]
+	Parameter WIDTH bound to: 32'sb00000000000000000000000000101110 
+	Parameter FIFO_DEPTH bound to: 32'sb00000000000000000000000000010000 
+INFO: [Synth 8-6155] done synthesizing module 'fftFifoRTL__parameterized1' (0#1) [D:/github/CLA/v2/rtl/cfar/fftFIFO.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'butterflyUnit__parameterized1' [D:/github/CLA/v2/rtl/cfar/subFFT.sv:135]
+	Parameter DW bound to: 32'sb00000000000000000000000000010110 
+INFO: [Synth 8-6155] done synthesizing module 'butterflyUnit__parameterized1' (0#1) [D:/github/CLA/v2/rtl/cfar/subFFT.sv:135]
+INFO: [Synth 8-6157] synthesizing module 'complexMulRTL__parameterized1' [D:/github/CLA/v2/rtl/cfar/complexMul.sv:10]
+	Parameter DW bound to: 32'sb00000000000000000000000000010111 
+	Parameter TW bound to: 32'sb00000000000000000000000000010010 
+	Parameter FRAC bound to: 32'sb00000000000000000000000000010000 
+INFO: [Synth 8-6155] done synthesizing module 'complexMulRTL__parameterized1' (0#1) [D:/github/CLA/v2/rtl/cfar/complexMul.sv:10]
+INFO: [Synth 8-6155] done synthesizing module 'subFFT__parameterized1' (0#1) [D:/github/CLA/v2/rtl/cfar/subFFT.sv:11]
+INFO: [Synth 8-6157] synthesizing module 'subFFT__parameterized2' [D:/github/CLA/v2/rtl/cfar/subFFT.sv:11]
+	Parameter DW bound to: 32'sb00000000000000000000000000010111 
+	Parameter DEPTH bound to: 32'sb00000000000000000000000000001000 
+	Parameter STEP bound to: 32'sb00000000000000000000000000001000 
+INFO: [Synth 8-3876] $readmem data file 'tw_cos.mem' is read successfully [D:/github/CLA/v2/rtl/cfar/subFFT.sv:79]
+INFO: [Synth 8-6157] synthesizing module 'fftFifoRTL__parameterized2' [D:/github/CLA/v2/rtl/cfar/fftFIFO.sv:1]
+	Parameter WIDTH bound to: 32'sb00000000000000000000000000110000 
+	Parameter FIFO_DEPTH bound to: 32'sb00000000000000000000000000001000 
+INFO: [Synth 8-6155] done synthesizing module 'fftFifoRTL__parameterized2' (0#1) [D:/github/CLA/v2/rtl/cfar/fftFIFO.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'butterflyUnit__parameterized2' [D:/github/CLA/v2/rtl/cfar/subFFT.sv:135]
+	Parameter DW bound to: 32'sb00000000000000000000000000010111 
+INFO: [Synth 8-6155] done synthesizing module 'butterflyUnit__parameterized2' (0#1) [D:/github/CLA/v2/rtl/cfar/subFFT.sv:135]
+INFO: [Synth 8-6157] synthesizing module 'complexMulRTL__parameterized2' [D:/github/CLA/v2/rtl/cfar/complexMul.sv:10]
+	Parameter DW bound to: 32'sb00000000000000000000000000011000 
+	Parameter TW bound to: 32'sb00000000000000000000000000010010 
+	Parameter FRAC bound to: 32'sb00000000000000000000000000010000 
+INFO: [Synth 8-6155] done synthesizing module 'complexMulRTL__parameterized2' (0#1) [D:/github/CLA/v2/rtl/cfar/complexMul.sv:10]
+INFO: [Synth 8-6155] done synthesizing module 'subFFT__parameterized2' (0#1) [D:/github/CLA/v2/rtl/cfar/subFFT.sv:11]
+INFO: [Synth 8-6157] synthesizing module 'subFFT__parameterized3' [D:/github/CLA/v2/rtl/cfar/subFFT.sv:11]
+	Parameter DW bound to: 32'sb00000000000000000000000000011000 
+	Parameter DEPTH bound to: 32'sb00000000000000000000000000000100 
+	Parameter STEP bound to: 32'sb00000000000000000000000000010000 
+INFO: [Synth 8-3876] $readmem data file 'tw_cos.mem' is read successfully [D:/github/CLA/v2/rtl/cfar/subFFT.sv:79]
+INFO: [Synth 8-6157] synthesizing module 'fftFifoRTL__parameterized3' [D:/github/CLA/v2/rtl/cfar/fftFIFO.sv:1]
+	Parameter WIDTH bound to: 32'sb00000000000000000000000000110010 
+	Parameter FIFO_DEPTH bound to: 32'sb00000000000000000000000000000100 
+INFO: [Synth 8-6155] done synthesizing module 'fftFifoRTL__parameterized3' (0#1) [D:/github/CLA/v2/rtl/cfar/fftFIFO.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'butterflyUnit__parameterized3' [D:/github/CLA/v2/rtl/cfar/subFFT.sv:135]
+	Parameter DW bound to: 32'sb00000000000000000000000000011000 
+INFO: [Synth 8-6155] done synthesizing module 'butterflyUnit__parameterized3' (0#1) [D:/github/CLA/v2/rtl/cfar/subFFT.sv:135]
+INFO: [Synth 8-6157] synthesizing module 'complexMulRTL__parameterized3' [D:/github/CLA/v2/rtl/cfar/complexMul.sv:10]
+	Parameter DW bound to: 32'sb00000000000000000000000000011001 
+	Parameter TW bound to: 32'sb00000000000000000000000000010010 
+	Parameter FRAC bound to: 32'sb00000000000000000000000000010000 
+INFO: [Synth 8-6155] done synthesizing module 'complexMulRTL__parameterized3' (0#1) [D:/github/CLA/v2/rtl/cfar/complexMul.sv:10]
+INFO: [Synth 8-6155] done synthesizing module 'subFFT__parameterized3' (0#1) [D:/github/CLA/v2/rtl/cfar/subFFT.sv:11]
+INFO: [Synth 8-6157] synthesizing module 'subFFT__parameterized4' [D:/github/CLA/v2/rtl/cfar/subFFT.sv:11]
+	Parameter DW bound to: 32'sb00000000000000000000000000011001 
+	Parameter DEPTH bound to: 32'sb00000000000000000000000000000010 
+	Parameter STEP bound to: 32'sb00000000000000000000000000100000 
+INFO: [Synth 8-3876] $readmem data file 'tw_cos.mem' is read successfully [D:/github/CLA/v2/rtl/cfar/subFFT.sv:79]
+INFO: [Synth 8-6157] synthesizing module 'fftFifoRTL__parameterized4' [D:/github/CLA/v2/rtl/cfar/fftFIFO.sv:1]
+	Parameter WIDTH bound to: 32'sb00000000000000000000000000110100 
+	Parameter FIFO_DEPTH bound to: 32'sb00000000000000000000000000000010 
+INFO: [Synth 8-6155] done synthesizing module 'fftFifoRTL__parameterized4' (0#1) [D:/github/CLA/v2/rtl/cfar/fftFIFO.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'butterflyUnit__parameterized4' [D:/github/CLA/v2/rtl/cfar/subFFT.sv:135]
+	Parameter DW bound to: 32'sb00000000000000000000000000011001 
+INFO: [Synth 8-6155] done synthesizing module 'butterflyUnit__parameterized4' (0#1) [D:/github/CLA/v2/rtl/cfar/subFFT.sv:135]
+INFO: [Synth 8-6157] synthesizing module 'complexMulRTL__parameterized4' [D:/github/CLA/v2/rtl/cfar/complexMul.sv:10]
+	Parameter DW bound to: 32'sb00000000000000000000000000011010 
+	Parameter TW bound to: 32'sb00000000000000000000000000010010 
+	Parameter FRAC bound to: 32'sb00000000000000000000000000010000 
+INFO: [Synth 8-6155] done synthesizing module 'complexMulRTL__parameterized4' (0#1) [D:/github/CLA/v2/rtl/cfar/complexMul.sv:10]
+INFO: [Synth 8-6155] done synthesizing module 'subFFT__parameterized4' (0#1) [D:/github/CLA/v2/rtl/cfar/subFFT.sv:11]
+INFO: [Synth 8-6157] synthesizing module 'subFFT__parameterized5' [D:/github/CLA/v2/rtl/cfar/subFFT.sv:11]
+	Parameter DW bound to: 32'sb00000000000000000000000000011010 
+	Parameter DEPTH bound to: 32'sb00000000000000000000000000000001 
+	Parameter STEP bound to: 32'sb00000000000000000000000001000000 
+INFO: [Synth 8-3876] $readmem data file 'tw_cos.mem' is read successfully [D:/github/CLA/v2/rtl/cfar/subFFT.sv:79]
+INFO: [Synth 8-6157] synthesizing module 'fftFifoRTL__parameterized5' [D:/github/CLA/v2/rtl/cfar/fftFIFO.sv:1]
+	Parameter WIDTH bound to: 32'sb00000000000000000000000000110110 
+	Parameter FIFO_DEPTH bound to: 32'sb00000000000000000000000000000001 
+INFO: [Synth 8-6155] done synthesizing module 'fftFifoRTL__parameterized5' (0#1) [D:/github/CLA/v2/rtl/cfar/fftFIFO.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'butterflyUnit__parameterized5' [D:/github/CLA/v2/rtl/cfar/subFFT.sv:135]
+	Parameter DW bound to: 32'sb00000000000000000000000000011010 
+INFO: [Synth 8-6155] done synthesizing module 'butterflyUnit__parameterized5' (0#1) [D:/github/CLA/v2/rtl/cfar/subFFT.sv:135]
+INFO: [Synth 8-6157] synthesizing module 'complexMulRTL__parameterized5' [D:/github/CLA/v2/rtl/cfar/complexMul.sv:10]
+	Parameter DW bound to: 32'sb00000000000000000000000000011011 
+	Parameter TW bound to: 32'sb00000000000000000000000000010010 
+	Parameter FRAC bound to: 32'sb00000000000000000000000000010000 
+INFO: [Synth 8-6155] done synthesizing module 'complexMulRTL__parameterized5' (0#1) [D:/github/CLA/v2/rtl/cfar/complexMul.sv:10]
+INFO: [Synth 8-6155] done synthesizing module 'subFFT__parameterized5' (0#1) [D:/github/CLA/v2/rtl/cfar/subFFT.sv:11]
+INFO: [Synth 8-6155] done synthesizing module 'fftRTL' (0#1) [D:/github/CLA/v2/rtl/cfar/fft128.sv:12]
+INFO: [Synth 8-6155] done synthesizing module 'dopplerFftRTL' (0#1) [D:/github/CLA/v2/rtl/cfar/dopplerFftRTL.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'powerRTL' [D:/github/CLA/v2/rtl/cfar/powerRTL.sv:10]
+INFO: [Synth 8-6155] done synthesizing module 'powerRTL' (0#1) [D:/github/CLA/v2/rtl/cfar/powerRTL.sv:10]
+INFO: [Synth 8-6157] synthesizing module 'logDomainRTL' [D:/github/CLA/v2/rtl/cfar/logDomain.sv:2]
+INFO: [Synth 8-6155] done synthesizing module 'logDomainRTL' (0#1) [D:/github/CLA/v2/rtl/cfar/logDomain.sv:2]
+INFO: [Synth 8-6157] synthesizing module 'cornerTurn2RTL' [D:/github/CLA/v2/rtl/cfar/cornerTurn2RTL.sv:1]
+INFO: [Synth 8-6155] done synthesizing module 'cornerTurn2RTL' (0#1) [D:/github/CLA/v2/rtl/cfar/cornerTurn2RTL.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'osCfarRTL' [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:1]
+INFO: [Synth 8-6155] done synthesizing module 'osCfarRTL' (0#1) [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'postProcRTL' [D:/github/CLA/v2/rtl/cfar/postProcRTL.sv:1]
+INFO: [Synth 8-6155] done synthesizing module 'postProcRTL' (0#1) [D:/github/CLA/v2/rtl/cfar/postProcRTL.sv:1]
+INFO: [Synth 8-6155] done synthesizing module 'top' (0#1) [D:/github/CLA/v2/rtl/cfar/top.sv:1]
+INFO: [Synth 8-6155] done synthesizing module 'radar_wrapper' (0#1) [D:/github/CLA/v2/rtl/cfar/wrapper.v:2]
+INFO: [Synth 8-6155] done synthesizing module 'designv2_radar_wrapper_0_0' (0#1) [d:/github/CLA/v2/vivado/systemv2/systemv2.gen/sources_1/bd/designv2/ip/designv2_radar_wrapper_0_0/synth/designv2_radar_wrapper_0_0.v:53]
+WARNING: [Synth 8-7137] Register gRam.mem_reg in module fftFifoRTL has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code 
+WARNING: [Synth 8-4767] Trying to implement RAM 'gRam.mem_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [D:/github/CLA/v2/rtl/cfar/fftFIFO.sv:34]
+Reason is one or more of the following :
+	1: RAM is sensitive to asynchronous reset signal. this RTL style is not supported. 
+WARNING: [Synth 8-7137] Register gRam.mem_reg in module fftFifoRTL__parameterized0 has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code 
+WARNING: [Synth 8-4767] Trying to implement RAM 'gRam.mem_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [D:/github/CLA/v2/rtl/cfar/fftFIFO.sv:34]
+Reason is one or more of the following :
+	1: RAM is sensitive to asynchronous reset signal. this RTL style is not supported. 
+WARNING: [Synth 8-7137] Register gRam.mem_reg in module fftFifoRTL__parameterized1 has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code 
+WARNING: [Synth 8-4767] Trying to implement RAM 'gRam.mem_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [D:/github/CLA/v2/rtl/cfar/fftFIFO.sv:34]
+Reason is one or more of the following :
+	1: RAM is sensitive to asynchronous reset signal. this RTL style is not supported. 
+WARNING: [Synth 8-7137] Register gRam.mem_reg in module fftFifoRTL__parameterized2 has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code 
+WARNING: [Synth 8-4767] Trying to implement RAM 'gRam.mem_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [D:/github/CLA/v2/rtl/cfar/fftFIFO.sv:34]
+Reason is one or more of the following :
+	1: RAM is sensitive to asynchronous reset signal. this RTL style is not supported. 
+WARNING: [Synth 8-7137] Register gRam.mem_reg in module fftFifoRTL__parameterized3 has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code 
+WARNING: [Synth 8-4767] Trying to implement RAM 'gRam.mem_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [D:/github/CLA/v2/rtl/cfar/fftFIFO.sv:34]
+Reason is one or more of the following :
+	1: RAM is sensitive to asynchronous reset signal. this RTL style is not supported. 
+WARNING: [Synth 8-7137] Register gRam.mem_reg in module fftFifoRTL__parameterized4 has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code 
+WARNING: [Synth 8-4767] Trying to implement RAM 'gRam.mem_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [D:/github/CLA/v2/rtl/cfar/fftFIFO.sv:34]
+Reason is one or more of the following :
+	1: RAM is sensitive to asynchronous reset signal. this RTL style is not supported. 
+WARNING: [Synth 8-3936] Found unconnected internal register 'dataS1_reg' and it is trimmed from '54' to '53' bits. [D:/github/CLA/v2/rtl/cfar/logDomain.sv:37]
+WARNING: [Synth 8-3936] Found unconnected internal register 'selectComb_reg' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:171]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[0]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[0]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[1]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[1]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[2]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[2]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[3]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[3]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[4]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[4]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[5]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[5]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[6]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[6]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[7]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[7]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[8]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[8]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[9]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[9]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[10]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[10]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[11]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[11]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[12]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[12]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[13]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[13]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[14]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[14]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[15]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[15]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[16]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[16]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[17]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[17]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[18]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[18]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[19]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[19]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[20]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[20]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[21]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[21]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[22]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[22]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[23]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[23]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[24]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[24]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[25]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[25]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[26]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[26]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[27]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[27]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[28]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[28]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+WARNING: [Synth 8-3936] Found unconnected internal register 's2Ref_reg[29]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:165]
+WARNING: [Synth 8-3936] Found unconnected internal register 's1Ref_reg[29]' and it is trimmed from '17' to '16' bits. [D:/github/CLA/v2/rtl/cfar/osCFAR.sv:140]
+INFO: [Synth 8-7129] Port readEn_i in module fftFifoRTL__parameterized5 is either unconnected or has no load
+INFO: [Synth 8-7129] Port readEn_i in module fftFifoRTL__parameterized4 is either unconnected or has no load
+INFO: [Synth 8-7129] Port readEn_i in module fftFifoRTL__parameterized3 is either unconnected or has no load
+INFO: [Synth 8-7129] Port readEn_i in module fftFifoRTL__parameterized2 is either unconnected or has no load
+INFO: [Synth 8-7129] Port readEn_i in module fftFifoRTL__parameterized1 is either unconnected or has no load
+INFO: [Synth 8-7129] Port readEn_i in module fftFifoRTL__parameterized0 is either unconnected or has no load
+INFO: [Synth 8-7129] Port readEn_i in module fftFifoRTL is either unconnected or has no load
+INFO: [Synth 8-7129] Port s_axis_tlast in module rxPadRTL is either unconnected or has no load
+INFO: [Synth 8-7129] Port s_axil_wstrb[3] in module axiLiteRegsRTL is either unconnected or has no load
+INFO: [Synth 8-7129] Port s_axil_wstrb[2] in module axiLiteRegsRTL is either unconnected or has no load
+INFO: [Synth 8-7129] Port s_axil_wstrb[1] in module axiLiteRegsRTL is either unconnected or has no load
+INFO: [Synth 8-7129] Port s_axil_wstrb[0] in module axiLiteRegsRTL is either unconnected or has no load
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:16 ; elapsed = 00:00:20 . Memory (MB): peak = 2048.562 ; gain = 416.488
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:16 ; elapsed = 00:00:20 . Memory (MB): peak = 2048.562 ; gain = 416.488
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:16 ; elapsed = 00:00:20 . Memory (MB): peak = 2048.562 ; gain = 416.488
+---------------------------------------------------------------------------------
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.361 . Memory (MB): peak = 2048.562 ; gain = 0.000
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Completed Processing XDC Constraints
+
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.019 . Memory (MB): peak = 2142.414 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.517 . Memory (MB): peak = 2142.414 ; gain = 0.000
+INFO: [Designutils 20-5008] Incremental synthesis strategy off
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:34 ; elapsed = 00:00:38 . Memory (MB): peak = 2142.414 ; gain = 510.340
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xck26-sfvc784-2LV-c
+INFO: [Synth 8-6742] Reading net delay rules and data
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:34 ; elapsed = 00:00:38 . Memory (MB): peak = 2142.414 ; gain = 510.340
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:34 ; elapsed = 00:00:38 . Memory (MB): peak = 2142.414 ; gain = 510.340
+---------------------------------------------------------------------------------
+INFO: [Synth 8-5800] Cascade chain of height 8 reduced to 4 because memory depth for RAM "cornerTurn1RTL:/ram_reg" is not power of 2. 
+INFO: [Synth 8-3971] The signal "postProcRTL:/mem_reg" was recognized as a true dual port RAM template.
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:39 ; elapsed = 00:00:44 . Memory (MB): peak = 2142.414 ; gain = 510.340
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input   54 Bit       Adders := 1     
+	   2 Input   38 Bit       Adders := 40    
+	   2 Input   32 Bit       Adders := 1     
+	   2 Input   27 Bit       Adders := 2     
+	   3 Input   27 Bit       Adders := 2     
+	   2 Input   26 Bit       Adders := 2     
+	   3 Input   26 Bit       Adders := 2     
+	   2 Input   25 Bit       Adders := 2     
+	   3 Input   25 Bit       Adders := 2     
+	   2 Input   24 Bit       Adders := 2     
+	   3 Input   24 Bit       Adders := 2     
+	   2 Input   23 Bit       Adders := 2     
+	   3 Input   23 Bit       Adders := 2     
+	   2 Input   22 Bit       Adders := 2     
+	   3 Input   22 Bit       Adders := 2     
+	   2 Input   21 Bit       Adders := 2     
+	   3 Input   21 Bit       Adders := 2     
+	   4 Input   20 Bit       Adders := 2     
+	   2 Input   18 Bit       Adders := 12    
+	   2 Input   17 Bit       Adders := 3     
+	   3 Input   17 Bit       Adders := 1     
+	   4 Input   17 Bit       Adders := 1     
+	   2 Input   15 Bit       Adders := 3     
+	   2 Input   11 Bit       Adders := 2     
+	   2 Input   10 Bit       Adders := 25    
+	   3 Input   10 Bit       Adders := 1     
+	   2 Input    8 Bit       Adders := 3     
+	   2 Input    7 Bit       Adders := 8     
+	   2 Input    6 Bit       Adders := 10    
+	  30 Input    5 Bit       Adders := 31    
+	   2 Input    5 Bit       Adders := 9     
+	   2 Input    4 Bit       Adders := 2     
+	   2 Input    3 Bit       Adders := 2     
+	   2 Input    2 Bit       Adders := 3     
+	   2 Input    1 Bit       Adders := 2     
++---XORs : 
+	   2 Input      7 Bit         XORs := 1     
++---Registers : 
+	              160 Bit    Registers := 1     
+	              141 Bit    Registers := 2     
+	               54 Bit    Registers := 2     
+	               53 Bit    Registers := 1     
+	               52 Bit    Registers := 2     
+	               50 Bit    Registers := 4     
+	               48 Bit    Registers := 10    
+	               46 Bit    Registers := 16    
+	               45 Bit    Registers := 4     
+	               44 Bit    Registers := 36    
+	               43 Bit    Registers := 4     
+	               42 Bit    Registers := 68    
+	               41 Bit    Registers := 4     
+	               40 Bit    Registers := 4     
+	               39 Bit    Registers := 4     
+	               38 Bit    Registers := 38    
+	               36 Bit    Registers := 2     
+	               32 Bit    Registers := 25    
+	               27 Bit    Registers := 8     
+	               26 Bit    Registers := 2     
+	               25 Bit    Registers := 2     
+	               24 Bit    Registers := 2     
+	               23 Bit    Registers := 2     
+	               22 Bit    Registers := 2     
+	               21 Bit    Registers := 2     
+	               20 Bit    Registers := 6     
+	               18 Bit    Registers := 14    
+	               16 Bit    Registers := 227   
+	               15 Bit    Registers := 2     
+	               11 Bit    Registers := 1     
+	               10 Bit    Registers := 34    
+	                8 Bit    Registers := 2     
+	                7 Bit    Registers := 11    
+	                6 Bit    Registers := 4     
+	                5 Bit    Registers := 41    
+	                4 Bit    Registers := 4     
+	                3 Bit    Registers := 4     
+	                2 Bit    Registers := 14    
+	                1 Bit    Registers := 67    
++---RAMs : 
+	            2000K Bit	(128000 X 16 bit)          RAMs := 1     
+	             703K Bit	(20000 X 36 bit)          RAMs := 1     
+	              31K Bit	(1000 X 32 bit)          RAMs := 1     
++---Muxes : 
+	   2 Input   52 Bit        Muxes := 1     
+	   4 Input   50 Bit        Muxes := 1     
+	   2 Input   38 Bit        Muxes := 38    
+	   2 Input   32 Bit        Muxes := 5     
+	   2 Input   27 Bit        Muxes := 4     
+	   2 Input   26 Bit        Muxes := 4     
+	   2 Input   25 Bit        Muxes := 4     
+	   2 Input   24 Bit        Muxes := 4     
+	   2 Input   23 Bit        Muxes := 4     
+	   2 Input   22 Bit        Muxes := 4     
+	   2 Input   21 Bit        Muxes := 4     
+	   2 Input   20 Bit        Muxes := 2     
+	   2 Input   18 Bit        Muxes := 18    
+	   2 Input   17 Bit        Muxes := 31    
+	   2 Input   16 Bit        Muxes := 37    
+	   2 Input   15 Bit        Muxes := 3     
+	   2 Input   11 Bit        Muxes := 2     
+	   2 Input   10 Bit        Muxes := 26    
+	   2 Input    8 Bit        Muxes := 2     
+	   2 Input    7 Bit        Muxes := 4     
+	   2 Input    6 Bit        Muxes := 18    
+	   2 Input    5 Bit        Muxes := 10    
+	   2 Input    1 Bit        Muxes := 220   
+	   6 Input    1 Bit        Muxes := 25    
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 1248 (col length:96)
+BRAMs: 288 (col length: RAMB18 96 RAMB36 48)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+DSP Report: Generating DSP mulComplex, operation Mode is: (C:0x8000)+A2*B2.
+DSP Report: register coef_reg is absorbed into DSP mulComplex.
+DSP Report: register stageComplex_reg is absorbed into DSP mulComplex.
+DSP Report: operator mulComplex is absorbed into DSP mulComplex.
+DSP Report: operator mulComplex0 is absorbed into DSP mulComplex.
+DSP Report: Generating DSP mulReel, operation Mode is: (C:0x8000)+A2*B2.
+DSP Report: register coef_reg is absorbed into DSP mulReel.
+DSP Report: register stageReel_reg is absorbed into DSP mulReel.
+DSP Report: operator mulReel is absorbed into DSP mulReel.
+DSP Report: operator mulReel0 is absorbed into DSP mulReel.
+DSP Report: Generating DSP complexMulRTL/bd0, operation Mode is: A*B.
+DSP Report: operator complexMulRTL/bd0 is absorbed into DSP complexMulRTL/bd0.
+DSP Report: Generating DSP complexMulRTL/ac0, operation Mode is: A*B.
+DSP Report: operator complexMulRTL/ac0 is absorbed into DSP complexMulRTL/ac0.
+DSP Report: Generating DSP complexMulRTL/reelOut_o1, operation Mode is: C+A:B.
+DSP Report: operator complexMulRTL/reelOut_o1 is absorbed into DSP complexMulRTL/reelOut_o1.
+DSP Report: Generating DSP complexMulRTL/reelOut_o1, operation Mode is: PCIN-A:B.
+DSP Report: operator complexMulRTL/reelOut_o1 is absorbed into DSP complexMulRTL/reelOut_o1.
+DSP Report: Generating DSP complexMulRTL/bc0, operation Mode is: A*B.
+DSP Report: operator complexMulRTL/bc0 is absorbed into DSP complexMulRTL/bc0.
+DSP Report: Generating DSP complexMulRTL/ad0, operation Mode is: A*B.
+DSP Report: operator complexMulRTL/ad0 is absorbed into DSP complexMulRTL/ad0.
+DSP Report: Generating DSP complexMulRTL/complexOut_o1, operation Mode is: C+A:B.
+DSP Report: operator complexMulRTL/complexOut_o1 is absorbed into DSP complexMulRTL/complexOut_o1.
+DSP Report: Generating DSP complexMulRTL/complexOut_o1, operation Mode is: C+A:B.
+DSP Report: operator complexMulRTL/complexOut_o1 is absorbed into DSP complexMulRTL/complexOut_o1.
+DSP Report: Generating DSP complexMulRTL/bd0, operation Mode is: A*B.
+DSP Report: operator complexMulRTL/bd0 is absorbed into DSP complexMulRTL/bd0.
+DSP Report: Generating DSP complexMulRTL/ac0, operation Mode is: A*B.
+DSP Report: operator complexMulRTL/ac0 is absorbed into DSP complexMulRTL/ac0.
+DSP Report: Generating DSP complexMulRTL/reelOut_o1, operation Mode is: C+A:B.
+DSP Report: operator complexMulRTL/reelOut_o1 is absorbed into DSP complexMulRTL/reelOut_o1.
+DSP Report: Generating DSP complexMulRTL/reelOut_o1, operation Mode is: PCIN-A:B.
+DSP Report: operator complexMulRTL/reelOut_o1 is absorbed into DSP complexMulRTL/reelOut_o1.
+DSP Report: Generating DSP complexMulRTL/bc0, operation Mode is: A*B.
+DSP Report: operator complexMulRTL/bc0 is absorbed into DSP complexMulRTL/bc0.
+DSP Report: Generating DSP complexMulRTL/ad0, operation Mode is: A*B.
+DSP Report: operator complexMulRTL/ad0 is absorbed into DSP complexMulRTL/ad0.
+DSP Report: Generating DSP complexMulRTL/complexOut_o1, operation Mode is: C+A:B.
+DSP Report: operator complexMulRTL/complexOut_o1 is absorbed into DSP complexMulRTL/complexOut_o1.
+DSP Report: Generating DSP complexMulRTL/complexOut_o1, operation Mode is: C+A:B.
+DSP Report: operator complexMulRTL/complexOut_o1 is absorbed into DSP complexMulRTL/complexOut_o1.
+DSP Report: Generating DSP complexMulRTL/bd0, operation Mode is: A*B.
+DSP Report: operator complexMulRTL/bd0 is absorbed into DSP complexMulRTL/bd0.
+DSP Report: Generating DSP complexMulRTL/ac0, operation Mode is: A*B.
+DSP Report: operator complexMulRTL/ac0 is absorbed into DSP complexMulRTL/ac0.
+DSP Report: Generating DSP complexMulRTL/reelOut_o1, operation Mode is: C+A:B.
+DSP Report: operator complexMulRTL/reelOut_o1 is absorbed into DSP complexMulRTL/reelOut_o1.
+DSP Report: Generating DSP complexMulRTL/reelOut_o1, operation Mode is: PCIN-A:B.
+DSP Report: operator complexMulRTL/reelOut_o1 is absorbed into DSP complexMulRTL/reelOut_o1.
+DSP Report: Generating DSP complexMulRTL/bc0, operation Mode is: A*B.
+DSP Report: operator complexMulRTL/bc0 is absorbed into DSP complexMulRTL/bc0.
+DSP Report: Generating DSP complexMulRTL/ad0, operation Mode is: A*B.
+DSP Report: operator complexMulRTL/ad0 is absorbed into DSP complexMulRTL/ad0.
+DSP Report: Generating DSP complexMulRTL/complexOut_o1, operation Mode is: C+A:B.
+DSP Report: operator complexMulRTL/complexOut_o1 is absorbed into DSP complexMulRTL/complexOut_o1.
+DSP Report: Generating DSP complexMulRTL/complexOut_o1, operation Mode is: C+A:B.
+DSP Report: operator complexMulRTL/complexOut_o1 is absorbed into DSP complexMulRTL/complexOut_o1.
+DSP Report: Generating DSP complexMulRTL/bd0, operation Mode is: A*B.
+DSP Report: operator complexMulRTL/bd0 is absorbed into DSP complexMulRTL/bd0.
+DSP Report: Generating DSP complexMulRTL/ac0, operation Mode is: A*B.
+DSP Report: operator complexMulRTL/ac0 is absorbed into DSP complexMulRTL/ac0.
+DSP Report: Generating DSP complexMulRTL/reelOut_o1, operation Mode is: C+A:B.
+DSP Report: operator complexMulRTL/reelOut_o1 is absorbed into DSP complexMulRTL/reelOut_o1.
+DSP Report: Generating DSP complexMulRTL/reelOut_o1, operation Mode is: PCIN-A:B.
+DSP Report: operator complexMulRTL/reelOut_o1 is absorbed into DSP complexMulRTL/reelOut_o1.
+DSP Report: Generating DSP complexMulRTL/bc0, operation Mode is: A*B.
+DSP Report: operator complexMulRTL/bc0 is absorbed into DSP complexMulRTL/bc0.
+DSP Report: Generating DSP complexMulRTL/ad0, operation Mode is: A*B.
+DSP Report: operator complexMulRTL/ad0 is absorbed into DSP complexMulRTL/ad0.
+DSP Report: Generating DSP complexMulRTL/complexOut_o1, operation Mode is: C+A:B.
+DSP Report: operator complexMulRTL/complexOut_o1 is absorbed into DSP complexMulRTL/complexOut_o1.
+DSP Report: Generating DSP complexMulRTL/complexOut_o1, operation Mode is: C+A:B.
+DSP Report: operator complexMulRTL/complexOut_o1 is absorbed into DSP complexMulRTL/complexOut_o1.
+DSP Report: Generating DSP complexMulRTL/bd0, operation Mode is: A*B.
+DSP Report: operator complexMulRTL/bd0 is absorbed into DSP complexMulRTL/bd0.
+DSP Report: Generating DSP complexMulRTL/ac0, operation Mode is: A*B.
+DSP Report: operator complexMulRTL/ac0 is absorbed into DSP complexMulRTL/ac0.
+DSP Report: Generating DSP complexMulRTL/reelOut_o1, operation Mode is: C+A:B.
+DSP Report: operator complexMulRTL/reelOut_o1 is absorbed into DSP complexMulRTL/reelOut_o1.
+DSP Report: Generating DSP complexMulRTL/reelOut_o1, operation Mode is: PCIN-A:B.
+DSP Report: operator complexMulRTL/reelOut_o1 is absorbed into DSP complexMulRTL/reelOut_o1.
+DSP Report: Generating DSP complexMulRTL/bc0, operation Mode is: A*B.
+DSP Report: operator complexMulRTL/bc0 is absorbed into DSP complexMulRTL/bc0.
+DSP Report: Generating DSP complexMulRTL/ad0, operation Mode is: A*B.
+DSP Report: operator complexMulRTL/ad0 is absorbed into DSP complexMulRTL/ad0.
+DSP Report: Generating DSP complexMulRTL/complexOut_o1, operation Mode is: C+A:B.
+DSP Report: operator complexMulRTL/complexOut_o1 is absorbed into DSP complexMulRTL/complexOut_o1.
+DSP Report: Generating DSP complexMulRTL/complexOut_o1, operation Mode is: C+A:B.
+DSP Report: operator complexMulRTL/complexOut_o1 is absorbed into DSP complexMulRTL/complexOut_o1.
+DSP Report: Generating DSP complexMulRTL/bd0, operation Mode is: A*B.
+DSP Report: operator complexMulRTL/bd0 is absorbed into DSP complexMulRTL/bd0.
+DSP Report: Generating DSP complexMulRTL/ac0, operation Mode is: A*B.
+DSP Report: operator complexMulRTL/ac0 is absorbed into DSP complexMulRTL/ac0.
+DSP Report: Generating DSP complexMulRTL/reelOut_o1, operation Mode is: C+A:B.
+DSP Report: operator complexMulRTL/reelOut_o1 is absorbed into DSP complexMulRTL/reelOut_o1.
+DSP Report: Generating DSP complexMulRTL/reelOut_o1, operation Mode is: PCIN-A:B.
+DSP Report: operator complexMulRTL/reelOut_o1 is absorbed into DSP complexMulRTL/reelOut_o1.
+DSP Report: Generating DSP complexMulRTL/bc0, operation Mode is: A*B.
+DSP Report: operator complexMulRTL/bc0 is absorbed into DSP complexMulRTL/bc0.
+DSP Report: Generating DSP complexMulRTL/ad0, operation Mode is: A*B.
+DSP Report: operator complexMulRTL/ad0 is absorbed into DSP complexMulRTL/ad0.
+DSP Report: Generating DSP complexMulRTL/complexOut_o1, operation Mode is: C+A:B.
+DSP Report: operator complexMulRTL/complexOut_o1 is absorbed into DSP complexMulRTL/complexOut_o1.
+DSP Report: Generating DSP complexMulRTL/complexOut_o1, operation Mode is: C+A:B.
+DSP Report: operator complexMulRTL/complexOut_o1 is absorbed into DSP complexMulRTL/complexOut_o1.
+DSP Report: Generating DSP complexMulRTL/reelOut_o1, operation Mode is: C+A:B.
+DSP Report: operator complexMulRTL/reelOut_o1 is absorbed into DSP complexMulRTL/reelOut_o1.
+DSP Report: Generating DSP complexMulRTL/reelOut_o1, operation Mode is: PCIN-A:B.
+DSP Report: operator complexMulRTL/reelOut_o1 is absorbed into DSP complexMulRTL/reelOut_o1.
+DSP Report: Generating DSP complexMulRTL/complexOut_o1, operation Mode is: C+A:B.
+DSP Report: operator complexMulRTL/complexOut_o1 is absorbed into DSP complexMulRTL/complexOut_o1.
+DSP Report: Generating DSP complexMulRTL/complexOut_o1, operation Mode is: C+A:B.
+DSP Report: operator complexMulRTL/complexOut_o1 is absorbed into DSP complexMulRTL/complexOut_o1.
+WARNING: [Synth 8-3936] Found unconnected internal register 'qM2_reg' and it is trimmed from '48' to '37' bits. [D:/github/CLA/v2/rtl/cfar/powerRTL.sv:40]
+WARNING: [Synth 8-3936] Found unconnected internal register 'qM2_reg' and it is trimmed from '48' to '17' bits. [D:/github/CLA/v2/rtl/cfar/powerRTL.sv:40]
+WARNING: [Synth 8-3936] Found unconnected internal register 'iM2_reg' and it is trimmed from '48' to '37' bits. [D:/github/CLA/v2/rtl/cfar/powerRTL.sv:39]
+WARNING: [Synth 8-3936] Found unconnected internal register 'iM2_reg' and it is trimmed from '48' to '17' bits. [D:/github/CLA/v2/rtl/cfar/powerRTL.sv:39]
+DSP Report: Generating DSP qM_reg, operation Mode is: (A2*B2)'.
+DSP Report: register qM_reg is absorbed into DSP qM_reg.
+DSP Report: register qA_reg is absorbed into DSP qM_reg.
+DSP Report: register qM_reg is absorbed into DSP qM_reg.
+DSP Report: operator qM0 is absorbed into DSP qM_reg.
+DSP Report: operator qM0 is absorbed into DSP qM_reg.
+DSP Report: Generating DSP qM2_reg, operation Mode is: (PCIN>>17)+(A2*B)'.
+DSP Report: register qA_reg is absorbed into DSP qM2_reg.
+DSP Report: register qM2_reg is absorbed into DSP qM2_reg.
+DSP Report: register qM_reg is absorbed into DSP qM2_reg.
+DSP Report: operator qM0 is absorbed into DSP qM2_reg.
+DSP Report: operator qM0 is absorbed into DSP qM2_reg.
+DSP Report: Generating DSP iM_reg, operation Mode is: (A2*B2)'.
+DSP Report: register iM_reg is absorbed into DSP iM_reg.
+DSP Report: register iA_reg is absorbed into DSP iM_reg.
+DSP Report: register iM_reg is absorbed into DSP iM_reg.
+DSP Report: operator iM0 is absorbed into DSP iM_reg.
+DSP Report: operator iM0 is absorbed into DSP iM_reg.
+DSP Report: Generating DSP iM2_reg, operation Mode is: (PCIN>>17)+(A2*B)'.
+DSP Report: register iA_reg is absorbed into DSP iM2_reg.
+DSP Report: register iM2_reg is absorbed into DSP iM2_reg.
+DSP Report: register iM_reg is absorbed into DSP iM2_reg.
+DSP Report: operator iM0 is absorbed into DSP iM2_reg.
+DSP Report: operator iM0 is absorbed into DSP iM2_reg.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[18] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[19] is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP accComplex_reg[19], operation Mode is: (PCIN-A''*B2)'.
+DSP Report: register stageRxReel_reg is absorbed into DSP accComplex_reg[19].
+DSP Report: register txComplexBank_reg[18] is absorbed into DSP accComplex_reg[19].
+DSP Report: register txComplexBank_reg[19] is absorbed into DSP accComplex_reg[19].
+DSP Report: register accComplex_reg[19] is absorbed into DSP accComplex_reg[19].
+DSP Report: operator p_19_in is absorbed into DSP accComplex_reg[19].
+DSP Report: operator p_0_out is absorbed into DSP accComplex_reg[19].
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[17] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[18] is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_113_in, operation Mode is: PCIN-A''*B2.
+DSP Report: register txComplexBank_reg[17] is absorbed into DSP p_113_in.
+DSP Report: register txComplexBank_reg[18] is absorbed into DSP p_113_in.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_113_in.
+DSP Report: operator p_113_in is absorbed into DSP p_113_in.
+DSP Report: operator p_0_out is absorbed into DSP p_113_in.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register txReelBank_reg[16] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[17] is absorbed into DSP p_0_out.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_110_in, operation Mode is: PCIN-A''*B2.
+DSP Report: register txComplexBank_reg[16] is absorbed into DSP p_110_in.
+DSP Report: register txComplexBank_reg[17] is absorbed into DSP p_110_in.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_110_in.
+DSP Report: operator p_110_in is absorbed into DSP p_110_in.
+DSP Report: operator p_0_out is absorbed into DSP p_110_in.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register txReelBank_reg[15] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[16] is absorbed into DSP p_0_out.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_107_in, operation Mode is: PCIN-A''*B2.
+DSP Report: register txComplexBank_reg[15] is absorbed into DSP p_107_in.
+DSP Report: register txComplexBank_reg[16] is absorbed into DSP p_107_in.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_107_in.
+DSP Report: operator p_107_in is absorbed into DSP p_107_in.
+DSP Report: operator p_0_out is absorbed into DSP p_107_in.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register txReelBank_reg[14] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[15] is absorbed into DSP p_0_out.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_104_in, operation Mode is: PCIN-A''*B2.
+DSP Report: register txComplexBank_reg[14] is absorbed into DSP p_104_in.
+DSP Report: register txComplexBank_reg[15] is absorbed into DSP p_104_in.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_104_in.
+DSP Report: operator p_104_in is absorbed into DSP p_104_in.
+DSP Report: operator p_0_out is absorbed into DSP p_104_in.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register txReelBank_reg[13] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[14] is absorbed into DSP p_0_out.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_101_in, operation Mode is: PCIN-A''*B2.
+DSP Report: register txComplexBank_reg[13] is absorbed into DSP p_101_in.
+DSP Report: register txComplexBank_reg[14] is absorbed into DSP p_101_in.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_101_in.
+DSP Report: operator p_101_in is absorbed into DSP p_101_in.
+DSP Report: operator p_0_out is absorbed into DSP p_101_in.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register txReelBank_reg[12] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[13] is absorbed into DSP p_0_out.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_98_in, operation Mode is: PCIN-A''*B2.
+DSP Report: register txComplexBank_reg[12] is absorbed into DSP p_98_in.
+DSP Report: register txComplexBank_reg[13] is absorbed into DSP p_98_in.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_98_in.
+DSP Report: operator p_98_in is absorbed into DSP p_98_in.
+DSP Report: operator p_0_out is absorbed into DSP p_98_in.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register txReelBank_reg[11] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[12] is absorbed into DSP p_0_out.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_95_in, operation Mode is: PCIN-A''*B2.
+DSP Report: register txComplexBank_reg[11] is absorbed into DSP p_95_in.
+DSP Report: register txComplexBank_reg[12] is absorbed into DSP p_95_in.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_95_in.
+DSP Report: operator p_95_in is absorbed into DSP p_95_in.
+DSP Report: operator p_0_out is absorbed into DSP p_95_in.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register txReelBank_reg[10] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[11] is absorbed into DSP p_0_out.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_92_in, operation Mode is: PCIN-A''*B2.
+DSP Report: register txComplexBank_reg[10] is absorbed into DSP p_92_in.
+DSP Report: register txComplexBank_reg[11] is absorbed into DSP p_92_in.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_92_in.
+DSP Report: operator p_92_in is absorbed into DSP p_92_in.
+DSP Report: operator p_0_out is absorbed into DSP p_92_in.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register txReelBank_reg[9] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[10] is absorbed into DSP p_0_out.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_89_in, operation Mode is: PCIN-A''*B2.
+DSP Report: register txComplexBank_reg[9] is absorbed into DSP p_89_in.
+DSP Report: register txComplexBank_reg[10] is absorbed into DSP p_89_in.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_89_in.
+DSP Report: operator p_89_in is absorbed into DSP p_89_in.
+DSP Report: operator p_0_out is absorbed into DSP p_89_in.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register txReelBank_reg[8] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[9] is absorbed into DSP p_0_out.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_86_in, operation Mode is: PCIN-A''*B2.
+DSP Report: register txComplexBank_reg[8] is absorbed into DSP p_86_in.
+DSP Report: register txComplexBank_reg[9] is absorbed into DSP p_86_in.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_86_in.
+DSP Report: operator p_86_in is absorbed into DSP p_86_in.
+DSP Report: operator p_0_out is absorbed into DSP p_86_in.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register txReelBank_reg[7] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[8] is absorbed into DSP p_0_out.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_83_in, operation Mode is: PCIN-A''*B2.
+DSP Report: register txComplexBank_reg[7] is absorbed into DSP p_83_in.
+DSP Report: register txComplexBank_reg[8] is absorbed into DSP p_83_in.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_83_in.
+DSP Report: operator p_83_in is absorbed into DSP p_83_in.
+DSP Report: operator p_0_out is absorbed into DSP p_83_in.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register txReelBank_reg[6] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[7] is absorbed into DSP p_0_out.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_80_in, operation Mode is: PCIN-A''*B2.
+DSP Report: register txComplexBank_reg[6] is absorbed into DSP p_80_in.
+DSP Report: register txComplexBank_reg[7] is absorbed into DSP p_80_in.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_80_in.
+DSP Report: operator p_80_in is absorbed into DSP p_80_in.
+DSP Report: operator p_0_out is absorbed into DSP p_80_in.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register txReelBank_reg[5] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[6] is absorbed into DSP p_0_out.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_77_in, operation Mode is: PCIN-A''*B2.
+DSP Report: register txComplexBank_reg[5] is absorbed into DSP p_77_in.
+DSP Report: register txComplexBank_reg[6] is absorbed into DSP p_77_in.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_77_in.
+DSP Report: operator p_77_in is absorbed into DSP p_77_in.
+DSP Report: operator p_0_out is absorbed into DSP p_77_in.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register txReelBank_reg[4] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[5] is absorbed into DSP p_0_out.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_74_in, operation Mode is: PCIN-A''*B2.
+DSP Report: register txComplexBank_reg[4] is absorbed into DSP p_74_in.
+DSP Report: register txComplexBank_reg[5] is absorbed into DSP p_74_in.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_74_in.
+DSP Report: operator p_74_in is absorbed into DSP p_74_in.
+DSP Report: operator p_0_out is absorbed into DSP p_74_in.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register txReelBank_reg[3] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[4] is absorbed into DSP p_0_out.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_71_in, operation Mode is: PCIN-A''*B2.
+DSP Report: register txComplexBank_reg[3] is absorbed into DSP p_71_in.
+DSP Report: register txComplexBank_reg[4] is absorbed into DSP p_71_in.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_71_in.
+DSP Report: operator p_71_in is absorbed into DSP p_71_in.
+DSP Report: operator p_0_out is absorbed into DSP p_71_in.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register txReelBank_reg[2] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[3] is absorbed into DSP p_0_out.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_68_in, operation Mode is: PCIN-A''*B2.
+DSP Report: register txComplexBank_reg[2] is absorbed into DSP p_68_in.
+DSP Report: register txComplexBank_reg[3] is absorbed into DSP p_68_in.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_68_in.
+DSP Report: operator p_68_in is absorbed into DSP p_68_in.
+DSP Report: operator p_0_out is absorbed into DSP p_68_in.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register txReelBank_reg[1] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[2] is absorbed into DSP p_0_out.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_65_in, operation Mode is: PCIN-A''*B2.
+DSP Report: register txComplexBank_reg[1] is absorbed into DSP p_65_in.
+DSP Report: register txComplexBank_reg[2] is absorbed into DSP p_65_in.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_65_in.
+DSP Report: operator p_65_in is absorbed into DSP p_65_in.
+DSP Report: operator p_0_out is absorbed into DSP p_65_in.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register txReelBank_reg[0] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[1] is absorbed into DSP p_0_out.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_62_in, operation Mode is: PCIN-A''*B2.
+DSP Report: register txComplexBank_reg[0] is absorbed into DSP p_62_in.
+DSP Report: register txComplexBank_reg[1] is absorbed into DSP p_62_in.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_62_in.
+DSP Report: operator p_62_in is absorbed into DSP p_62_in.
+DSP Report: operator p_0_out is absorbed into DSP p_62_in.
+DSP Report: Generating DSP p_0_out, operation Mode is: A2*B2.
+DSP Report: register txReelBank_reg[0] is absorbed into DSP p_0_out.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_59_in, operation Mode is: PCIN-A2*B2.
+DSP Report: register txComplexBank_reg[0] is absorbed into DSP p_59_in.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_59_in.
+DSP Report: operator p_59_in is absorbed into DSP p_59_in.
+DSP Report: operator p_0_out is absorbed into DSP p_59_in.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register txReelBank_reg[18] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[19] is absorbed into DSP p_0_out.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP accReel_reg[19], operation Mode is: (PCIN+A''*B2)'.
+DSP Report: register txComplexBank_reg[18] is absorbed into DSP accReel_reg[19].
+DSP Report: register txComplexBank_reg[19] is absorbed into DSP accReel_reg[19].
+DSP Report: register stageRxComplex_reg is absorbed into DSP accReel_reg[19].
+DSP Report: register accReel_reg[19] is absorbed into DSP accReel_reg[19].
+DSP Report: operator accReel_reg[19]0 is absorbed into DSP accReel_reg[19].
+DSP Report: operator p_0_out is absorbed into DSP accReel_reg[19].
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[17] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[18] is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_2_out0, operation Mode is: PCIN+A''*B2.
+DSP Report: register txComplexBank_reg[17] is absorbed into DSP p_2_out0.
+DSP Report: register txComplexBank_reg[18] is absorbed into DSP p_2_out0.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_2_out0.
+DSP Report: operator p_2_out0 is absorbed into DSP p_2_out0.
+DSP Report: operator p_0_out is absorbed into DSP p_2_out0.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[16] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[17] is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_2_out0, operation Mode is: PCIN+A''*B2.
+DSP Report: register txComplexBank_reg[16] is absorbed into DSP p_2_out0.
+DSP Report: register txComplexBank_reg[17] is absorbed into DSP p_2_out0.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_2_out0.
+DSP Report: operator p_2_out0 is absorbed into DSP p_2_out0.
+DSP Report: operator p_0_out is absorbed into DSP p_2_out0.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[15] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[16] is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_2_out0, operation Mode is: PCIN+A''*B2.
+DSP Report: register txComplexBank_reg[15] is absorbed into DSP p_2_out0.
+DSP Report: register txComplexBank_reg[16] is absorbed into DSP p_2_out0.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_2_out0.
+DSP Report: operator p_2_out0 is absorbed into DSP p_2_out0.
+DSP Report: operator p_0_out is absorbed into DSP p_2_out0.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[14] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[15] is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_2_out0, operation Mode is: PCIN+A''*B2.
+DSP Report: register txComplexBank_reg[14] is absorbed into DSP p_2_out0.
+DSP Report: register txComplexBank_reg[15] is absorbed into DSP p_2_out0.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_2_out0.
+DSP Report: operator p_2_out0 is absorbed into DSP p_2_out0.
+DSP Report: operator p_0_out is absorbed into DSP p_2_out0.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[13] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[14] is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_2_out0, operation Mode is: PCIN+A''*B2.
+DSP Report: register txComplexBank_reg[13] is absorbed into DSP p_2_out0.
+DSP Report: register txComplexBank_reg[14] is absorbed into DSP p_2_out0.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_2_out0.
+DSP Report: operator p_2_out0 is absorbed into DSP p_2_out0.
+DSP Report: operator p_0_out is absorbed into DSP p_2_out0.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[12] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[13] is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_2_out0, operation Mode is: PCIN+A''*B2.
+DSP Report: register txComplexBank_reg[12] is absorbed into DSP p_2_out0.
+DSP Report: register txComplexBank_reg[13] is absorbed into DSP p_2_out0.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_2_out0.
+DSP Report: operator p_2_out0 is absorbed into DSP p_2_out0.
+DSP Report: operator p_0_out is absorbed into DSP p_2_out0.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[11] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[12] is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_2_out0, operation Mode is: PCIN+A''*B2.
+DSP Report: register txComplexBank_reg[11] is absorbed into DSP p_2_out0.
+DSP Report: register txComplexBank_reg[12] is absorbed into DSP p_2_out0.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_2_out0.
+DSP Report: operator p_2_out0 is absorbed into DSP p_2_out0.
+DSP Report: operator p_0_out is absorbed into DSP p_2_out0.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[10] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[11] is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_2_out0, operation Mode is: PCIN+A''*B2.
+DSP Report: register txComplexBank_reg[10] is absorbed into DSP p_2_out0.
+DSP Report: register txComplexBank_reg[11] is absorbed into DSP p_2_out0.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_2_out0.
+DSP Report: operator p_2_out0 is absorbed into DSP p_2_out0.
+DSP Report: operator p_0_out is absorbed into DSP p_2_out0.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[9] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[10] is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_2_out0, operation Mode is: PCIN+A''*B2.
+DSP Report: register txComplexBank_reg[9] is absorbed into DSP p_2_out0.
+DSP Report: register txComplexBank_reg[10] is absorbed into DSP p_2_out0.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_2_out0.
+DSP Report: operator p_2_out0 is absorbed into DSP p_2_out0.
+DSP Report: operator p_0_out is absorbed into DSP p_2_out0.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[8] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[9] is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_2_out0, operation Mode is: PCIN+A''*B2.
+DSP Report: register txComplexBank_reg[8] is absorbed into DSP p_2_out0.
+DSP Report: register txComplexBank_reg[9] is absorbed into DSP p_2_out0.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_2_out0.
+DSP Report: operator p_2_out0 is absorbed into DSP p_2_out0.
+DSP Report: operator p_0_out is absorbed into DSP p_2_out0.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[7] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[8] is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_2_out0, operation Mode is: PCIN+A''*B2.
+DSP Report: register txComplexBank_reg[7] is absorbed into DSP p_2_out0.
+DSP Report: register txComplexBank_reg[8] is absorbed into DSP p_2_out0.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_2_out0.
+DSP Report: operator p_2_out0 is absorbed into DSP p_2_out0.
+DSP Report: operator p_0_out is absorbed into DSP p_2_out0.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[6] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[7] is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_2_out0, operation Mode is: PCIN+A''*B2.
+DSP Report: register txComplexBank_reg[6] is absorbed into DSP p_2_out0.
+DSP Report: register txComplexBank_reg[7] is absorbed into DSP p_2_out0.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_2_out0.
+DSP Report: operator p_2_out0 is absorbed into DSP p_2_out0.
+DSP Report: operator p_0_out is absorbed into DSP p_2_out0.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[5] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[6] is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_2_out0, operation Mode is: PCIN+A''*B2.
+DSP Report: register txComplexBank_reg[5] is absorbed into DSP p_2_out0.
+DSP Report: register txComplexBank_reg[6] is absorbed into DSP p_2_out0.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_2_out0.
+DSP Report: operator p_2_out0 is absorbed into DSP p_2_out0.
+DSP Report: operator p_0_out is absorbed into DSP p_2_out0.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[4] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[5] is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_2_out0, operation Mode is: PCIN+A''*B2.
+DSP Report: register txComplexBank_reg[4] is absorbed into DSP p_2_out0.
+DSP Report: register txComplexBank_reg[5] is absorbed into DSP p_2_out0.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_2_out0.
+DSP Report: operator p_2_out0 is absorbed into DSP p_2_out0.
+DSP Report: operator p_0_out is absorbed into DSP p_2_out0.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[3] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[4] is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_2_out0, operation Mode is: PCIN+A''*B2.
+DSP Report: register txComplexBank_reg[3] is absorbed into DSP p_2_out0.
+DSP Report: register txComplexBank_reg[4] is absorbed into DSP p_2_out0.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_2_out0.
+DSP Report: operator p_2_out0 is absorbed into DSP p_2_out0.
+DSP Report: operator p_0_out is absorbed into DSP p_2_out0.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[2] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[3] is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_2_out0, operation Mode is: PCIN+A''*B2.
+DSP Report: register txComplexBank_reg[2] is absorbed into DSP p_2_out0.
+DSP Report: register txComplexBank_reg[3] is absorbed into DSP p_2_out0.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_2_out0.
+DSP Report: operator p_2_out0 is absorbed into DSP p_2_out0.
+DSP Report: operator p_0_out is absorbed into DSP p_2_out0.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[1] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[2] is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_2_out0, operation Mode is: PCIN+A''*B2.
+DSP Report: register txComplexBank_reg[1] is absorbed into DSP p_2_out0.
+DSP Report: register txComplexBank_reg[2] is absorbed into DSP p_2_out0.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_2_out0.
+DSP Report: operator p_2_out0 is absorbed into DSP p_2_out0.
+DSP Report: operator p_0_out is absorbed into DSP p_2_out0.
+DSP Report: Generating DSP p_0_out, operation Mode is: A''*B2.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[0] is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[1] is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_2_out0, operation Mode is: PCIN+A''*B2.
+DSP Report: register txComplexBank_reg[0] is absorbed into DSP p_2_out0.
+DSP Report: register txComplexBank_reg[1] is absorbed into DSP p_2_out0.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_2_out0.
+DSP Report: operator p_2_out0 is absorbed into DSP p_2_out0.
+DSP Report: operator p_0_out is absorbed into DSP p_2_out0.
+DSP Report: Generating DSP p_0_out, operation Mode is: A2*B2.
+DSP Report: register stageRxReel_reg is absorbed into DSP p_0_out.
+DSP Report: register txReelBank_reg[0] is absorbed into DSP p_0_out.
+DSP Report: operator p_0_out is absorbed into DSP p_0_out.
+DSP Report: Generating DSP p_2_out0, operation Mode is: PCIN+A2*B2.
+DSP Report: register txComplexBank_reg[0] is absorbed into DSP p_2_out0.
+DSP Report: register stageRxComplex_reg is absorbed into DSP p_2_out0.
+DSP Report: operator p_2_out0 is absorbed into DSP p_2_out0.
+DSP Report: operator p_0_out is absorbed into DSP p_2_out0.
+INFO: [Synth 8-3971] The signal "u_topi_4/postProcRTL/mem_reg" was recognized as a true dual port RAM template.
+INFO: [Synth 8-5800] Cascade chain of height 8 reduced to 4 because memory depth for RAM "u_topi_4/cornerTurn1RTL/ram_reg" is not power of 2. 
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:02:32 ; elapsed = 00:02:39 . Memory (MB): peak = 2724.359 ; gain = 1092.285
+---------------------------------------------------------------------------------
+ Sort Area is top__GCB0 iM_reg_52 : 0 0 : 3711 5600 : Used 1 time 100
+ Sort Area is top__GCB0 iM_reg_52 : 0 1 : 1889 5600 : Used 1 time 100
+ Sort Area is top__GCB0 qM_reg_55 : 0 0 : 3711 5600 : Used 1 time 100
+ Sort Area is top__GCB0 qM_reg_55 : 0 1 : 1889 5600 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/reelOut_o1_4b : 0 0 : 155 454 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/reelOut_o1_4b : 0 1 : 299 454 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/reelOut_o1_41 : 0 0 : 151 443 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/reelOut_o1_41 : 0 1 : 292 443 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/reelOut_o1_35 : 0 0 : 147 432 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/reelOut_o1_35 : 0 1 : 285 432 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/reelOut_o1_29 : 0 0 : 143 421 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/reelOut_o1_29 : 0 1 : 278 421 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/reelOut_o1_1d : 0 0 : 139 410 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/reelOut_o1_1d : 0 1 : 271 410 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/reelOut_o1_11 : 0 0 : 135 399 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/reelOut_o1_11 : 0 1 : 264 399 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/reelOut_o1_5 : 0 0 : 131 388 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/reelOut_o1_5 : 0 1 : 257 388 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/complexOut_o1_4e : 0 0 : 166 166 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/complexOut_o1_46 : 0 0 : 162 162 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/complexOut_o1_3a : 0 0 : 158 158 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/complexOut_o1_2e : 0 0 : 154 154 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/complexOut_o1_22 : 0 0 : 150 150 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/complexOut_o1_16 : 0 0 : 146 146 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/complexOut_o1_a : 0 0 : 142 142 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/complexOut_o1_50 : 0 0 : 128 128 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/complexOut_o1_49 : 0 0 : 125 125 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/complexOut_o1_3d : 0 0 : 122 122 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/complexOut_o1_31 : 0 0 : 119 119 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/complexOut_o1_25 : 0 0 : 116 116 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/complexOut_o1_19 : 0 0 : 113 113 : Used 1 time 100
+ Sort Area is top__GCB0 complexMulRTL/complexOut_o1_d : 0 0 : 110 110 : Used 1 time 100
+ Sort Area is top__GCB1 p_0_out_6d : 0 0 : 1985 4224 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_6d : 0 1 : 2239 4224 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_59 : 0 0 : 1985 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_59 : 0 1 : 2207 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_5c : 0 0 : 1985 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_5c : 0 1 : 2207 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_5d : 0 0 : 1985 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_5d : 0 1 : 2207 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_5e : 0 0 : 1985 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_5e : 0 1 : 2207 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_5f : 0 0 : 1985 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_5f : 0 1 : 2207 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_60 : 0 0 : 1985 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_60 : 0 1 : 2207 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_61 : 0 0 : 1985 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_61 : 0 1 : 2207 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_62 : 0 0 : 1985 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_62 : 0 1 : 2207 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_63 : 0 0 : 1985 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_63 : 0 1 : 2207 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_64 : 0 0 : 1985 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_64 : 0 1 : 2207 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_65 : 0 0 : 1985 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_65 : 0 1 : 2207 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_66 : 0 0 : 1985 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_66 : 0 1 : 2207 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_67 : 0 0 : 1985 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_67 : 0 1 : 2207 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_68 : 0 0 : 1985 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_68 : 0 1 : 2207 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_69 : 0 0 : 1985 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_69 : 0 1 : 2207 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_6a : 0 0 : 1985 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_6a : 0 1 : 2207 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_6b : 0 0 : 1985 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_6b : 0 1 : 2207 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_6c : 0 0 : 1985 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_6c : 0 1 : 2207 4192 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_56 : 0 0 : 1969 4160 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_56 : 0 1 : 2191 4160 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_84 : 0 0 : 1985 4103 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_84 : 0 1 : 2118 4103 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_71 : 0 0 : 1985 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_71 : 0 1 : 2085 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_73 : 0 0 : 1985 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_73 : 0 1 : 2085 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_74 : 0 0 : 1985 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_74 : 0 1 : 2085 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_75 : 0 0 : 1985 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_75 : 0 1 : 2085 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_76 : 0 0 : 1985 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_76 : 0 1 : 2085 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_77 : 0 0 : 1985 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_77 : 0 1 : 2085 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_78 : 0 0 : 1985 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_78 : 0 1 : 2085 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_79 : 0 0 : 1985 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_79 : 0 1 : 2085 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_7a : 0 0 : 1985 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_7a : 0 1 : 2085 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_7b : 0 0 : 1985 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_7b : 0 1 : 2085 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_7c : 0 0 : 1985 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_7c : 0 1 : 2085 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_7d : 0 0 : 1985 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_7d : 0 1 : 2085 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_7e : 0 0 : 1985 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_7e : 0 1 : 2085 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_7f : 0 0 : 1985 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_7f : 0 1 : 2085 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_80 : 0 0 : 1985 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_80 : 0 1 : 2085 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_81 : 0 0 : 1985 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_81 : 0 1 : 2085 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_82 : 0 0 : 1985 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_82 : 0 1 : 2085 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_83 : 0 0 : 1985 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_83 : 0 1 : 2085 4070 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_6f : 0 0 : 1969 4038 : Used 1 time 0
+ Sort Area is top__GCB1 p_0_out_6f : 0 1 : 2069 4038 : Used 1 time 0
+ Sort Area is top__GCB0 complexMulRTL/ac0_3f : 0 0 : 3329 3329 : Used 1 time 0
+ Sort Area is top__GCB0 complexMulRTL/ad0_45 : 0 0 : 3329 3329 : Used 1 time 0
+ Sort Area is top__GCB0 complexMulRTL/bc0_48 : 0 0 : 3329 3329 : Used 1 time 0
+ Sort Area is top__GCB0 complexMulRTL/bd0_44 : 0 0 : 3329 3329 : Used 1 time 0
+ Sort Area is top__GCB0 complexMulRTL/ac0_33 : 0 0 : 3223 3223 : Used 1 time 0
+ Sort Area is top__GCB0 complexMulRTL/ad0_39 : 0 0 : 3223 3223 : Used 1 time 0
+ Sort Area is top__GCB0 complexMulRTL/bc0_3c : 0 0 : 3223 3223 : Used 1 time 0
+ Sort Area is top__GCB0 complexMulRTL/bd0_38 : 0 0 : 3223 3223 : Used 1 time 0
+ Sort Area is top__GCB0 complexMulRTL/ac0_27 : 0 0 : 3117 3117 : Used 1 time 0
+ Sort Area is top__GCB0 complexMulRTL/ad0_2d : 0 0 : 3117 3117 : Used 1 time 0
+ Sort Area is top__GCB0 complexMulRTL/bc0_30 : 0 0 : 3117 3117 : Used 1 time 0
+ Sort Area is top__GCB0 complexMulRTL/bd0_2c : 0 0 : 3117 3117 : Used 1 time 0
+ Sort Area is top__GCB0 complexMulRTL/ac0_1b : 0 0 : 3011 3011 : Used 1 time 0
+ Sort Area is top__GCB0 complexMulRTL/ad0_21 : 0 0 : 3011 3011 : Used 1 time 0
+ Sort Area is top__GCB0 complexMulRTL/bc0_24 : 0 0 : 3011 3011 : Used 1 time 0
+ Sort Area is top__GCB0 complexMulRTL/bd0_20 : 0 0 : 3011 3011 : Used 1 time 0
+ Sort Area is top__GCB0 complexMulRTL/ac0_f : 0 0 : 2905 2905 : Used 1 time 0
+ Sort Area is top__GCB0 complexMulRTL/ad0_15 : 0 0 : 2905 2905 : Used 1 time 0
+ Sort Area is top__GCB0 complexMulRTL/bc0_18 : 0 0 : 2905 2905 : Used 1 time 0
+ Sort Area is top__GCB0 complexMulRTL/bd0_14 : 0 0 : 2905 2905 : Used 1 time 0
+ Sort Area is top__GCB0 mulComplex_0 : 0 0 : 2838 2838 : Used 1 time 0
+ Sort Area is top__GCB0 mulReel_2 : 0 0 : 2838 2838 : Used 1 time 0
+ Sort Area is top__GCB0 complexMulRTL/ac0_3 : 0 0 : 2799 2799 : Used 1 time 0
+ Sort Area is top__GCB0 complexMulRTL/ad0_9 : 0 0 : 2799 2799 : Used 1 time 0
+ Sort Area is top__GCB0 complexMulRTL/bc0_c : 0 0 : 2799 2799 : Used 1 time 0
+ Sort Area is top__GCB0 complexMulRTL/bd0_8 : 0 0 : 2799 2799 : Used 1 time 0
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+ROM: Preliminary Mapping Report
++------------+------------+---------------+----------------+
+|Module Name | RTL Object | Depth x Width | Implemented As | 
++------------+------------+---------------+----------------+
+|winPreFFT   | mem        | 32x18         | LUT            | 
+|subFFT      | cosTable   | 64x18         | LUT            | 
+|subFFT      | cosTable   | 64x18         | LUT            | 
+|subFFT      | cosTable   | 64x18         | LUT            | 
+|subFFT      | cosTable   | 64x18         | LUT            | 
+|subFFT      | cosTable   | 64x18         | LUT            | 
+|subFFT      | cosTable   | 64x18         | LUT            | 
+|subFFT      | cosTable   | 64x18         | LUT            | 
+|subFFT      | cosTable   | 64x18         | LUT            | 
+|subFFT      | cosTable   | 64x18         | LUT            | 
+|subFFT      | cosTable   | 64x18         | LUT            | 
+|subFFT      | cosTable   | 64x18         | LUT            | 
+|subFFT      | cosTable   | 64x18         | LUT            | 
+|winPreFFT   | p_0_out    | 32x18         | LUT            | 
+|subFFT      | p_0_out    | 64x18         | LUT            | 
+|subFFT      | p_0_out    | 64x18         | LUT            | 
+|subFFT      | p_0_out    | 64x18         | LUT            | 
+|subFFT      | p_0_out    | 64x18         | LUT            | 
+|subFFT      | p_0_out    | 64x18         | LUT            | 
+|subFFT      | p_0_out    | 64x18         | LUT            | 
+|subFFT      | p_0_out    | 64x18         | LUT            | 
+|subFFT      | p_0_out    | 64x18         | LUT            | 
+|subFFT      | p_0_out    | 64x18         | LUT            | 
+|subFFT      | p_0_out    | 64x18         | LUT            | 
+|subFFT      | p_0_out    | 64x18         | LUT            | 
+|subFFT      | p_0_out    | 64x18         | LUT            | 
++------------+------------+---------------+----------------+
+
+
+Block RAM: Preliminary Mapping Report (see note below)
++------------------------+------------+------------------------+---+---+-------------------------+---+---+------------------+--------+--------+---------------------+
+|Module Name             | RTL Object | PORT A (Depth x Width) | W | R | PORT B (Depth x Width)  | W | R | Ports driving FF | RAMB18 | RAMB36 | Cascade Heights     | 
++------------------------+------------+------------------------+---+---+-------------------------+---+---+------------------+--------+--------+---------------------+
+|u_topi_4/cornerTurn2RTL | ram_reg    | 125 K x 16(READ_FIRST) | W |   | 125 K x 16(WRITE_FIRST) |   | R | Port A and B     | 0      | 60     | 8,8,8,8,4,4,4,4,8,4 | 
+|u_topi_4/cornerTurn1RTL | ram_reg    | 19 K x 36(READ_FIRST)  | W |   | 19 K x 36(WRITE_FIRST)  |   | R | Port A and B     | 0      | 20     | 8,8,4               | 
++------------------------+------------+------------------------+---+---+-------------------------+---+---+------------------+--------+--------+---------------------+
+
+Note: The table above is a preliminary report that shows the Block RAMs at the current stage of the synthesis flow. Some Block RAMs may be reimplemented as non Block RAM primitives later in the synthesis flow. Multiple instantiated Block RAMs are reported only once. 
+
+DSP: Preliminary Mapping Report (see note below. The ' indicates corresponding REG is set)
++-----------------+--------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|Module Name      | DSP Mapping        | A Size | B Size | C Size | D Size | P Size | AREG | BREG | CREG | DREG | ADREG | MREG | PREG | 
++-----------------+--------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|winPreFFT        | (C:0x8000)+A2*B2   | 20     | 18     | 17     | -      | 36     | 1    | 1    | 0    | -    | -     | 0    | 0    | 
+|winPreFFT        | (C:0x8000)+A2*B2   | 20     | 18     | 17     | -      | 36     | 1    | 1    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | A*B                | 21     | 18     | -      | -      | 39     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | A*B                | 21     | 18     | -      | -      | 39     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | C+A:B              | 19     | 18     | 48     | -      | 37     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | PCIN-A:B           | 19     | 18     | -      | -      | 37     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | A*B                | 21     | 18     | -      | -      | 39     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | A*B                | 21     | 18     | -      | -      | 39     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | C+A:B              | 30     | 18     | 39     | -      | 40     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | C+A:B              | 19     | 18     | 37     | -      | 37     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | A*B                | 22     | 18     | -      | -      | 40     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | A*B                | 22     | 18     | -      | -      | 40     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | C+A:B              | 20     | 18     | 48     | -      | 38     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | PCIN-A:B           | 20     | 18     | -      | -      | 38     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | A*B                | 22     | 18     | -      | -      | 40     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | A*B                | 22     | 18     | -      | -      | 40     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | C+A:B              | 30     | 18     | 40     | -      | 41     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | C+A:B              | 20     | 18     | 38     | -      | 38     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | A*B                | 23     | 18     | -      | -      | 41     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | A*B                | 23     | 18     | -      | -      | 41     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | C+A:B              | 21     | 18     | 48     | -      | 39     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | PCIN-A:B           | 21     | 18     | -      | -      | 39     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | A*B                | 23     | 18     | -      | -      | 41     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | A*B                | 23     | 18     | -      | -      | 41     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | C+A:B              | 30     | 18     | 41     | -      | 42     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | C+A:B              | 21     | 18     | 39     | -      | 39     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | A*B                | 24     | 18     | -      | -      | 42     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | A*B                | 24     | 18     | -      | -      | 42     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | C+A:B              | 22     | 18     | 48     | -      | 40     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | PCIN-A:B           | 22     | 18     | -      | -      | 40     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | A*B                | 24     | 18     | -      | -      | 42     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | A*B                | 24     | 18     | -      | -      | 42     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | C+A:B              | 30     | 18     | 42     | -      | 43     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | C+A:B              | 22     | 18     | 40     | -      | 40     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | A*B                | 25     | 18     | -      | -      | 43     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | A*B                | 25     | 18     | -      | -      | 43     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | C+A:B              | 23     | 18     | 48     | -      | 41     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | PCIN-A:B           | 23     | 18     | -      | -      | 41     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | A*B                | 25     | 18     | -      | -      | 43     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | A*B                | 25     | 18     | -      | -      | 43     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | C+A:B              | 30     | 18     | 43     | -      | 44     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | C+A:B              | 23     | 18     | 41     | -      | 41     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | A*B                | 26     | 18     | -      | -      | 44     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | A*B                | 26     | 18     | -      | -      | 44     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | C+A:B              | 24     | 18     | 48     | -      | 42     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | PCIN-A:B           | 24     | 18     | -      | -      | 42     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | A*B                | 26     | 18     | -      | -      | 44     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | A*B                | 26     | 18     | -      | -      | 44     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | C+A:B              | 30     | 18     | 44     | -      | 45     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | C+A:B              | 24     | 18     | 42     | -      | 42     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | C+A:B              | 25     | 18     | 48     | -      | 43     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | PCIN-A:B           | 25     | 18     | -      | -      | 43     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | C+A:B              | 30     | 18     | 45     | -      | 46     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | C+A:B              | 25     | 18     | 43     | -      | 43     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|powerRTL         | (A2*B2)'           | 27     | 18     | -      | -      | 48     | 1    | 1    | -    | -    | -     | 1    | 0    | 
+|powerRTL         | (PCIN>>17)+(A2*B)' | 27     | 10     | -      | -      | 37     | 1    | 0    | -    | -    | -     | 1    | 1    | 
+|powerRTL         | (A2*B2)'           | 27     | 18     | -      | -      | 48     | 1    | 1    | -    | -    | -     | 1    | 0    | 
+|powerRTL         | (PCIN>>17)+(A2*B)' | 27     | 10     | -      | -      | 37     | 1    | 0    | -    | -    | -     | 1    | 1    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | (PCIN-A''*B2)'     | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 1    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-A''*B2        | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-A''*B2        | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-A''*B2        | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-A''*B2        | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-A''*B2        | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-A''*B2        | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-A''*B2        | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-A''*B2        | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-A''*B2        | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-A''*B2        | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-A''*B2        | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-A''*B2        | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-A''*B2        | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-A''*B2        | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-A''*B2        | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-A''*B2        | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-A''*B2        | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-A''*B2        | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A2*B2              | 16     | 16     | -      | -      | 32     | 1    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-A2*B2         | 16     | 16     | -      | -      | 32     | 1    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | (PCIN+A''*B2)'     | 16     | 16     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 1    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B2        | 16     | 16     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B2        | 16     | 16     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B2        | 16     | 16     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B2        | 16     | 16     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B2        | 16     | 16     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B2        | 16     | 16     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B2        | 16     | 16     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B2        | 16     | 16     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B2        | 16     | 16     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B2        | 16     | 16     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B2        | 16     | 16     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B2        | 16     | 16     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B2        | 16     | 16     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B2        | 16     | 16     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B2        | 16     | 16     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B2        | 16     | 16     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B2        | 16     | 16     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B2             | 16     | 16     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B2        | 16     | 16     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A2*B2              | 16     | 16     | -      | -      | 32     | 1    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A2*B2         | 16     | 16     | -      | -      | 33     | 1    | 1    | -    | -    | -     | 0    | 0    | 
++-----------------+--------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+
+Note: The table above is a preliminary report that shows the DSPs inferred at the current stage of the synthesis flow. Some DSP may be reimplemented as non DSP primitives later in the synthesis flow. Multiple instantiated DSPs are reported only once.
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:02:33 ; elapsed = 00:02:40 . Memory (MB): peak = 2724.359 ; gain = 1092.285
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+Block RAM: Final Mapping Report
++------------------------+------------+------------------------+---+---+-------------------------+---+---+------------------+--------+--------+---------------------+
+|Module Name             | RTL Object | PORT A (Depth x Width) | W | R | PORT B (Depth x Width)  | W | R | Ports driving FF | RAMB18 | RAMB36 | Cascade Heights     | 
++------------------------+------------+------------------------+---+---+-------------------------+---+---+------------------+--------+--------+---------------------+
+|u_topi_4/cornerTurn2RTL | ram_reg    | 125 K x 16(READ_FIRST) | W |   | 125 K x 16(WRITE_FIRST) |   | R | Port A and B     | 0      | 60     | 8,8,8,8,4,4,4,4,8,4 | 
+|u_topi_4/cornerTurn1RTL | ram_reg    | 19 K x 36(READ_FIRST)  | W |   | 19 K x 36(WRITE_FIRST)  |   | R | Port A and B     | 0      | 20     | 8,8,4               | 
++------------------------+------------+------------------------+---+---+-------------------------+---+---+------------------+--------+--------+---------------------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+INFO: [Synth 8-7052] The timing for the instance inst/u_top/postProcRTL/mem_reg_1_bram_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance inst/u_top/postProcRTL/mem_reg_2_bram_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance inst/u_top/cornerTurn2RTL/ram_reg_bram_7 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance inst/u_top/cornerTurn2RTL/ram_reg_bram_15 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance inst/u_top/cornerTurn2RTL/ram_reg_bram_23 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance inst/u_top/cornerTurn2RTL/ram_reg_bram_31 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance inst/u_top/cornerTurn2RTL/ram_reg_bram_35 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance inst/u_top/cornerTurn2RTL/ram_reg_bram_39 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance inst/u_top/cornerTurn2RTL/ram_reg_bram_43 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance inst/u_top/cornerTurn2RTL/ram_reg_bram_47 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance inst/u_top/cornerTurn1RTL/ram_reg_bram_7 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance inst/u_top/cornerTurn1RTL/ram_reg_bram_15 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance inst/u_top/cornerTurn1RTL/ram_reg_bram_19 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:02:44 ; elapsed = 00:02:52 . Memory (MB): peak = 2724.359 ; gain = 1092.285
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:02:53 ; elapsed = 00:03:01 . Memory (MB): peak = 2724.359 ; gain = 1092.285
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:02:53 ; elapsed = 00:03:01 . Memory (MB): peak = 2724.359 ; gain = 1092.285
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:02:56 ; elapsed = 00:03:04 . Memory (MB): peak = 2724.359 ; gain = 1092.285
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:02:57 ; elapsed = 00:03:04 . Memory (MB): peak = 2724.359 ; gain = 1092.285
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:02:57 ; elapsed = 00:03:05 . Memory (MB): peak = 2724.359 ; gain = 1092.285
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:02:57 ; elapsed = 00:03:05 . Memory (MB): peak = 2724.359 ; gain = 1092.285
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+Static Shift Register Report:
++---------------------------+-------------------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|Module Name                | RTL Name                                        | Length | Width | Reset Signal | Pull out first Reg | Pull out last Reg | SRL16E | SRLC32E | 
++---------------------------+-------------------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|designv2_radar_wrapper_0_0 | inst/u_top/osCfarRTL/rangeIdx_o_reg[9]          | 4      | 10    | NO           | NO                 | YES               | 10     | 0       | 
+|designv2_radar_wrapper_0_0 | inst/u_top/osCfarRTL/window_reg[18][15]         | 4      | 32    | NO           | NO                 | YES               | 32     | 0       | 
+|designv2_radar_wrapper_0_0 | inst/u_top/osCfarRTL/dopplerIdx_o_reg[6]        | 4      | 7     | NO           | NO                 | YES               | 7      | 0       | 
+|designv2_radar_wrapper_0_0 | inst/u_top/postProcRTL/acCut_reg[15]            | 5      | 16    | NO           | NO                 | YES               | 16     | 0       | 
+|designv2_radar_wrapper_0_0 | inst/u_top/osCfarRTL/valid_o_reg                | 5      | 1     | YES          | NO                 | YES               | 1      | 0       | 
+|designv2_radar_wrapper_0_0 | inst/u_top/dopplerFftRTL/tagValidDelay_reg[140] | 142    | 1     | YES          | NO                 | YES               | 0      | 5       | 
+|designv2_radar_wrapper_0_0 | inst/u_top/dopplerFftRTL/tagSofDelay_reg[140]   | 142    | 1     | YES          | NO                 | YES               | 0      | 5       | 
+|designv2_radar_wrapper_0_0 | inst/u_top/powerRTL/vSh_reg[3]                  | 4      | 1     | YES          | NO                 | YES               | 1      | 0       | 
+|designv2_radar_wrapper_0_0 | inst/u_top/powerRTL/sSh_reg[3]                  | 4      | 1     | YES          | NO                 | YES               | 1      | 0       | 
++---------------------------+-------------------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+DSP Final Report (the ' indicates corresponding REG is set)
++-----------------+------------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|Module Name      | DSP Mapping            | A Size | B Size | C Size | D Size | P Size | AREG | BREG | CREG | DREG | ADREG | MREG | PREG | 
++-----------------+------------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|complexMulRTL    | (A*B)'                 | 30     | 18     | -      | -      | 39     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | (A*B)'                 | 30     | 18     | -      | -      | 39     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | C+A:B                  | 30     | 18     | 16     | -      | 0      | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | (PCIN-(A:B))'          | 30     | 18     | -      | -      | 37     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | (A*B)'                 | 30     | 18     | -      | -      | 39     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | (A*B)'                 | 30     | 18     | -      | -      | 39     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | Dynamic                | -      | -      | -      | -      | 40     | -    | -    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | Dynamic                | -      | -      | -      | -      | 37     | -    | -    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | (A*B)'                 | 30     | 18     | -      | -      | 40     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | (A*B)'                 | 30     | 18     | -      | -      | 40     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | C+A:B                  | 30     | 18     | 16     | -      | 0      | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | (PCIN-(A:B))'          | 30     | 18     | -      | -      | 38     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | (A*B)'                 | 30     | 18     | -      | -      | 40     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | (A*B)'                 | 30     | 18     | -      | -      | 40     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | Dynamic                | -      | -      | -      | -      | 41     | -    | -    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | Dynamic                | -      | -      | -      | -      | 38     | -    | -    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | (A*B)'                 | 30     | 18     | -      | -      | 41     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | (A*B)'                 | 30     | 18     | -      | -      | 41     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | C+A:B                  | 30     | 18     | 16     | -      | 0      | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | (PCIN-(A:B))'          | 30     | 18     | -      | -      | 39     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | (A*B)'                 | 30     | 18     | -      | -      | 41     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | (A*B)'                 | 30     | 18     | -      | -      | 41     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | Dynamic                | -      | -      | -      | -      | 42     | -    | -    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | Dynamic                | -      | -      | -      | -      | 39     | -    | -    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | (A*B)'                 | 30     | 18     | -      | -      | 42     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | (A*B)'                 | 30     | 18     | -      | -      | 42     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | C+A:B                  | 30     | 18     | 16     | -      | 0      | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | (PCIN-(A:B))'          | 30     | 18     | -      | -      | 40     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | (A*B)'                 | 30     | 18     | -      | -      | 42     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | (A*B)'                 | 30     | 18     | -      | -      | 42     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | Dynamic                | -      | -      | -      | -      | 43     | -    | -    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | Dynamic                | -      | -      | -      | -      | 40     | -    | -    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | (A*B)'                 | 30     | 18     | -      | -      | 43     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | (A*B)'                 | 30     | 18     | -      | -      | 43     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | C+A:B                  | 30     | 18     | 16     | -      | 0      | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | (PCIN-(A:B))'          | 30     | 18     | -      | -      | 41     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | (A*B)'                 | 30     | 18     | -      | -      | 43     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | (A*B)'                 | 30     | 18     | -      | -      | 43     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | Dynamic                | -      | -      | -      | -      | 44     | -    | -    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | Dynamic                | -      | -      | -      | -      | 41     | -    | -    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | (A*B)'                 | 30     | 18     | -      | -      | 44     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | (A*B)'                 | 30     | 17     | -      | -      | 44     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | C+A:B                  | 30     | 18     | 16     | -      | 0      | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | (PCIN-(A:B))'          | 30     | 18     | -      | -      | 42     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | (A*B)'                 | 30     | 17     | -      | -      | 44     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | (A*B)'                 | 30     | 18     | -      | -      | 44     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | Dynamic                | -      | -      | -      | -      | 45     | -    | -    | -    | -    | -     | 0    | 0    | 
+|complexMulRTL    | Dynamic                | -      | -      | -      | -      | 42     | -    | -    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | C+A:B                  | 30     | 18     | 16     | -      | 0      | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | (PCIN-(A:B))'          | 0      | 0      | -      | -      | 43     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|complexMulRTL    | C+A:B                  | 0      | 16     | 0      | -      | 46     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|complexMulRTL    | (C+A:B)'               | 30     | 18     | 48     | -      | 43     | 0    | 0    | 0    | -    | -     | 0    | 1    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | (PCIN-(A''*B'))'       | 30     | 18     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 1    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-(A''*B')          | 30     | 18     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-(A''*B')          | 30     | 18     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-(A''*B')          | 30     | 18     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-(A''*B')          | 30     | 18     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-(A''*B')          | 30     | 18     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-(A''*B')          | 30     | 18     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-(A''*B')          | 30     | 18     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-(A''*B')          | 30     | 18     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-(A''*B')          | 30     | 18     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-(A''*B')          | 30     | 18     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-(A''*B')          | 30     | 18     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-(A''*B')          | 30     | 18     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-(A''*B')          | 30     | 18     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-(A''*B')          | 30     | 18     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-(A''*B')          | 30     | 18     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-(A''*B')          | 30     | 18     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-(A''*B')          | 30     | 18     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-(A''*B')          | 30     | 18     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN-(A''*B')          | 30     | 18     | -      | -      | 32     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | (PCIN+A''*B')'         | 30     | 18     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 1    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B'            | 30     | 18     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B'            | 30     | 18     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B'            | 30     | 18     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B'            | 30     | 18     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B'            | 30     | 18     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B'            | 30     | 18     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B'            | 30     | 18     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B'            | 30     | 18     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B'            | 30     | 18     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B'            | 30     | 18     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B'            | 30     | 18     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B'            | 30     | 18     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B'            | 30     | 18     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B'            | 30     | 18     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B'            | 30     | 18     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B'            | 30     | 18     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B'            | 30     | 18     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B'            | 30     | 18     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | A''*B'                 | 30     | 18     | -      | -      | 0      | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|matchedFilterRTL | PCIN+A''*B'            | 30     | 18     | -      | -      | 33     | 2    | 1    | -    | -    | -     | 0    | 0    | 
+|powerRTL         | (A''*B'')'             | 30     | 17     | -      | -      | 48     | 2    | 2    | -    | -    | -     | 0    | 1    | 
+|powerRTL         | (PCIN>>17+(A''*B'')')' | 30     | 18     | -      | -      | 37     | 2    | 2    | -    | -    | -     | 1    | 1    | 
+|powerRTL         | (A''*B'')'             | 30     | 17     | -      | -      | 48     | 2    | 2    | -    | -    | -     | 0    | 1    | 
+|powerRTL         | (PCIN>>17+(A''*B'')')' | 30     | 18     | -      | -      | 37     | 2    | 2    | -    | -    | -     | 1    | 1    | 
+|winPreFFT        | (C+A''*B')'            | 30     | 17     | 16     | -      | 36     | 2    | 1    | 0    | -    | -     | 0    | 1    | 
+|winPreFFT        | (C+A''*B')'            | 30     | 17     | 16     | -      | 36     | 2    | 1    | 0    | -    | -     | 0    | 1    | 
++-----------------+------------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+----------------+------+
+|      |Cell            |Count |
++------+----------------+------+
+|1     |CARRY8          |  1232|
+|2     |DSP48E2         |     8|
+|3     |DSP_ALU         |   130|
+|4     |DSP_A_B_DATA    |   130|
+|5     |DSP_C_DATA      |   130|
+|6     |DSP_MULTIPLIER  |   130|
+|7     |DSP_M_DATA      |   130|
+|8     |DSP_OUTPUT      |   130|
+|9     |DSP_PREADD      |   130|
+|10    |DSP_PREADD_DATA |   130|
+|11    |LUT1            |    44|
+|12    |LUT2            |  2257|
+|13    |LUT3            |  2623|
+|14    |LUT4            |  1333|
+|15    |LUT5            |  2460|
+|16    |LUT6            |  8819|
+|17    |MUXF7           |   663|
+|18    |MUXF8           |   206|
+|19    |RAMB36E2        |    82|
+|20    |SRL16E          |    68|
+|21    |SRLC32E         |    10|
+|22    |FDCE            |  1920|
+|23    |FDPE            |    29|
+|24    |FDRE            | 10174|
+|25    |FDSE            |    18|
++------+----------------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:02:57 ; elapsed = 00:03:05 . Memory (MB): peak = 2724.359 ; gain = 1092.285
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 4 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:02:33 ; elapsed = 00:02:57 . Memory (MB): peak = 2724.359 ; gain = 998.434
+Synthesis Optimization Complete : Time (s): cpu = 00:02:57 ; elapsed = 00:03:05 . Memory (MB): peak = 2724.359 ; gain = 1092.285
+INFO: [Project 1-571] Translating synthesized netlist
+Netlist sorting complete. Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.540 . Memory (MB): peak = 2724.359 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 2239 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 3 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.017 . Memory (MB): peak = 2724.359 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 138 instances were transformed.
+  DSP48E2 => DSP48E2 (DSP_ALU, DSP_A_B_DATA, DSP_C_DATA, DSP_MULTIPLIER, DSP_M_DATA, DSP_OUTPUT, DSP_PREADD, DSP_PREADD_DATA): 138 instances
+
+Synth Design complete | Checksum: cca9b2c7
+INFO: [Common 17-83] Releasing license: Synthesis
+146 Infos, 78 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:03:19 ; elapsed = 00:03:34 . Memory (MB): peak = 2724.359 ; gain = 2125.754
+INFO: [Coretcl 2-1174] Renamed 44 cell refs.
+Write ShapeDB Complete: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.089 . Memory (MB): peak = 2724.359 ; gain = 0.000
+INFO: [Common 17-1381] The checkpoint 'D:/github/CLA/v2/vivado/systemv2/systemv2.runs/designv2_radar_wrapper_0_0_synth_1/designv2_radar_wrapper_0_0.dcp' has been generated.
+INFO: [Vivado 12-24828] Executing command : report_utilization -file designv2_radar_wrapper_0_0_utilization_synth.rpt -pb designv2_radar_wrapper_0_0_utilization_synth.pb
+INFO: [Common 17-206] Exiting Vivado at Sun Oct 11 05:25:23 2026...

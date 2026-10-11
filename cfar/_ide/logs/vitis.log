@@ -1,0 +1,68 @@
+21:05:54 INFO  : updated workspace path: D:\github\RoC-CFAR
+21:05:54 INFO  : Marking the target connection as default Local
+21:05:54 INFO  : Marking the target connection as default Linux Agent
+21:05:54 INFO  : Marking the target connection as default XRTServer
+21:05:54 INFO  : Marking the target connection as default LinuxEmulation
+21:05:54 INFO  : Marking the target connection as default QEMU
+21:05:54 INFO  : created .gitignore file for the project D:\github\RoC-CFAR
+21:05:54 INFO  : cmd.exe, /C, empyro.bat repo -st   D:\programs\2025.2.1\Vitis\data\embeddedsw
+21:05:54 INFO  : Platform radar_plat creation started.
+21:05:54 INFO  : Using sdt generation script from D:\programs\2025.2.1\Vitis\vitis-server\scripts\platformutil.tcl
+21:05:54 INFO  : cmd.exe, /C, sdtgen.bat D:\programs\2025.2.1\Vitis\vitis-server\scripts\platformutil.tcl D:\github\RoC-CFAR\vivado\testEnv\bd_wrapper.xsa D:\github\RoC-CFAR\radar_plat\hw\sdt
+21:05:56 INFO  : [INFO]: Initializing repositories
+21:05:56 INFO  : [INFO]: Successfully set the EmbeddedSW path, refer .repo.yaml for more details.
+21:05:56 INFO  : Successfully created repository data at D:\github\RoC-CFAR/_ide\.wsdata
+21:05:56 INFO  : cmd.exe, /C, empyro.bat get_template_data -d C:\Users\beyen\AppData\Local\Temp\rigel_lopper_beyen6320509848964339889 -r D:\github\RoC-CFAR\_ide\.wsdata\.repo.yaml
+21:05:57 INFO  : Embedded Template List generated successfully
+21:06:04 INFO  : connection terminated
+21:06:04 INFO  : connection terminated
+21:06:04 INFO  : scheduling shutdown timer for 2 seconds ...
+21:06:19 INFO  : INFO: D:\github\RoC-CFAR\radar_plat\hw\sdt exists. Files will be overwritten
+21:06:19 INFO  : -xsa D:\github\RoC-CFAR\vivado\testEnv\bd_wrapper.xsa
+21:06:19 INFO  : -dir D:\github\RoC-CFAR\radar_plat\hw\sdt
+21:06:19 INFO  : -board_dts 
+21:06:19 INFO  : -include_dts 
+21:06:19 INFO  : -repo D:/programs/2025.2.1/Vitis/data/system-device-tree-xlnx
+21:06:19 INFO  : -zocl disable
+21:06:19 INFO  : INFO: [Hsi 55-2053] elapsed time for repository (D:/programs/2025.2.1/Vitis/data/embeddedsw) loading 0 seconds
+21:06:19 INFO  : hsi::open_hw_design: Time (s): cpu = 00:00:10 ; elapsed = 00:00:10 . Memory (MB): peak = 276.367 ; gain = 182.754
+21:06:19 INFO  : SDT generated successfully
+21:06:19 INFO  : Lopper command for cpu List generation: lopper.bat --enhanced --werror -f -O D:\github\RoC-CFAR\.rigel_lopper -i lop-cpu-oslist.dts D:\github\RoC-CFAR\radar_plat\hw\sdt\system-top.dts
+21:06:19 INFO  : cmd.exe, /C, lopper.bat --enhanced --werror -f -O D:\github\RoC-CFAR\.rigel_lopper -i lop-cpu-oslist.dts D:\github\RoC-CFAR\radar_plat\hw\sdt\system-top.dts
+21:06:22 INFO  : CPU List generated successfully
+21:06:22 INFO  : SDT generated successfully.
+21:06:22 INFO  : ZYNQMP: Using the QEMU args from install at  : D:\programs\2025.2.1\Vitis\data\emulation\platforms\zynqmp\sw\a53_linux\qemu\qemu_args.txt
+21:06:22 INFO  : ZYNQMP: Using the PMUQEMU args from install at  : D:\programs\2025.2.1\Vitis\data\emulation\platforms\zynqmp\sw\a53_linux\qemu\pmu_args.txt
+21:06:22 INFO  : ZYNQMP: Using the QEMU args from install at  : D:\programs\2025.2.1\Vitis\data\emulation\platforms\zynqmp\sw\a53_standalone\qemu\qemu_args.txt
+21:06:22 INFO  : ZYNQMP: Using the QEMU args from install at  : D:\programs\2025.2.1\Vitis\data\emulation\platforms\zynqmp\sw\a53_standalone\qemu\qemu_args.txt
+21:06:22 INFO  : ZYNQMP: Using the PMUQEMU args from install at  : D:\programs\2025.2.1\Vitis\data\emulation\platforms\zynqmp\sw\a53_standalone\qemu\pmu_args.txt
+21:06:22 INFO  : ZYNQMP: Using the PMUQEMU args from install at  : D:\programs\2025.2.1\Vitis\data\emulation\platforms\zynqmp\sw\a53_standalone\qemu\pmu_args.txt
+21:06:22 INFO  : cmd.exe, /C, empyro.bat repo -st   D:\programs\2025.2.1\Vitis\data\embeddedsw
+21:06:24 INFO  : [INFO]: Initializing repositories
+21:06:24 INFO  : [INFO]: Successfully set the EmbeddedSW path, refer .repo.yaml for more details.
+21:06:24 INFO  : Successfully created repository data at D:\github\RoC-CFAR/_ide\.wsdata
+21:06:24 INFO  : lopper command to generate BSP :empyro.bat create_bsp -w D:\github\RoC-CFAR\radar_plat\psu_cortexa53_0\standalone_psu_cortexa53_0\bsp -p psu_cortexa53_0 -o standalone -s D:\github\RoC-CFAR\radar_plat\hw\sdt\system-top.dts -t empty_application -r D:\github\RoC-CFAR\_ide\.wsdata\.repo.yaml
+21:06:24 INFO  : cmd.exe, /C, empyro.bat repo -st   D:\programs\2025.2.1\Vitis\data\embeddedsw
+21:06:24 INFO  : cmd.exe, /C, empyro.bat create_bsp -w D:\github\RoC-CFAR\radar_plat\psu_cortexa53_0\standalone_psu_cortexa53_0\bsp -p psu_cortexa53_0 -o standalone -s D:\github\RoC-CFAR\radar_plat\hw\sdt\system-top.dts -t empty_application -r D:\github\RoC-CFAR\_ide\.wsdata\.repo.yaml
+21:06:27 INFO  : [INFO]: Initializing repositories
+21:06:27 INFO  : [INFO]: Successfully set the EmbeddedSW path, refer .repo.yaml for more details.
+21:06:27 INFO  : Successfully created repository data at D:\github\RoC-CFAR/_ide\.wsdata
+21:06:27 INFO  : lopper command to generate BSP :empyro.bat create_bsp -w D:\github\RoC-CFAR\radar_plat\zynqmp_fsbl\zynqmp_fsbl_bsp -p psu_cortexa53_0 -o standalone -s D:\github\RoC-CFAR\radar_plat\hw\sdt\system-top.dts -t zynqmp_fsbl -r D:\github\RoC-CFAR\_ide\.wsdata\.repo.yaml
+21:06:27 INFO  : cmd.exe, /C, empyro.bat create_bsp -w D:\github\RoC-CFAR\radar_plat\zynqmp_fsbl\zynqmp_fsbl_bsp -p psu_cortexa53_0 -o standalone -s D:\github\RoC-CFAR\radar_plat\hw\sdt\system-top.dts -t zynqmp_fsbl -r D:\github\RoC-CFAR\_ide\.wsdata\.repo.yaml
+21:06:27 ERROR : [ERROR]: 
+21:06:27 INFO  :                     Please set the Embeddedsw directory path.
+21:06:27 INFO  :                     Usage:
+21:06:27 INFO  :                         empyro repo -st <the ESW_REPO_PATH>
+21:06:27 INFO  :                     For multiple esw repo paths, use below with left one having higher precedence:
+21:06:27 INFO  :                         empyro repo -st <path_1> <path_2> ... <path_n>
+21:06:27 INFO  :                     
+21:06:27 ERROR : Error in generating BSP 'D:\github\RoC-CFAR\radar_plat\zynqmp_fsbl\zynqmp_fsbl_bsp'.
+21:06:27 ERROR : [ERROR]: 
+21:06:27 INFO  :                     Please set the Embeddedsw directory path.
+21:06:27 INFO  :                     Usage:
+21:06:27 INFO  :                         empyro repo -st <the ESW_REPO_PATH>
+21:06:27 INFO  :                     For multiple esw repo paths, use below with left one having higher precedence:
+21:06:27 INFO  :                         empyro repo -st <path_1> <path_2> ... <path_n>
+21:06:27 INFO  :                     
+21:06:27 ERROR : Error in generating BSP 'D:\github\RoC-CFAR\radar_plat\psu_cortexa53_0\standalone_psu_cortexa53_0\bsp'.
+21:06:27 ERROR : Failed to create platform: radar_plat. Error in creating platform 'radar_plat.'

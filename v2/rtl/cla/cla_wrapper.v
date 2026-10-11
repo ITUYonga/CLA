@@ -13,7 +13,7 @@
 // Gerekirse CLA_AXI_Lite'taki portlar buraya aynen eklenir.
 
 module cla_wrapper #(
-    parameter PROGRAM_HEX = "C:/Users/beyen/Downloads/cla_kv260/cla_kv260/cladrone_l3.hex"                  // L3 programi (satir basina 16 bit , alt adres once)
+    parameter PROGRAM_HEX = "drone_l3.hex"                  // L3 programi (satir basina 16 bit , alt adres once)
 )(
     (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 s_axi_aclk CLK" *)
     (* X_INTERFACE_PARAMETER = "ASSOCIATED_BUSIF S_AXI, ASSOCIATED_RESET s_axi_aresetn" *)

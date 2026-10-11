@@ -1,0 +1,5 @@
+*.asv
+*.mat
+vectors/*
+!vectors/vec_nominal_nfft128/
+!vectors/*.md
