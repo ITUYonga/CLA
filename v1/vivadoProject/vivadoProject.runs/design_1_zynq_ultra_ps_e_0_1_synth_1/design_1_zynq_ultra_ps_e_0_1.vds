@@ -1,0 +1,27 @@
+#-----------------------------------------------------------
+# Vivado v2025.2 (64-bit)
+# SW Build 6299465 on Fri Nov 14 19:35:11 GMT 2025
+# IP Build 6300035 on Fri Nov 14 10:48:45 MST 2025
+# SharedData Build 6298862 on Thu Nov 13 04:50:51 MST 2025
+# Start of session at: Sun Oct 11 03:51:24 2026
+# Process ID         : 15116
+# Current directory  : D:/github/CLA/vivado/vivadoProject/vivadoProject.runs/design_1_zynq_ultra_ps_e_0_1_synth_1
+# Command line       : vivado.exe -log design_1_zynq_ultra_ps_e_0_1.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source design_1_zynq_ultra_ps_e_0_1.tcl
+# Log file           : D:/github/CLA/vivado/vivadoProject/vivadoProject.runs/design_1_zynq_ultra_ps_e_0_1_synth_1/design_1_zynq_ultra_ps_e_0_1.vds
+# Journal file       : D:/github/CLA/vivado/vivadoProject/vivadoProject.runs/design_1_zynq_ultra_ps_e_0_1_synth_1\vivado.jou
+# Running On         : komputer
+# Platform           : Windows Server 2016 or Windows 10
+# Operating System   : 26200
+# Processor Detail   : AMD Ryzen 7 6800H with Radeon Graphics         
+# CPU Frequency      : 3194 MHz
+# CPU Physical cores : 8
+# CPU Logical cores  : 16
+# Host memory        : 16371 MB
+# Swap memory        : 30132 MB
+# Total Virtual      : 46503 MB
+# Available Virtual  : 17450 MB
+#-----------------------------------------------------------
+source design_1_zynq_ultra_ps_e_0_1.tcl -notrace
+create_project: Time (s): cpu = 00:00:16 ; elapsed = 00:00:11 . Memory (MB): peak = 543.234 ; gain = 222.043
+INFO: [IP_Flow 19-4838] Using cached IP synthesis design for IP design_1_zynq_ultra_ps_e_0_1, cache-ID = 77492d45693c1979.
+INFO: [Common 17-206] Exiting Vivado at Sun Oct 11 03:51:43 2026...
