@@ -1,7 +1,6 @@
-# Yonga-CLA: 8-Stage Pipelined Control Law Accelerator (CLA) on FPGA
+# yonga-cla: 8-Stage Pipelined Control Law Accelerator (CLA) on FPGA
 
-<img width="1750" height="625" alt="1" src="https://github.com/user-attachments/assets/93f102ed-405d-4b44-9fd4-d87b397b8690" />
-
+<img width="1750" height="625" alt="1" src="https://github.com/user-attachments/assets/d6ed0bc4-fef1-4059-9be5-381ee082058d" />
 
 **Authors:** Mustafa Taha Aydemir, Safa Oğuzhan Dişbudak, Arda Yalçınöz, Ahmet Kargı &nbsp;|&nbsp; **Date:** October 2026 &nbsp;|&nbsp; **Platform:** AMD/Xilinx Kria KV260 / Vivado / SystemVerilog
 
@@ -12,11 +11,25 @@ Real-time control loops—the mathematics keeping a quadrotor stable in a 6 m/s 
 Key highlights:
 
 - **8-Stage Deterministic Pipeline (`F1 → F2 → D1 → D2 → R1 → R2 → E → W`):** Custom Harvard architecture with dedicated instruction fetch, combinational decode, effective address & branch resolution, memory read, execute, and writeback stages.
-- **Full 78-Encoding 32-Bit CLA ISA:** Implements IEEE-754 single-precision floating-point (`MADDF32`, `MSUBF32`, `MMPYF32`), **Parallel Dual-Issue** instructions (`MMACF32 || MMOV32`, `MMPYF32 || MADDF32`, `MMPYF32 || MSUBF32`), single-cycle LUT-based $1/x$ (`MEINVF32`) and $1/\sqrt{x}$ (`MEISQRTF32`) seed estimators, type conversions (`MI16TOF32`, `MF32TOI16R`), and delayed conditional branches (`MBCNDD`, `MCCNDD`, `MRCNDD`).
+- **Full 78-Encoding 32-Bit CLA ISA:** Implements IEEE-754 single-precision floating-point (`MADDF32`, `MSUBF32`, `MMPYF32`), **Parallel Dual-Issue** instructions (`MMACF32 || MMOV32`, `MMPYF32 || MADDF32`, `MMPYF32 || MSUBF32`), single-cycle LUT-based `1/x` (`MEINVF32`) and `1/√x` (`MEISQRTF32`) seed estimators, type conversions (`MI16TOF32`, `MF32TOI16R`), and delayed conditional branches (`MBCNDD`, `MCCNDD`, `MRCNDD`).
 - **Event-Driven 8-Task Hardware Arbiter (`Task 1–8`):** No `while(1)` polling loop or OS scheduler overhead. Hardware triggers (`hw_task_trig`) or software forces (`MIFRC`) launch prioritized tasks directly from independent vector registers (`MVECT1–8`).
 - **2-Stage Pipelined FP32 Arithmetic (`K1 / K2`) & Zero-Cycle Flag Forwarding:** Splits 32-bit floating-point addition and multiplication across `Execute` (`K1`) and `Write` (`K2`) while forwarding in-flight `LVF/LUF` flags (`gorunen_5`, `gorunen_32`) back to `Decode2` and `Execute` with zero stall penalty.
 - **4-Write-Port Result Register File (`MR0–MR3`):** Sustains simultaneous writebacks from dual-issue E-stage operations and completing W-stage `K2` adder/multiplier pipelines in a single clock cycle under strict hardware priority (`E1 > E2 > adder K2 > multiplier K2`).
 - **Bit-True Golden Model & KV260 Hardware-in-the-Loop Verification:** Every control step executed on the physical KV260 FPGA fabric is verified bit-for-bit against the cycle-accurate Python Golden Model (`pc/core.py`) and C reference implementation across all 64 words of the `C2M` Message RAM.
+
+## Navigation
+
+- [Why It Matters](#why-it-matters)
+- [What is a Control Law Accelerator (CLA)?](#what-is-a-control-law-accelerator-cla)
+- [Mathematical Background & Drone Control Law](#mathematical-background--drone-control-law)
+- [Architecture](#architecture)
+- [Engineering & Algorithm Explanations](#engineering--algorithm-explanations)
+- [Directory Structure](#directory-structure)
+- [Modules](#modules)
+- [Simulation & Hardware-in-the-Loop Verification](#simulation--hardware-in-the-loop-verification)
+- [Real-World Applications](#real-world-applications)
+- [What's Next](#whats-next)
+- [References](#references)
 
 ## Why It Matters
 
@@ -60,7 +73,7 @@ Host CPU / Zynq PS (AXI4-Lite)                       yonga-cla Co-Processor (FPG
 
 ## Mathematical Background & Drone Control Law
 
-To prove the hardware on a realistic, non-trivial multi-variable control problem, **yonga-cla** runs a **431-instruction multi-rate cascaded 6-DOF quadrotor flight controller with a velocity-based disturbance observer** (`gui/drone_uret.py` $\to$ `gui/drone.casm`).
+To prove the hardware on a realistic, non-trivial multi-variable control problem, **yonga-cla** runs a **431-instruction multi-rate cascaded 6-DOF quadrotor flight controller with a velocity-based disturbance observer** (`gui/drone_uret.py` → `gui/drone.casm`).
 
 ### Multi-Rate Cascaded Control Architecture
 
@@ -70,51 +83,73 @@ A quadrotor is an underactuated 6-DOF system with fast rotational dynamics and s
 | :--- | :--- | :--- | :--- |
 | **Task 1** | `0x000` | **1 kHz** (Every step) | **Angular Rate Loop (PI + Derivative-on-Measurement) & 4-Motor Mixer** |
 | **Task 2** | `0x0CE` | **500 Hz** (Every 2 steps) | **Attitude Loop (Roll, Pitch, Yaw Proportional Control)** |
-| **Task 3** | `0x118` | **100 Hz** (Every 10 steps) | **Position (P) $\to$ Velocity (PI + Feedforward) $\to$ Tilt & Thrust Reference** |
+| **Task 3** | `0x118` | **100 Hz** (Every 10 steps) | **Position (P) → Velocity (PI + Feedforward) → Tilt & Thrust Reference** |
 | **Task 4** | `0x24E` | **100 Hz** (Every 10 steps) | **Velocity-Based Disturbance Observer (Wind & Impulse Estimator)** |
 | **Task 8** | `0x318` | On Reset (`SK_SIFIRLA`) | **State Initialization (Clears all 33 persistent state words in `C2M`)** |
 
 ### 1. Task 1: Angular Rate Loop (PI-D) and Motor Mixer (1 kHz)
 
-For each body angular rate axis $\omega \in \{r, p, q\}$ with reference $\omega_{\text{ref}}$, error $e_\omega[k] = \omega_{\text{ref}}[k] - \omega[k]$, and anti-windup integral state $I_\omega[k]$, the derivative term is computed on the **measured angular rate** $(\omega[k] - \omega[k-1])$ rather than on the error to prevent derivative kick on reference step changes:
+For each body angular rate axis `ω ∈ {r, p, q}` with reference `ω_ref`, rate error `e_ω[k] = ω_ref[k] - ω[k]`, and anti-windup integral state `I_ω[k]`, the derivative term is computed on the **measured angular rate** `(ω[k] - ω[k-1])` rather than on the error to prevent derivative kick on reference step changes:
 
-$$I_\omega[k] = \text{clip}\!\Bigl(I_\omega[k-1] + K_{i,r}\,e_\omega[k],\ -I_{\max,r},\ +I_{\max,r}\Bigr)$$
+```text
+e_ω[k] = ω_ref[k] - ω[k]
+I_ω[k] = clip( I_ω[k-1] + Ki_r * e_ω[k],  -I_max_r, +I_max_r )
+d_ω[k] = clip( Kp_r * e_ω[k] + I_ω[k] - Kd_r * (ω[k] - ω[k-1]),  -d_max, +d_max )
+```
 
-$$\delta_\omega[k] = \text{clip}\!\Bigl(K_{p,r}\,e_\omega[k] + I_\omega[k] - K_{d,r}\bigl(\omega[k] - \omega[k-1]\bigr),\ -d_{\max},\ +d_{\max}\Bigr)$$
+The resulting roll (`dx`), pitch (`dy`), and yaw (`dz`) torque commands are combined with the collective thrust command `t` in the quadrotor X-configuration mixer and clamped to `[0.0, 1.0]` using `MMINF32` and `MMAXF32`:
 
-The resulting roll ($\delta_x$), pitch ($\delta_y$), and yaw ($\delta_z$) torque commands are combined with the collective thrust command $T$ in the quadrotor X-configuration mixer and clamped to $[0, 1]$ using `MMINF32` and `MMAXF32`:
-
-$$u_1 = \text{clip}_{[0,1]}(T - \delta_y + \delta_z), \quad u_2 = \text{clip}_{[0,1]}(T + \delta_x - \delta_z), \quad u_3 = \text{clip}_{[0,1]}(T + \delta_y + \delta_z), \quad u_4 = \text{clip}_{[0,1]}(T - \delta_x - \delta_z)$$
+```text
+u1 = clip( t - dy + dz,  0.0, 1.0 )
+u2 = clip( t + dx - dz,  0.0, 1.0 )
+u3 = clip( t + dy + dz,  0.0, 1.0 )
+u4 = clip( t - dx - dz,  0.0, 1.0 )
+```
 
 ### 2. Task 2: Attitude Loop (500 Hz)
 
-Converts roll ($\phi$), pitch ($\theta$), and yaw ($\psi$) angle errors into body angular rate references:
+Converts roll (`φ`), pitch (`θ`), and yaw (`ψ`) angle errors into body angular rate references (`wref_x`, `wref_y`, `wref_z`):
 
-$$\omega_{\text{ref},i} = \text{clip}\!\Bigl(K_{a,i}\bigl(\theta_{\text{ref},i} - \theta_i\bigr),\ -\omega_{\max,i},\ +\omega_{\max,i}\Bigr), \qquad i \in \{x, y, z\}$$
+```text
+wref_x = clip( Ka_xy * (roll_ref  - roll),   -wmax_xy, +wmax_xy )
+wref_y = clip( Ka_xy * (pitch_ref - pitch),  -wmax_xy, +wmax_xy )
+wref_z = clip( Ka_z  * (yaw_ref   - yaw),    -wmax_z,  +wmax_z  )
+```
 
 ### 3. Task 3: Position & Velocity Loop with Observer Bumpless Transfer (100 Hz)
 
-For each translational axis $i \in \{x, y, z\}$, position error drives a clamped velocity reference $v_{\text{ref},i}$, which in turn drives a PI velocity controller compensated by the disturbance observer estimate $\hat{e}_{d,i}$:
+For each translational axis `i ∈ {x, y, z}`, position error `(h_i - p_i)` drives a clamped velocity reference `vr_i`, which in turn drives a PI velocity controller compensated by the disturbance observer acceleration estimate `eh_i`:
 
-$$v_{\text{ref},i} = \text{clip}\!\Bigl(K_{p,p}\bigl(p_{\text{ref},i} - p_i\bigr),\ -v_{\max},\ +v_{\max}\Bigr), \qquad e_{v,i} = v_{\text{ref},i} - v_i$$
+```text
+vr_i    = clip( Kp_p * (h_i - p_i),  -vmax, +vmax )
+ev_i    = vr_i - v_i
+dff     = ff - ff_prev
+I_v[k]  = clip( I_v[k-1] + dff * eh_i + Ki_v * ev_i,  -I_max_v, +I_max_v )
+a_cmd_i = Kp_v * ev_i + I_v[k] - ff * eh_i
+```
 
-$$I_{v,i}[k] = \text{clip}\!\Bigl(I_{v,i}[k-1] + (\gamma_{\text{ff}}[k] - \gamma_{\text{ff}}[k-1])\hat{e}_{d,i} + K_{i,v}\,e_{v,i},\ -I_{\max,v},\ +I_{\max,v}\Bigr)$$
+Notice the term `dff * eh_i` where `dff = ff - ff_prev`: when the disturbance observer feedforward flag `ff ∈ {0, 1}` is toggled on or off in flight, shifting the velocity integrator by `(ff - ff_prev) * eh_i` guarantees **bumpless transfer** with zero acceleration jump. Desired horizontal accelerations `(a_cmd_x, a_cmd_y)` are then rotated by yaw `ψ` (`cosy`, `siny`) and converted into pitch/roll references and tilt-compensated thrust `t`:
 
-$$a_{\text{cmd},i} = K_{p,v}\,e_{v,i} + I_{v,i}[k] - \gamma_{\text{ff}}[k]\,\hat{e}_{d,i}$$
-
-Notice the term $(\gamma_{\text{ff}}[k] - \gamma_{\text{ff}}[k-1])\hat{e}_{d,i}$: when the disturbance observer feedforward flag $\gamma_{\text{ff}} \in \{0, 1\}$ is toggled on or off in flight, shifting the velocity integrator by $\Delta\gamma_{\text{ff}}\,\hat{e}_{d,i}$ guarantees **bumpless transfer** with zero acceleration jump. Desired horizontal accelerations $(a_{\text{cmd},x}, a_{\text{cmd},y})$ are then rotated by yaw $\psi$ and converted into pitch/roll references and tilt-compensated thrust $T$:
-
-$$\theta_{\text{ref}} = \text{clip}\!\left(\frac{\cos\psi\,a_{\text{cmd},x} + \sin\psi\,a_{\text{cmd},y}}{g},\ -\theta_{\max},\ +\theta_{\max}\right), \qquad \phi_{\text{ref}} = \text{clip}\!\left(\frac{\sin\psi\,a_{\text{cmd},x} - \cos\psi\,a_{\text{cmd},y}}{g},\ -\theta_{\max},\ +\theta_{\max}\right)$$
-
-$$T = \text{clip}_{[T_{\min}, T_{\max}]}\!\left(c_T (g + a_{\text{cmd},z})\Bigl(1 + \frac{\phi^2 + \theta^2}{2}\Bigr)\right)$$
+```text
+pitch_ref = clip( (cosy * a_cmd_x + siny * a_cmd_y) / g,  -aci_max, +aci_max )
+roll_ref  = clip( (siny * a_cmd_x - cosy * a_cmd_y) / g,  -aci_max, +aci_max )
+t         = clip( ct * (g + a_cmd_z) * (1.0 + 0.5 * (roll^2 + pitch^2)),  tmin, tmax )
+```
 
 ### 4. Task 4: Velocity-Based Disturbance Observer (100 Hz)
 
-Using the nominal thrust acceleration $A = T / c_T$ and measured Euler angles, Task 4 computes the nominal model accelerations $(a_{m,x}, a_{m,y}, a_{m,z})$ and updates a Luenberger-style velocity and disturbance acceleration observer $(\hat{v}_i, \hat{e}_{d,i})$ to reject wind gusts, external impulses, rotor efficiency loss, and payload changes:
+Using the nominal thrust acceleration `A = t / ct` and measured Euler angles, Task 4 computes the nominal model accelerations `(amx, amy, amz)` and updates a Luenberger-style velocity and disturbance acceleration observer `(vh_i, eh_i)` to reject wind gusts, external impulses, rotor efficiency loss, and payload changes:
 
-$$a_{m,x} = A(\cos\psi\,\theta + \sin\psi\,\phi), \qquad a_{m,y} = A(\sin\psi\,\theta - \cos\psi\,\phi), \qquad a_{m,z} = A\Bigl(1 - \frac{\phi^2 + \theta^2}{2}\Bigr) - g$$
+```text
+A   = t * inv_ct
+amx = A * (cosy * pitch + siny * roll)
+amy = A * (siny * pitch - cosy * roll)
+amz = A * (1.0 - 0.5 * (roll^2 + pitch^2)) - g
 
-$$e_{\text{obs},i} = v_i - \hat{v}_i, \qquad \hat{v}_i[k+1] = \hat{v}_i[k] + T_{s,\text{obs}}\bigl(a_{m,i} + \hat{e}_{d,i}[k]\bigr) + l_1\,e_{\text{obs},i}, \qquad \hat{e}_{d,i}[k+1] = \text{clip}\!\bigl(\hat{e}_{d,i}[k] + l_2\,e_{\text{obs},i},\ -e_{\max},\ +e_{\max}\bigr)$$
+e_obs_i   = v_i - vh_i[k]
+vh_i[k+1] = vh_i[k] + ts_obs * (am_i + eh_i[k]) + l1 * e_obs_i
+eh_i[k+1] = clip( eh_i[k] + l2 * e_obs_i,  -elim, +elim )
+```
 
 ## Architecture
 
@@ -140,7 +175,7 @@ $$e_{\text{obs},i} = v_i - \hat{v}_i, \qquad \hat{v}_i[k+1] = \hat{v}_i[k] + T_{
 
 ### CLA Memory Map (16-Bit Word Addressed)
 
-<img width="576" height="494" alt="0" src="https://github.com/user-attachments/assets/4e7628fa-633b-4b79-811a-2e14991532ae" />
+<img width="576" height="494" alt="0" src="https://github.com/user-attachments/assets/376d6f4c-5288-4e90-87c4-d53e8e81571f" />
 
 | Memory Region | Address Range (16-Bit Word) | Capacity | Access Rules & Role |
 | :--- | :--- | :--- | :--- |
@@ -156,13 +191,13 @@ Mapped into a 4 KB aperture on the Zynq UltraScale+ `HPM0` bus (recommended base
 
 | Byte Offset | Register Name | Access | Description |
 | :--- | :--- | :--- | :--- |
-| `0x000` | `MIFR` | R | Interrupt Flag Register (bit $i$: Task $i+1$ pending) |
-| `0x004` | `MIOVF` | R | Interrupt Overflow Flag Register (bit $i$: trigger arrived while `MIFR[i]` was already 1) |
+| `0x000` | `MIFR` | R | Interrupt Flag Register (bit `i`: Task `i+1` pending) |
+| `0x004` | `MIOVF` | R | Interrupt Overflow Flag Register (bit `i`: trigger arrived while `MIFR[i]` was already 1) |
 | `0x008` | `MICLR` | W | Interrupt Clear Register (writing 1 clears the corresponding `MIFR` bit) |
 | `0x00C` | `MICLROVF` | W | Interrupt Overflow Clear Register (writing 1 clears the corresponding `MIOVF` bit) |
-| `0x010` | `MIFRC` | W | Interrupt Force Register (writing 1 triggers Task $i+1$ in software) |
-| `0x014` | `MIER` | RW | Interrupt Enable Register (bit $i$: enables Task $i+1$ for arbitration) |
-| `0x018` | `MIRUN` | R | Interrupt Run Register (bit $i$: Task $i+1$ is currently executing in the pipeline) |
+| `0x010` | `MIFRC` | W | Interrupt Force Register (writing 1 triggers Task `i+1` in software) |
+| `0x014` | `MIER` | RW | Interrupt Enable Register (bit `i`: enables Task `i+1` for arbitration) |
+| `0x018` | `MIRUN` | R | Interrupt Run Register (bit `i`: Task `i+1` is currently executing in the pipeline) |
 | `0x01C` | `MCTL` | W | Control Register (`bit 0`: `HARDRESET`, `bit 1`: `SOFTRESET`, `bit 2`: `IACKE`) |
 | `0x020 – 0x03C` | `MVECT1 – MVECT8` | RW | 16-bit starting program counter (`MPC`) word addresses for Tasks 1–8 |
 | `0x040` | `IRQ_DURUM` | R / W1C | Latches rising edges of `pie_kesme[7:0]`; write 1 to clear |
@@ -282,9 +317,9 @@ end else begin
 end
 ```
 
-Division and vector normalization ($1/\sqrt{x^2 + y^2 + z^2}$) are ubiquitous in motor and flight control, yet iterative hardware dividers stall pipelines for puluhan cycles. Following the TI Type-0 CLA specification, `kestirme.sv` provides single-cycle 8-bit mantissa seed estimates (`MEINVF32` and `MEISQRTF32`) from a single `1024 × 8-bit` table (`estimate_lut.hex`):
-- **`MEISQRTF32` ($1/\sqrt{x}$):** Uses addresses `0x000–0x1FF` (`{1'b0, exp[0], mantissa[22:15]}`), selecting between even-exponent and odd-exponent tables via `exp[0]` and computing the biased output exponent as `(380 - exp) >> 1`.
-- **`MEINVF32` ($1/x$):** Uses addresses `0x200–0x2FF` (`{2'b10, mantissa[22:15]}`) and computes the biased output exponent as `253 - exp`. One or two subsequent Newton-Raphson `MMPYF32` / `MSUBF32` iterations refine this seed to full 23-bit IEEE-754 precision.
+Division and vector normalization (`1/√(x² + y² + z²)`) are ubiquitous in motor and flight control, yet iterative hardware dividers stall pipelines for dozens of cycles. Following the TI Type-0 CLA specification, `kestirme.sv` provides single-cycle 8-bit mantissa seed estimates (`MEINVF32` and `MEISQRTF32`) from a single `1024 × 8-bit` table (`estimate_lut.hex`):
+- **`MEISQRTF32` (`1/√x`):** Uses addresses `0x000–0x1FF` (`{1'b0, exp[0], mantissa[22:15]}`), selecting between even-exponent and odd-exponent tables via `exp[0]` and computing the biased output exponent as `(380 - exp) >> 1`.
+- **`MEINVF32` (`1/x`):** Uses addresses `0x200–0x2FF` (`{2'b10, mantissa[22:15]}`) and computes the biased output exponent as `253 - exp`. One or two subsequent Newton-Raphson `MMPYF32` / `MSUBF32` iterations refine this seed to full 23-bit IEEE-754 precision.
 
 ## Directory Structure
 
@@ -349,7 +384,7 @@ Top-level processor core connecting `Gorev_Yazmaclari`, `cla_mvect_regs`, `cla_g
 
 ### `ALU.sv` and Submodules (`rtl/cla/alu/`)
 
-<img width="1280" height="863" alt="2aa4da1c-78cc-4dc2-ab34-930584cdd5b6" src="https://github.com/user-attachments/assets/906400e9-d2a4-43c6-bd02-37753d5ff0cc" />
+<img width="1280" height="863" alt="2aa4da1c-78cc-4dc2-ab34-930584cdd5b6" src="https://github.com/user-attachments/assets/242cd525-ded6-4e02-8282-71de7cf5ab1c" />
 
 Central execution engine driven by `Execute.sv`. Routes four 32-bit operands (`a, b, c, d`) through ten 2-bit input multiplexers (`mux_1..mux_10`) into six specialized units:
 
@@ -358,7 +393,7 @@ Central execution engine driven by `Execute.sv`. Routes four 32-bit operands (`a
 | `fpu_toplama.sv` (`topla_k1`, `topla_k2`, `pack`) | 2 cycles (`E → W`) | `MADDF32`, `MSUBF32` (including `#16FHi`, parallel `\|\| MMOV32`, `\|\| MMPYF32`, and `MMACF32`) |
 | `fpu_carpma.sv` (`carp_k1`, `carp_k2`, `pack`) | 2 cycles (`E → W`) | `MMPYF32` (including `#16FHi`, parallel `\|\| MMOV32`, `\|\| MADDF32/MSUBF32`, and `MMACF32`) |
 | `tamsayi_islem.sv` | 1 cycle (`E`) | `MADD32`, `MSUB32`, `MAND32`, `MOR32`, `MXOR32`, `MLSL32`, `MLSR32`, `MASR32`, `MCMP32` |
-| `fpu_kestirme.sv` (`clasify`, `kestirme`) | 1 cycle (`E`) | `MEINVF32` ($1/x$), `MEISQRTF32` ($1/\sqrt{x}$) via `1024 × 8-bit` ROM (`estimate_lut.hex`) |
+| `fpu_kestirme.sv` (`clasify`, `kestirme`) | 1 cycle (`E`) | `MEINVF32` (`1/x`), `MEISQRTF32` (`1/√x`) via `1024 × 8-bit` ROM (`estimate_lut.hex`) |
 | `fpu_karsilastirma.sv` (`clasify`, `karsilastirma`) | 1 cycle (`E`) | `MCMPF32`, `MMAXF32`, `MMINF32`, `MABSF32`, conditional `MNEGF32` |
 | `fpu_donusum.sv` (`clasify`, `donusum`) | 1 cycle (`E`) | `MF32TOI16`, `MF32TOI16R`, `MF32TOI32`, `MF32TOUI16`, `MF32TOUI16R`, `MF32TOUI32`, `MI16TOF32`, `MI32TOF32`, `MUI16TOF32`, `MUI32TOF32`, `MFRACF32` |
 
@@ -392,15 +427,15 @@ python3 cla_dongu.py 10000 --c-ref
 
 **Disturbance Scenario Timeline (`OLAYLAR` in `cla_dongu.py`):**
 
-| Step ($1\text{ ms/step}$) | Event Injected | Physical Effect |
+| Step (`1 ms/step`) | Event Injected | Physical Effect |
 | :--- | :--- | :--- |
-| `0` | `SK_HEDEF (0, 0, 2)` | Takeoff from ground $(0,0,0)$ to hover at $z = 2.0\text{ m}$ |
-| `1500` ($1.5\text{ s}$) | `SK_HEDEF (2, 1, 2)` | Step waypoint command to $(x=2\text{ m},\ y=1\text{ m},\ z=2\text{ m})$ |
-| `3000` ($3.0\text{ s}$) | `SK_RUZGAR (6, 0, 0)` | $6\text{ m/s}$ sustained lateral wind gust along $+x$ |
-| `4500` ($4.5\text{ s}$) | `SK_DARBE (0, 8, 0), 0.3s` | $8\text{ N}$ external lateral force impulse along $+y$ for $0.3\text{ s}$ |
-| `6000` ($6.0\text{ s}$) | `SK_MOTOR (1, 0.7)` | Motor 2 loses $30\%$ thrust efficiency ($\eta_2 = 0.70$) |
-| `7000` ($7.0\text{ s}$) | `SK_YUK (+0.3 kg)` | Sudden $+0.3\text{ kg}$ payload mass addition in flight |
-| `8000 – 9500` | `SK_GOZLEMCI` off $\to$ on | Disturbance observer disabled under $-6\text{ m/s}$ wind, then re-enabled |
+| `0` | `SK_HEDEF (0, 0, 2)` | Takeoff from ground `(0, 0, 0)` to hover at `z = 2.0 m` |
+| `1500` (`1.5 s`) | `SK_HEDEF (2, 1, 2)` | Step waypoint command to `(x = 2 m, y = 1 m, z = 2 m)` |
+| `3000` (`3.0 s`) | `SK_RUZGAR (6, 0, 0)` | `6 m/s` sustained lateral wind gust along `+x` |
+| `4500` (`4.5 s`) | `SK_DARBE (0, 8, 0), 0.3s` | `8 N` external lateral force impulse along `+y` for `0.3 s` |
+| `6000` (`6.0 s`) | `SK_MOTOR (1, 0.7)` | Motor 2 loses `30%` thrust efficiency (`η_2 = 0.70`) |
+| `7000` (`7.0 s`) | `SK_YUK (+0.3 kg)` | Sudden `+0.3 kg` payload mass addition in flight |
+| `8000 – 9500` | `SK_GOZLEMCI` off → on | Disturbance observer disabled under `-6 m/s` wind, then re-enabled |
 
 ### 3. Real-Time Browser Telemetry & Control GUI (`cla_gui.py`)
 
@@ -428,7 +463,7 @@ python3 kart_test.py --kart 192.168.137.92
 
 1. **Connectivity & Hardware ID (`0x434C4101`):** Pings `radar_server` and reads AXI offset `0x04C` (`KIMLIK`) to confirm the CLA bitstream is active.
 2. **Program CRC Verification (`0x276C7CCB`):** Ensures the `drone_cla.h` compiled into `radar_server` matches the local `drone.casm` instruction image.
-3. **Step-by-Step Hardware-in-the-Loop vs. Golden Model:** Runs 6-DOF physics on the PC while dispatching every control step over TCP/AXI to the physical KV260 CLA core, asserting zero bit discrepancies across all 33 `C2M` state words as the drone climbs to $2\text{ m}$.
+3. **Step-by-Step Hardware-in-the-Loop vs. Golden Model:** Runs 6-DOF physics on the PC while dispatching every control step over TCP/AXI to the physical KV260 CLA core, asserting zero bit discrepancies across all 33 `C2M` state words as the drone climbs to `2 m`.
 4. **On-Board 1 kHz Real-Time Flight Simulation:** Runs a 12-second flight scenario (takeoff, waypoint step, wind gust, impulse) at 1 kHz directly on the KV260 PS+PL and replays captured hardware traces against the Golden Model.
 
 ## Real-World Applications
@@ -436,7 +471,7 @@ python3 kart_test.py --kart 192.168.137.92
 | Industry | Application | What the CLA Accelerates |
 | :--- | :--- | :--- |
 | **UAVs & Aerospace** | Multi-rate autopilot & attitude control | Cascaded PID loops, quaternion/Euler rotations, and disturbance observers (`drone.casm`) |
-| **Electric Drives (PMSM / BLDC)** | Field-Oriented Control (FOC) & predictive current control | Clarke/Park transforms, $1/\sqrt{x}$ vector normalization, and 20–100 kHz PI current regulators |
+| **Electric Drives (PMSM / BLDC)** | Field-Oriented Control (FOC) & predictive current control | Clarke/Park transforms, `1/√x` vector normalization, and 20–100 kHz PI current regulators |
 | **Digital Power Electronics** | Switched-mode power supplies & solar inverters | High-bandwidth 2p2z / 3p3z compensation filters and phase-locked loops (PLL) |
 | **Robotics & Actuators** | Multi-axis joint torque and impedance control | Parallel low-latency feedback loops isolated from high-level motion planning |
 | **Automotive EV Systems** | Traction inverter & active suspension control | Deterministic microsecond-level control laws with zero OS interrupt jitter |
