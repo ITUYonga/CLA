@@ -170,4 +170,4 @@ python3 kart_test.py --kart 192.168.137.92
 
 * **Ahmet Kargı**
 
-**İTÜ YONGA** — *Sürekli Üretmek, Ürettikçe Gelişmek.*
+**İTÜ YONGA**
