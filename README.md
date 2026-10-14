@@ -1,5 +1,8 @@
 # yonga-cla: 8-Stage Pipelined Control Law Accelerator (CLA) on FPGA
 
+<img width="1750" height="625" alt="1" src="https://github.com/user-attachments/assets/93f102ed-405d-4b44-9fd4-d87b397b8690" />
+
+
 **Authors:** Mustafa Taha Aydemir, Safa Oğuzhan Dişbudak, Arda Yalçınöz, Ahmet Kargı &nbsp;|&nbsp; **Date:** October 2026 &nbsp;|&nbsp; **Platform:** AMD/Xilinx Kria KV260 / Vivado / SystemVerilog
 
 Real-time control loops—the mathematics keeping a quadrotor stable in a 6 m/s crosswind or driving a synchronous motor at tens of kilohertz—executed not in an interrupt-bound CPU thread, but directly in a deterministic, 8-stage pipelined floating-point co-processor built from the ground up in SystemVerilog.
@@ -136,6 +139,8 @@ $$e_{\text{obs},i} = v_i - \hat{v}_i, \qquad \hat{v}_i[k+1] = \hat{v}_i[k] + T_{
 - **Stage 8 — `Write` (`W`):** Houses the architectural `MR0–MR3` register file (4 write ports) and `MSTF` status register. Completes Stage 2 (`K2`) of the FP32 adder and multiplier, arbitrates up to 4 simultaneous register writes (`e_yaz1`, `e_yaz2`, `valid_topla`, `valid_carp`), drives memory store requests back to `Read1`, detects `E/W` K2 read-after-write hazards (`dur_exe`), and forwards live `MSTF` flags (`gorunen_5`, `gorunen_32`).
 
 ### CLA Memory Map (16-Bit Word Addressed)
+
+<img width="576" height="494" alt="0" src="https://github.com/user-attachments/assets/4e7628fa-633b-4b79-811a-2e14991532ae" />
 
 | Memory Region | Address Range (16-Bit Word) | Capacity | Access Rules & Role |
 | :--- | :--- | :--- | :--- |
@@ -343,6 +348,8 @@ Top-level processor core connecting `Gorev_Yazmaclari`, `cla_mvect_regs`, `cla_g
 | `c2m_addr`, `c2m_wr_en`, `c2m_rd_en`, `c2m_din`, `c2m_dout` | Out / In | 7, 2, 2, 32, 32 bits | Read/Write interface to external `C2M` Message RAM |
 
 ### `ALU.sv` and Submodules (`rtl/cla/alu/`)
+
+<img width="1280" height="863" alt="2aa4da1c-78cc-4dc2-ab34-930584cdd5b6" src="https://github.com/user-attachments/assets/906400e9-d2a4-43c6-bd02-37753d5ff0cc" />
 
 Central execution engine driven by `Execute.sv`. Routes four 32-bit operands (`a, b, c, d`) through ten 2-bit input multiplexers (`mux_1..mux_10`) into six specialized units:
 
