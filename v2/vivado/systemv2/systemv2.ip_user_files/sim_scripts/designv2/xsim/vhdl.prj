@@ -1,8 +1,0 @@
-vhdl xil_defaultlib  \
-"../../../bd/designv2/ip/designv2_axi_dma_0_0/sim/designv2_axi_dma_0_0.vhd" \
-"../../../bd/designv2/ip/designv2_axi_smc_0/bd_0/ip/ip_1/sim/bd_4851_psr_aclk_0.vhd" \
-"../../../bd/designv2/ip/designv2_rst_ps8_0_99M_0/sim/designv2_rst_ps8_0_99M_0.vhd" \
-"../../../bd/designv2/ip/designv2_axi_smc_1_0/bd_0/ip/ip_1/sim/bd_8255_psr_aclk_0.vhd" \
-
-# Do not sort compile order
-nosort
