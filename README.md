@@ -456,6 +456,6 @@ python3 kart_test.py --kart 192.168.137.92
 
 ## License
 
-This project was developed by the **İTÜ YONGA** team (**Mustafa Taha Aydemir**, **Safa Oğuzhan Dişbudak**, **Arda Yalçınöz**, **Ahmet Kargı**).
+This project is licensed under the MIT License.
 
 *İTÜ YONGA*
