@@ -1,4 +1,4 @@
-# yonga-cla: 8-Stage Pipelined Control Law Accelerator (CLA) on FPGA
+# Yonga-CLA: 8-Stage Pipelined Control Law Accelerator (CLA) on FPGA
 
 <img width="1750" height="625" alt="1" src="https://github.com/user-attachments/assets/d6ed0bc4-fef1-4059-9be5-381ee082058d" />
 
