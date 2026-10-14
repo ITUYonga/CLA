@@ -14,6 +14,9 @@ Bu depo; sentezlenebilir **SystemVerilog RTL** tasarımını, **AMD/Xilinx Kria 
 
 * **İki Aşamalı Kayan Nokta Birimi (`K1 / K2`) ve Bayrak Yönlendirme (`Görünen MSTF`):** Yüksek saat frekansı için FP32 toplayıcı ve çarpıcı `E` ve `W` aşamalarına bölünmüştür; `W` aşamasındaki taşma/alt-taşma (`LVF/LUF`) bayrakları `görünen MSTF` üzerinden `D2` dal birimine gecikmesiz aktarılır.
 
+<img width="1280" height="863" alt="image" src="https://github.com/user-attachments/assets/4e9b7865-6cb1-40ab-b7b6-ab28ce6ccaea" />
+
+
 * **4 Yazma Portlu `MR0–MR3` Yazmaç Öbeği:** Dual-Issue buyrukların ve 2 aşamalı FPU sonuçlarının boru hattını durdurmadan aynı çevrimde yazılabilmesi için 4 bağımsız yazma portu (`exe_hedef`, `exe_hedef_2`, `K2 topla`, `K2 çarp`) ve donanımsal öncelik mantığı (`E > topla K2 > çarp K2`) içerir.
 
 * **Çevrim-Doğru Golden Model ve HIL Doğrulaması:** RTL donanımı, Python tabanlı çevrim-doğru referans model (`pc/core.py`) ve C referans modeli (`libsim`) ile her kontrol adımında `C2M` mesaj RAM'i üzerinden **bit-bit (bit-true)** karşılaştırılır.
@@ -21,6 +24,8 @@ Bu depo; sentezlenebilir **SystemVerilog RTL** tasarımını, **AMD/Xilinx Kria 
 ## Mimari Genel Bakış
 
 ### 1. Boru Hattı Aşamaları (8 Kademe)
+
+<img width="1750" height="625" alt="1" src="https://github.com/user-attachments/assets/5f75e260-c3bd-4283-ae21-65f7f6f8e407" />
 
 ```
 [F1: Fetch1] ──► [F2: Fetch2] ──► [D1: Decode1] ──► [D2: Decode2] ──► [R1: Read1] ──► [R2: Read2] ──► [E: Execute (K1)] ──► [W: Write (K2)]
@@ -47,6 +52,8 @@ Bu depo; sentezlenebilir **SystemVerilog RTL** tasarımını, **AMD/Xilinx Kria 
 * **`W` (`Write.sv` — Geri Yazma ve FPU 2. Aşama):** FP32 toplama ve çarpmanın 2. aşamasını (`K2`) tamamlar; sonuçları `MR0–MR3` yazmaçlarına, veri RAM'lerine ve `MSTF` durum yazmacına yazar.
 
 ### 2. CLA Bellek Haritası (16-Bit Kelime Adresli)
+
+<img width="576" height="494" alt="0" src="https://github.com/user-attachments/assets/2fa04507-40d7-4113-ba2e-274b39571f42" />
 
 * **`C2M Message RAM` (`0x1480`, `128 × 16-bit` / `64 × 32-bit`):** CLA → CPU mesaj belleği. CLA okur ve yazar, CPU okur; kalıcı kontrol durumları ve hesaplanan motor komutları burada tutulur.
 
